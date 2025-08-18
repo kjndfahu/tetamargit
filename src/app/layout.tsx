@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FreshMarket - Продукты премиум качества",
-  description: "Лучшие продукты для вашего стола. Свежие овощи, фрукты, мясо и молочные продукты.",
+  title: "Teta Margit",
+  description: "",
 };
 
 export default function RootLayout({

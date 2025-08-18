@@ -38,25 +38,6 @@ const contactInfo = [
   }
 ];
 
-const faqItems = [
-  {
-    question: 'Ako objednať produkty?',
-    answer: 'Vyberte potrebné produkty, pridajte ich do košíka a vyplňte objednávku. Doručíme ich v pre vás vhodnom čase.'
-  },
-  {
-    question: 'Máte doručenie?',
-    answer: 'Áno, doručujeme po celom meste. Cena doručenia závisí od štvrte a sumy objednávky.'
-  },
-  {
-    question: 'Aké spôsoby platby prijímate?',
-    answer: 'Prijímame hotovosť, bankové karty a elektronické platby.'
-  },
-  {
-    question: 'Môžem vrátiť produkty?',
-    answer: 'Áno, ak produkt neodpovedá deklarovanej kvalite, vymeníme ho alebo vrátime peniaze.'
-  }
-];
-
 export function ContactUs() {
   const [formData, setFormData] = useState({
     name: '',
@@ -66,7 +47,6 @@ export function ContactUs() {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -91,10 +71,6 @@ export function ContactUs() {
         message: ''
       });
     }, 3000);
-  };
-
-  const toggleFaq = (index: number) => {
-    setActiveFaq(activeFaq === index ? null : index);
   };
 
   return (

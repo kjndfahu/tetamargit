@@ -2,44 +2,6 @@
 import {  Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
 import Image from "next/image";
 
-
-const socialPosts = [
-  {
-    id: 1,
-    platform: 'Instagram',
-    icon: Instagram,
-    color: 'from-pink-500 to-purple-500',
-    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&h=300&fit=crop',
-    caption: 'Свежие овощи прямо с грядки! 🥬 Сегодня в продаже: помидоры, огурцы, перец. Заказывайте скорее!',
-    likes: 234,
-    comments: 45,
-    time: '2 часа назад'
-  },
-  {
-    id: 2,
-    platform: 'Facebook',
-    icon: Facebook,
-    color: 'from-blue-500 to-blue-600',
-    image: 'https://images.unsplash.com/photo-1607623814075-e51df1616ee7?w=300&h=300&fit=crop',
-    caption: 'Мясо премиум качества от наших фермеров! 🥩 Говядина, свинина, баранина. Всегда свежее!',
-    likes: 189,
-    comments: 32,
-    time: '5 часов назад'
-  },
-  {
-    id: 3,
-    platform: 'Twitter',
-    icon: Twitter,
-    color: 'from-black to-gray-500',
-    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=300&h=300&fit=crop',
-    caption: 'Деревенское молоко и творог! 🥛 Натуральные продукты без добавок. Доставка по городу.',
-    likes: 156,
-    comments: 28,
-    time: '1 день назад'
-  }
-];
-
-
 export function SocialNetworks() {
   return (
         <div className="text-center rounded-2xl px-8">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShoppingCart, Heart, Star, Info, Clock, Users } from 'lucide-react';
+import { ShoppingCart, Info, Clock, Users } from 'lucide-react';
 
 const flipCards = [
   {

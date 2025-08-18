@@ -1,6 +1,3 @@
-import { Header } from "@/widgets/header";
-import { Footer } from "@/widgets/footer";
-
 import { ImageBanner } from "@/features/image-banner";
 import { Filter } from "@/features/filter";
 import { RecentlyViewed } from "@/features/recently-viewed";

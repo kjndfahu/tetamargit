@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Filter as FilterIcon, Search, Star, ShoppingCart, Heart } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 const categories = [
   { id: 'vegetables', name: 'Zelenina' },

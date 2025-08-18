@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, Heart, ShoppingCart, Star } from 'lucide-react';
 
 const recentlyViewedProducts = [
   {
@@ -68,22 +67,6 @@ const recentlyViewedProducts = [
 
 export function RecentlyViewed() {
   const [products, setProducts] = useState(recentlyViewedProducts);
-
-  const toggleFavorite = (productId: number) => {
-    setProducts(prev => prev.map(product => 
-      product.id === productId 
-        ? { ...product, isFavorite: !product.isFavorite }
-        : product
-    ));
-  };
-
-  const toggleCart = (productId: number) => {
-    setProducts(prev => prev.map(product => 
-      product.id === productId 
-        ? { ...product, isInCart: !product.isInCart }
-        : product
-    ));
-  };
 
   return (
     <section className=" bg-white">

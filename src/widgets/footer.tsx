@@ -39,7 +39,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-900">
-          <p>&copy; 2024 Teta Márgit. Všetky práva vyhradené.</p>
+          <p>&copy; 2025 Teta Márgit. Všetky práva vyhradené.</p>
         </div>
       </div>
     </footer>

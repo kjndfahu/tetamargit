@@ -8,7 +8,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">T</span>
               </div>
-              <span className="ml-2 text-xl font-bold">Teta Márgit</span>
+              <span className="ml-2 text-xl font-bold">111Teta Márgit</span>
             </div>
             <p className="text-gray-900 mb-4">
               Ponúkame len najčerstvejšie a najkvalitnejšie produkty pre váš stôl. 

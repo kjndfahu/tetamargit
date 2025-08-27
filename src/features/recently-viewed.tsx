@@ -49,7 +49,7 @@ const recentlyViewedProducts = [
     category: 'Ovocie',
     price: 2.20,
     oldPrice: 2.80,
-    image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300&h=300&fit=crop',
+    image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300&h=300&fit=crop',
     isFavorite: true,
     isInCart: false
   },

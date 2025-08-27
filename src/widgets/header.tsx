@@ -13,7 +13,7 @@ export function Header() {
           <div className="flex items-center">
             <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
             </div>
-            <span className="ml-3 text-2xl font-bold uppercase text-orange-500">1111Teta44447777888 Márgit</span>
+            <span className="ml-3 text-2xl font-bold uppercase text-orange-500">Teta Márgit</span>
           </div>
 
           <nav className="hidden md:flex space-x-8">

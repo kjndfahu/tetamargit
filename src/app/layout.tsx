@@ -25,8 +25,8 @@ export default function RootLayout({
       <body className={`${inter.variable} flex flex-col font-inter min-h-screen bg-[#f5f5f5] antialiased`}>
       <Header />
         {children}
-      </body>
       <Footer />
+      </body>
     </html>
   );
 }

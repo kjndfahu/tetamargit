@@ -15,21 +15,14 @@ export function DeliverySection({ deliveryMethod, setDeliveryMethod }: DeliveryS
 		<section className="bg-white shadow rounded-xl p-6">
 			<h2 className="text-xl font-semibold mb-4 text-black flex items-center gap-2"><Truck className="h-5 w-5 text-orange-500" /> Spôsob doručenia</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-				<button
-					onClick={() => setDeliveryMethod("pickup")}
-					className={`${deliveryMethod === "pickup" ? "border-orange-500 ring-2 ring-orange-200" : "border-gray-200"} cursor-pointer rounded-lg border p-4 text-left transition focus:outline-none`}
-				>
+				<button onClick={() => setDeliveryMethod("pickup")} className={`${deliveryMethod === "pickup" ? "border-orange-500 ring-2 ring-orange-200" : "border-gray-200"} cursor-pointer rounded-lg border p-4 text-left transition focus:outline-none`}>
 					<div className="flex items-center justify-between">
 						<span className="text-black font-medium flex items-center gap-2"><Store className="h-5 w-5 text-orange-500" /> Osobný odber</span>
 						<span className={`text-xs px-2 py-1 rounded ${deliveryMethod === "pickup" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-700"}`}>vybraté</span>
 					</div>
 					<p className="text-gray-600 mt-2">Zdarma. Vyzdvihnutie dnes v predajni.</p>
 				</button>
-
-				<button
-					onClick={() => setDeliveryMethod("courier")}
-					className={`${deliveryMethod === "courier" ? "border-orange-500 ring-2 ring-orange-200" : "border-gray-200"} cursor-pointer rounded-lg border p-4 text-left transition focus:outline-none`}
-				>
+				<button onClick={() => setDeliveryMethod("courier")} className={`${deliveryMethod === "courier" ? "border-orange-500 ring-2 ring-orange-200" : "border-gray-200"} cursor-pointer rounded-lg border p-4 text-left transition focus:outline-none`}>
 					<div className="flex items-center justify-between">
 						<span className="text-black font-medium flex items-center gap-2"><Truck className="h-5 w-5 text-orange-500" /> Doručenie kuriérom</span>
 						<span className={`text-xs px-2 py-1 rounded ${deliveryMethod === "courier" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-700"}`}>vybraté</span>
@@ -37,7 +30,6 @@ export function DeliverySection({ deliveryMethod, setDeliveryMethod }: DeliveryS
 					<p className="text-gray-600 mt-2">Zajtra, 4.99€ v rámci mesta.</p>
 				</button>
 			</div>
-
 			{deliveryMethod === "courier" && (
 				<div className="mt-6 border-t pt-6">
 					<h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2"><MapPin className="h-5 w-5 text-orange-500" /> Adresa doručenia</h3>

@@ -4,6 +4,7 @@ import { RecentlyViewed } from "@/features/recently-viewed";
 import { FlipCards } from "@/features/flip-cards";
 import { SocialNetworks } from "@/features/social-networks";
 import { ContactUs } from "@/features/contact-us";
+import { Competitions } from "@/features/competitions";
 
 export default function Home() {
   return (
@@ -18,6 +19,8 @@ export default function Home() {
       <FlipCards />
 
       <SocialNetworks />
+
+      <Competitions />
         
       <ContactUs />
 

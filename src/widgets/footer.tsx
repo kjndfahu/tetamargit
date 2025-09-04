@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export function Footer() {
   return (
     <footer className="border-gray-200 mt-[80px] border-t-[1px] text-white">
@@ -5,10 +7,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">T</span>
-              </div>
-              <span className="ml-2 text-xl font-bold">111555Teta Márgit</span>
+              <Image width={60} height={60} src="/img/logo-teta.svg" alt="logo" />
+              <span className="ml-2 text-xl font-bold">Teta Márgit</span>
             </div>
             <p className="text-gray-900 mb-4">
               Ponúkame len najčerstvejšie a najkvalitnejšie produkty pre váš stôl. 
@@ -20,10 +20,10 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-orange-400">Rýchle odkazy</h3>
             <ul className="space-y-2">
-              <li><a href="#home" className="text-gray-900 hover:text-white transition-colors">Domov</a></li>
-              <li><a href="#products" className="text-gray-900 hover:text-white transition-colors">Produkty</a></li>
-              <li><a href="#about" className="text-gray-900 hover:text-white transition-colors">O nás</a></li>
-              <li><a href="#contact" className="text-gray-900 hover:text-white transition-colors">Kontakt</a></li>
+              <li><a href="#home" className="text-gray-900 hover:text-orange-400 transition-colors">Domov</a></li>
+              <li><a href="#products" className="text-gray-900 hover:text-orange-400 transition-colors">Produkty</a></li>
+              <li><a href="#about" className="text-gray-900 hover:text-orange-400 transition-colors">O nás</a></li>
+              <li><a href="#contact" className="text-gray-900 hover:text-orange-400 transition-colors">Kontakt</a></li>
             </ul>
           </div>
 

@@ -1,7 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,11 +12,12 @@ export function Header() {
     <header className="bg-white shadow-lg sticky top-0 z-50">
       <div className="mx-auto px-4 sm:px-6 lg:px-20">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+          <Link href="/">
+            <div className="flex cursor-pointer items-center">
+              <Image width={60} height={60} src="/img/logo-teta.svg" alt="logo" />
+              <span className="ml-3 text-2xl font-bold uppercase text-orange-500">Teta Márgit</span>
             </div>
-            <span className="ml-3 text-2xl font-bold uppercase text-orange-500">3333Teta 000Márgit</span>
-          </div>
+          </Link>
 
           <nav className="hidden md:flex space-x-8">
             <a href="#home" className="text-black hover:text-orange-500 transition-colors">Domov</a>
@@ -23,12 +26,12 @@ export function Header() {
             <a href="#contact" className="text-black hover:text-orange-500 transition-colors">Kontakt</a>
           </nav>
 
-            <button className="relative p-2 text-black cursor-pointer hover:text-orange-500 transition-colors">
+            <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-orange-500 transition-colors">
               <ShoppingCart className="cursor-pointer h-6 w-6" />
               <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-            </button>
+            </a>
 
-          {/* Мобильное меню */}
+         
           <button
             className="md:hidden p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -41,7 +44,7 @@ export function Header() {
           </button>
         </div>
 
-        {/* Мобильное меню */}
+       
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
@@ -56,10 +59,10 @@ export function Header() {
                 placeholder="Hľadať produkty..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
-              <button className="w-full flex items-center cursor-pointer justify-center p-2 text-black hover:text-orange-500 transition-colors">
+              <a href="/cart" className="w-full flex items-center cursor-pointer justify-center p-2 text-black hover:text-orange-500 transition-colors">
                 <ShoppingCart className="cursor-pointer h-6 w-6 mr-2" />
                 Košík (3)
-              </button>
+              </a>
             </div>
           </div>
         )}

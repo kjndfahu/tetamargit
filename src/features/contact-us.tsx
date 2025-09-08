@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 const contactInfo = [
   {
@@ -39,6 +40,8 @@ const contactInfo = [
 ];
 
 export function ContactUs() {
+  const form = useRef<HTMLFormElement>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -47,6 +50,7 @@ export function ContactUs() {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -56,21 +60,42 @@ export function ContactUs() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Odosielame formulár:', formData);
-    setIsSubmitted(true);
 
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      });
-    }, 3000);
+    if (isLoading) return;
+
+    console.log('Odosielame formulár:', formData);
+
+    setIsLoading(true);
+
+    try {
+      await emailjs.sendForm(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
+        form.current!,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
+      );
+      console.log('Email sent successfully');
+
+      setIsSubmitted(true);
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Email sending failed:', error);
+    } finally {
+      setIsLoading(false);
+    }    
   };
 
   return (
@@ -117,7 +142,7 @@ export function ContactUs() {
                   <p className="text-gray-600">Čoskoro vás budeme kontaktovať.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form ref={form} onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -208,6 +233,7 @@ export function ContactUs() {
 
                   <button
                     type="submit"
+                    disabled={isLoading}
                     className="w-full bg-orange-500 cursor-pointer hover:from-yellow-500 hover:to-orange-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
                   >
                     <Send className="w-5 h-5" />

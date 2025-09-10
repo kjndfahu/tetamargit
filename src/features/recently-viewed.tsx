@@ -106,12 +106,11 @@ export function RecentlyViewed() {
                     </span>
                     {product.oldPrice > product.price && (
                       <span className="text-sm text-gray-500 line-through">
-                    <button className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
-                  <div className="text-xs text-[#EE4C7C] font-medium mb-2">
+                        {product.oldPrice}€
+                      </span>
                     )}
                   </div>
-                  
-                  <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">
+                    <button className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
                     Do košíka
                   </button>
                 </div>

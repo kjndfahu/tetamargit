@@ -231,7 +231,6 @@ export function Filter() {
                   </div>
                   
                   <div className="p-4">
-                    <div className="text-xs text-orange-500 font-medium mb-2">
                     <div className="text-xs text-[#EE4C7C] font-medium mb-2">
                       {product.category}
                     </div>

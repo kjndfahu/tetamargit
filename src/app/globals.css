@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --primary-gold: #FFD700;
-  --primary-orange: #FF8C00;
-  --primary-yellow: #FFEB3B;
+  --primary-pink: #EE4C7C;
+  --primary-magenta: #9A1750;
+  --primary-purple: #5D001E;
+  --secondary-pink: #E3AFBC;
+  --light-pink: #E3E2DF;
   --white: #FFFFFF;
   --black: #000000;
   --font-inter: var(--font-inter);
@@ -20,11 +22,11 @@ body {
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, var(--primary-gold) 0%, var(--primary-orange) 100%);
+  background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-magenta) 100%);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary-gold) 0%, var(--primary-orange) 100%);
+  background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-magenta) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

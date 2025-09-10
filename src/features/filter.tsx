@@ -140,7 +140,7 @@ export function Filter() {
                     placeholder="Názov..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -152,7 +152,7 @@ export function Filter() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full py-2 px-2 cursor-pointer text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full py-2 px-2 cursor-pointer text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                 >
                   <option className="cursor-pointer" value="popular">Popularita</option>
                   <option className="cursor-pointer" value="price-low">Cena ↑</option>
@@ -169,7 +169,7 @@ export function Filter() {
                 <select
                   value={selectedPriceRange}
                   onChange={(e) => setSelectedPriceRange(e.target.value)}
-                  className="w-full py-2 cursor-pointer px-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full py-2 cursor-pointer px-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                 >
                   <option value="">Všetky</option>
                   {priceRanges.map(range => (
@@ -191,8 +191,8 @@ export function Filter() {
                       onClick={() => toggleCategory(category.id)}
                       className={`w-full p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
                         selectedCategories.includes(category.id)
-                          ? 'border-orange-500 bg-orange-50 text-orange-700'
-                          : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50'
+                          ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
+                          : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
                       }`}
                     >
                       <span className="font-medium">{category.name}</span>
@@ -204,7 +204,7 @@ export function Filter() {
               <div className="space-y-2">
                 <button
                   onClick={applyFilters}
-                  className="w-full cursor-pointer bg-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm"
+                  className="w-full cursor-pointer bg-[#EE4C7C] hover:bg-[#9A1750] text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm"
                 >
                   Aplikovať
                 </button>
@@ -232,10 +232,11 @@ export function Filter() {
                   
                   <div className="p-4">
                     <div className="text-xs text-orange-500 font-medium mb-2">
+                    <div className="text-xs text-[#EE4C7C] font-medium mb-2">
                       {product.category}
                     </div>
                     
-                    <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-orange-500 transition-colors">
+                    <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">
                       {product.name}
                     </h3>
 
@@ -251,7 +252,7 @@ export function Filter() {
                         )}
                       </div>
                       
-                      <button className="bg-orange-500 hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
+                      <button className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
                         Do košíka
                       </button>
                     </div>

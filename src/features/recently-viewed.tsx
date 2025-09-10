@@ -106,12 +106,12 @@ export function RecentlyViewed() {
                     </span>
                     {product.oldPrice > product.price && (
                       <span className="text-sm text-gray-500 line-through">
-                        {product.oldPrice}€
-                      </span>
+                    <button className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
+                  <div className="text-xs text-[#EE4C7C] font-medium mb-2">
                     )}
                   </div>
                   
-                  <button className="bg-orange-500 hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
+                  <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">
                     Do košíka
                   </button>
                 </div>
@@ -121,7 +121,7 @@ export function RecentlyViewed() {
         </div>
 
         <div className="text-center mt-12">
-          <button className="bg-orange-500 hover:from-yellow-500 hover:to-orange-600 cursor-pointer text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <button className="bg-[#EE4C7C] hover:bg-[#9A1750] cursor-pointer text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
             Zobraziť všetky produkty
           </button>
         </div>

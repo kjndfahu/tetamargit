@@ -15,20 +15,20 @@ export function Header() {
           <Link href="/">
             <div className="flex cursor-pointer items-center">
               <Image width={60} height={60} src="/img/logo-teta.svg" alt="logo" />
-              <span className="ml-3 text-2xl font-bold uppercase text-orange-500">Teta Márgit</span>
+              <span className="ml-3 text-2xl font-bold uppercase text-[#EE4C7C]">Teta Márgit</span>
             </div>
           </Link>
 
           <nav className="hidden md:flex space-x-8">
-            <a href="#home" className="text-black hover:text-orange-500 transition-colors">Domov</a>
-            <a href="#products" className="text-black hover:text-orange-500 transition-colors">Produkty</a>
-            <a href="#about" className="text-black hover:text-orange-500 transition-colors">O nás</a>
-            <a href="#contact" className="text-black hover:text-orange-500 transition-colors">Kontakt</a>
+            <a href="#home" className="text-black hover:text-[#EE4C7C] transition-colors">Domov</a>
+            <a href="#products" className="text-black hover:text-[#EE4C7C] transition-colors">Produkty</a>
+            <a href="#about" className="text-black hover:text-[#EE4C7C] transition-colors">O nás</a>
+            <a href="#contact" className="text-black hover:text-[#EE4C7C] transition-colors">Kontakt</a>
           </nav>
 
-            <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-orange-500 transition-colors">
+            <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-[#EE4C7C] transition-colors">
               <ShoppingCart className="cursor-pointer h-6 w-6" />
-              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+              <span className="absolute -top-1 -right-1 bg-[#EE4C7C] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
             </a>
 
          
@@ -48,18 +48,18 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
-              <a href="#home" className="text-black hover:text-orange-500 transition-colors">Domov</a>
-              <a href="#products" className="text-black hover:text-orange-500 transition-colors">Produkty</a>
-              <a href="#about" className="text-black hover:text-orange-500 transition-colors">O nás</a>
-              <a href="#contact" className="text-black hover:text-orange-500 transition-colors">Kontakt</a>
+              <a href="#home" className="text-black hover:text-[#EE4C7C] transition-colors">Domov</a>
+              <a href="#products" className="text-black hover:text-[#EE4C7C] transition-colors">Produkty</a>
+              <a href="#about" className="text-black hover:text-[#EE4C7C] transition-colors">O nás</a>
+              <a href="#contact" className="text-black hover:text-[#EE4C7C] transition-colors">Kontakt</a>
             </nav>
             <div className="mt-4 space-y-2">
               <input
                 type="text"
                 placeholder="Hľadať produkty..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
               />
-              <a href="/cart" className="w-full flex items-center cursor-pointer justify-center p-2 text-black hover:text-orange-500 transition-colors">
+              <a href="/cart" className="w-full flex items-center cursor-pointer justify-center p-2 text-black hover:text-[#EE4C7C] transition-colors">
                 <ShoppingCart className="cursor-pointer h-6 w-6 mr-2" />
                 Košík (3)
               </a>

@@ -18,24 +18,24 @@ const contactInfo = [
     title: 'Email',
     value: 'info@tetamargit.sk',
     subtitle: 'Odpovieme do 2 hodín',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-50'
+    color: 'text-[#EE4C7C]',
+    bgColor: 'bg-[#E3AFBC]/20'
   },
   {
     icon: MapPin,
     title: 'Adresa',
     value: 'ul. Čerstvá, 15, Bratislava',
     subtitle: 'Metro "Čerstvá"',
-    color: 'text-orange-500',
-    bgColor: 'bg-orange-50'
+    color: 'text-[#9A1750]',
+    bgColor: 'bg-[#E3AFBC]/30'
   },
   {
     icon: Clock,
     title: 'Otvorené hodiny',
     value: 'Denne',
     subtitle: '8:00 - 22:00',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-50'
+    color: 'text-[#5D001E]',
+    bgColor: 'bg-[#E3AFBC]/40'
   }
 ];
 
@@ -155,7 +155,7 @@ export function ContactUs() {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="Vaše meno"
                       />
                     </div>
@@ -171,7 +171,7 @@ export function ContactUs() {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -188,7 +188,7 @@ export function ContactUs() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="+421 (999) 123-45-67"
                       />
                     </div>
@@ -203,7 +203,7 @@ export function ContactUs() {
                         value={formData.subject}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                       >
                         <option value="">Vyberte tému</option>
                         <option value="order">Otázka ohľadom objednávky</option>
@@ -226,7 +226,7 @@ export function ContactUs() {
                       onChange={handleInputChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent resize-none"
                       placeholder="Opíšte vašu otázku alebo návrh..."
                     />
                   </div>
@@ -234,7 +234,7 @@ export function ContactUs() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-orange-500 cursor-pointer hover:from-yellow-500 hover:to-orange-600 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                    className="w-full bg-[#EE4C7C] cursor-pointer hover:bg-[#9A1750] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
                   >
                     <Send className="w-5 h-5" />
                     <span>Posielajte správy</span>

@@ -1,12 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { Search, ShoppingCart, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, UserPlus, LogIn } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
+import { AuthModal } from '@/features/auth/auth-modal';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openAuth, setOpenAuth] = useState(false);
+  const [authType, setAuthType] = useState<'signup' | 'login'>('signup');
 
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50">
@@ -26,12 +29,19 @@ export function Header() {
             <a href="#contact" className="text-black hover:text-[#EE4C7C] transition-colors">Kontakt</a>
           </nav>
 
-            <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-[#EE4C7C] transition-colors">
-              <ShoppingCart className="cursor-pointer h-6 w-6" />
-              <span className="absolute -top-1 -right-1 bg-[#EE4C7C] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-            </a>
+            <div className="flex items-center gap-2">
+              <button onClick={() => { setAuthType('signup'); setOpenAuth(true); }} className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 text-black hover:border-[#EE4C7C] hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                <UserPlus className="h-4 w-4" /> Registrácia
+              </button>
+              <button onClick={() => { setAuthType('login'); setOpenAuth(true); }} className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 text-black hover:border-[#EE4C7C] hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                <LogIn className="h-4 w-4" /> Prihlásenie
+              </button>
+              <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-[#EE4C7C] transition-colors">
+                <ShoppingCart className="cursor-pointer h-6 w-6" />
+                <span className="absolute -top-1 -right-1 bg-[#EE4C7C] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+              </a>
+            </div>
 
-         
           <button
             className="md:hidden p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -44,7 +54,6 @@ export function Header() {
           </button>
         </div>
 
-       
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
@@ -63,10 +72,18 @@ export function Header() {
                 <ShoppingCart className="cursor-pointer h-6 w-6 mr-2" />
                 Košík (3)
               </a>
+              <button onClick={() => { setAuthType('signup'); setOpenAuth(true); }} className="w-full flex items-center justify-center gap-2 p-2 text-black hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                <UserPlus className="h-5 w-5" /> Registrácia
+              </button>
+              <button onClick={() => { setAuthType('login'); setOpenAuth(true); }} className="w-full flex items-center justify-center gap-2 p-2 text-black hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                <LogIn className="h-5 w-5" /> Prihlásenie
+              </button>
             </div>
           </div>
         )}
       </div>
+
+      <AuthModal open={openAuth} onClose={() => setOpenAuth(false)} type={authType} onSwitchType={(t) => setAuthType(t)} />
     </header>
   );
 }

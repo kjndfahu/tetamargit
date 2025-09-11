@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { X, Mail, Lock, User } from "lucide-react";
-import { AuthService, type SignUpData, type SignInData } from '@/lib/auth';
+import { useAuth } from '@/hooks/useAuth';
 
 type AuthType = "signup" | "login";
 
@@ -15,10 +15,11 @@ interface AuthModalProps {
 
 export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps) {
   const [animateIn, setAnimateIn] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const { signUp, signIn } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -48,7 +49,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
     
     try {
       if (isSignup) {
-        const signUpData: SignUpData = {
+        const signUpData = {
           email: formData.get('email') as string,
           password: formData.get('password') as string,
           firstName: formData.get('firstName') as string,
@@ -56,15 +57,15 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
           phone: formData.get('phone') as string || undefined,
         };
         
-        await AuthService.signUp(signUpData);
+        await signUp(signUpData);
         setSuccess('Registrácia bola úspešná! Skontrolujte svoj email pre potvrdenie.');
       } else {
-        const signInData: SignInData = {
+        const signInData = {
           email: formData.get('email') as string,
           password: formData.get('password') as string,
         };
         
-        await AuthService.signIn(signInData);
+        await signIn(signInData);
         setSuccess('Prihlásenie bolo úspešné!');
         setTimeout(() => {
           onClose();

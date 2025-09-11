@@ -2,26 +2,29 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { AuthGuard } from '@/components/auth-guard';
 import { User, Mail, Phone, Calendar, Save } from 'lucide-react';
 
 export default function ProfilePage() {
-  return (
-    <AuthGuard requireAuth={true}>
-      <ProfileContent />
-    </AuthGuard>
-  );
-}
-
-function ProfileContent() {
   const { user, profile, updateProfile, loading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    first_name: profile?.first_name || '',
-    last_name: profile?.last_name || '',
+    firstName: profile?.firstName || '',
+    lastName: profile?.lastName || '',
     phone: profile?.phone || '',
   });
+
+  // Redirect if not authenticated
+  if (!loading && !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Prístup zamietnutý</h1>
+          <p className="text-gray-600">Pre zobrazenie tejto stránky sa musíte prihlásiť.</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,8 +85,8 @@ function ProfileContent() {
                   </span>
                   <input
                     type="text"
-                    name="first_name"
-                    value={formData.first_name}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleInputChange}
                     required
                     disabled={saving}
@@ -99,8 +102,8 @@ function ProfileContent() {
                   </span>
                   <input
                     type="text"
-                    name="last_name"
-                    value={formData.last_name}
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleInputChange}
                     required
                     disabled={saving}
@@ -155,8 +158,8 @@ function ProfileContent() {
                   onClick={() => {
                     setIsEditing(false);
                     setFormData({
-                      first_name: profile?.first_name || '',
-                      last_name: profile?.last_name || '',
+                      firstName: profile?.firstName || '',
+                      lastName: profile?.lastName || '',
                       phone: profile?.phone || '',
                     });
                   }}
@@ -175,7 +178,7 @@ function ProfileContent() {
                     <User className="h-4 w-4 text-[#EE4C7C]" />
                     Meno
                   </span>
-                  <p className="text-lg text-gray-900">{profile?.first_name || 'Nie je zadané'}</p>
+                  <p className="text-lg text-gray-900">{profile?.firstName || 'Nie je zadané'}</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -183,7 +186,7 @@ function ProfileContent() {
                     <User className="h-4 w-4 text-[#EE4C7C]" />
                     Priezvisko
                   </span>
-                  <p className="text-lg text-gray-900">{profile?.last_name || 'Nie je zadané'}</p>
+                  <p className="text-lg text-gray-900">{profile?.lastName || 'Nie je zadané'}</p>
                 </div>
               </div>
 
@@ -209,7 +212,7 @@ function ProfileContent() {
                   Registrovaný od
                 </span>
                 <p className="text-lg text-gray-900">
-                  {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('sk-SK') : 'Neznáme'}
+                  {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString('sk-SK') : 'Neznáme'}
                 </p>
               </div>
             </div>

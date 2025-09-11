@@ -5,7 +5,7 @@ import { Search, ShoppingCart, Menu, X, UserPlus, LogIn, User, LogOut } from 'lu
 import { useState } from 'react';
 import Link from 'next/link';
 import { AuthModal } from '@/features/auth/auth-modal';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth-context';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,7 +46,7 @@ export function Header() {
                       <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-black">
                         <User className="h-4 w-4 text-[#EE4C7C]" />
                         <span className="text-sm">
-                          {profile ? `${profile.first_name} ${profile.last_name}` : user?.email}
+                          {profile ? `${profile.firstName} ${profile.lastName}` : user?.email}
                         </span>
                       </div>
                       <button 
@@ -111,7 +111,7 @@ export function Header() {
                       <div className="w-full flex items-center justify-center gap-2 p-2 text-black">
                         <User className="h-5 w-5 text-[#EE4C7C]" />
                         <span className="text-sm">
-                          {profile ? `${profile.first_name} ${profile.last_name}` : user?.email}
+                          {profile ? `${profile.firstName} ${profile.lastName}` : user?.email}
                         </span>
                       </div>
                       <button 

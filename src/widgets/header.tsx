@@ -1,16 +1,25 @@
 'use client';
 
 import Image from 'next/image';
-import { Search, ShoppingCart, Menu, X, UserPlus, LogIn } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, UserPlus, LogIn, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { AuthModal } from '@/features/auth/auth-modal';
+import { useAuth } from '@/hooks/useAuth';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAuth, setOpenAuth] = useState(false);
   const [authType, setAuthType] = useState<'signup' | 'login'>('signup');
+  const { user, profile, loading, signOut, isAuthenticated } = useAuth();
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50">
       <div className="mx-auto px-4 sm:px-6 lg:px-20">
@@ -30,12 +39,35 @@ export function Header() {
           </nav>
 
             <div className="flex items-center gap-2">
-              <button onClick={() => { setAuthType('signup'); setOpenAuth(true); }} className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 text-black hover:border-[#EE4C7C] hover:text-[#EE4C7C] transition-colors cursor-pointer">
-                <UserPlus className="h-4 w-4" /> Registrácia
-              </button>
-              <button onClick={() => { setAuthType('login'); setOpenAuth(true); }} className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 text-black hover:border-[#EE4C7C] hover:text-[#EE4C7C] transition-colors cursor-pointer">
-                <LogIn className="h-4 w-4" /> Prihlásenie
-              </button>
+              {!loading && (
+                <>
+                  {isAuthenticated ? (
+                    <div className="hidden sm:flex items-center gap-2">
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-black">
+                        <User className="h-4 w-4 text-[#EE4C7C]" />
+                        <span className="text-sm">
+                          {profile ? `${profile.first_name} ${profile.last_name}` : user?.email}
+                        </span>
+                      </div>
+                      <button 
+                        onClick={handleSignOut}
+                        className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 text-black hover:border-[#EE4C7C] hover:text-[#EE4C7C] transition-colors cursor-pointer"
+                      >
+                        <LogOut className="h-4 w-4" /> Odhlásiť sa
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <button onClick={() => { setAuthType('signup'); setOpenAuth(true); }} className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 text-black hover:border-[#EE4C7C] hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                        <UserPlus className="h-4 w-4" /> Registrácia
+                      </button>
+                      <button onClick={() => { setAuthType('login'); setOpenAuth(true); }} className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 text-black hover:border-[#EE4C7C] hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                        <LogIn className="h-4 w-4" /> Prihlásenie
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
               <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-[#EE4C7C] transition-colors">
                 <ShoppingCart className="cursor-pointer h-6 w-6" />
                 <span className="absolute -top-1 -right-1 bg-[#EE4C7C] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
@@ -72,18 +104,43 @@ export function Header() {
                 <ShoppingCart className="cursor-pointer h-6 w-6 mr-2" />
                 Košík (3)
               </a>
-              <button onClick={() => { setAuthType('signup'); setOpenAuth(true); }} className="w-full flex items-center justify-center gap-2 p-2 text-black hover:text-[#EE4C7C] transition-colors cursor-pointer">
-                <UserPlus className="h-5 w-5" /> Registrácia
-              </button>
-              <button onClick={() => { setAuthType('login'); setOpenAuth(true); }} className="w-full flex items-center justify-center gap-2 p-2 text-black hover:text-[#EE4C7C] transition-colors cursor-pointer">
-                <LogIn className="h-5 w-5" /> Prihlásenie
-              </button>
+              {!loading && (
+                <>
+                  {isAuthenticated ? (
+                    <>
+                      <div className="w-full flex items-center justify-center gap-2 p-2 text-black">
+                        <User className="h-5 w-5 text-[#EE4C7C]" />
+                        <span className="text-sm">
+                          {profile ? `${profile.first_name} ${profile.last_name}` : user?.email}
+                        </span>
+                      </div>
+                      <button 
+                        onClick={handleSignOut}
+                        className="w-full flex items-center justify-center gap-2 p-2 text-black hover:text-[#EE4C7C] transition-colors cursor-pointer"
+                      >
+                        <LogOut className="h-5 w-5" /> Odhlásiť sa
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => { setAuthType('signup'); setOpenAuth(true); }} className="w-full flex items-center justify-center gap-2 p-2 text-black hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                        <UserPlus className="h-5 w-5" /> Registrácia
+                      </button>
+                      <button onClick={() => { setAuthType('login'); setOpenAuth(true); }} className="w-full flex items-center justify-center gap-2 p-2 text-black hover:text-[#EE4C7C] transition-colors cursor-pointer">
+                        <LogIn className="h-5 w-5" /> Prihlásenie
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}
       </div>
 
-      <AuthModal open={openAuth} onClose={() => setOpenAuth(false)} type={authType} onSwitchType={(t) => setAuthType(t)} />
+      {!isAuthenticated && (
+        <AuthModal open={openAuth} onClose={() => setOpenAuth(false)} type={authType} onSwitchType={(t) => setAuthType(t)} />
+      )}
     </header>
   );
 }

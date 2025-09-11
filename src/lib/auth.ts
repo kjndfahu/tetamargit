@@ -29,27 +29,21 @@ export class AuthService {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
-    })
-
-    if (authError) {
-      throw new Error(authError.message)
-    }
-
-    if (authData.user) {
-      // Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: authData.user.id,
+      options: {
+        data: {
           first_name: data.firstName,
           last_name: data.lastName,
           phone: data.phone || null,
-        })
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError)
-        // Don't throw here as the user is already created
+        }
       }
+    })
+
+    if (authError) {
+      // Handle specific database errors
+      if (authError.message.includes('Database error saving new user')) {
+        throw new Error('Registrácia momentálne nie je dostupná. Skúste to prosím neskôr.')
+      }
+      throw new Error(authError.message)
     }
 
     return authData

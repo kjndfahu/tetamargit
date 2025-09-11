@@ -1,141 +1,159 @@
-import { supabase } from '@/config/supabase'
-import type { User, Session } from '@supabase/supabase-js'
-
-export interface Profile {
-  id: string
-  user_id: string
-  first_name: string | null
-  last_name: string | null
-  phone: string | null
-  created_at: string
-  updated_at: string
-}
+import { supabase } from '@/config/supabase';
+import type { User, AuthError } from '@supabase/supabase-js';
 
 export interface SignUpData {
-  email: string
-  password: string
-  firstName: string
-  lastName: string
-  phone?: string
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
 }
 
 export interface SignInData {
-  email: string
-  password: string
+  email: string;
+  password: string;
+}
+
+export interface Profile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export class AuthService {
+  // Sign up new user
   static async signUp(data: SignUpData) {
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
+    const { email, password, firstName, lastName, phone } = data;
+    
+    const { data: authData, error } = await supabase.auth.signUp({
+      email,
+      password,
       options: {
         data: {
-          first_name: data.firstName,
-          last_name: data.lastName,
-          phone: data.phone || null,
-        }
-      }
-    })
+          first_name: firstName,
+          last_name: lastName,
+          phone: phone || null,
+        },
+      },
+    });
 
-    if (authError) {
-      // Handle specific database errors
-      if (authError.message.includes('Database error saving new user')) {
-        throw new Error('Registrácia momentálne nie je dostupná. Skúste to prosím neskôr.')
-      }
-      throw new Error(authError.message)
+    if (error) {
+      throw error;
     }
 
-    return authData
+    if (authData.user) {
+    // Insert into profiles
+    const { error: profileError } = await supabase.from('profiles').insert({
+      user_id: authData.user.id,
+      first_name: firstName,
+      last_name: lastName,
+      phone: phone || null,
+    });
+
+    if (profileError) throw profileError;
   }
 
+    return authData;
+  }
+
+  // Sign in user
   static async signIn(data: SignInData) {
+    const { email, password } = data;
+    
     const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    })
+      email,
+      password,
+    });
 
     if (error) {
-      throw new Error(error.message)
+      throw error;
     }
 
-    return authData
+    return authData;
   }
 
+  // Sign out user
   static async signOut() {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut();
+    
     if (error) {
-      throw new Error(error.message)
+      throw error;
     }
   }
 
+  // Get current user
   static async getCurrentUser(): Promise<User | null> {
-    try {
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error) {
-        console.error('Error getting current user:', error.message)
-        return null
-      }
-      return user
-    } catch (error) {
-      console.error('Error getting current user:', error)
-      return null
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error) {
+      console.error('Error getting current user:', error);
+      return null;
     }
+
+    return user;
   }
 
-  static async getCurrentSession(): Promise<Session | null> {
-    try {
-      const { data: { session }, error } = await supabase.auth.getSession()
-      if (error) {
-        console.error('Error getting session:', error.message)
-        return null
-      }
-      return session
-    } catch (error) {
-      console.error('Error getting session:', error)
-      return null
-    }
-  }
-
+  // Get user profile
   static async getUserProfile(userId: string): Promise<Profile | null> {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single()
-
-      if (error) {
-        console.error('Error fetching profile:', error.message)
-        return null
-      }
-
-      return data
-    } catch (error) {
-      console.error('Error fetching profile:', error)
-      return null
-    }
-  }
-
-  static async updateUserProfile(userId: string, updates: Partial<Pick<Profile, 'first_name' | 'last_name' | 'phone'>>) {
     const { data, error } = await supabase
       .from('profiles')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
+      .select('*')
       .eq('user_id', userId)
-      .select()
-      .single()
+      .single();
 
     if (error) {
-      throw new Error(error.message)
+      console.error('Error getting user profile:', error);
+      return null;
     }
 
-    return data
+    return data;
   }
 
-  static onAuthStateChange(callback: (event: string, session: Session | null) => void) {
-    return supabase.auth.onAuthStateChange(callback)
+  // Update user profile
+  static async updateUserProfile(userId: string, updates: Partial<Omit<Profile, 'id' | 'created_at' | 'updated_at'>>) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
+  // Reset password
+  static async resetPassword(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  // Update password
+  static async updatePassword(newPassword: string) {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  // Listen to auth state changes
+  static onAuthStateChange(callback: (user: User | null) => void) {
+    return supabase.auth.onAuthStateChange((event, session) => {
+      callback(session?.user || null);
+    });
   }
 }

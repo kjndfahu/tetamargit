@@ -88,14 +88,6 @@ export class AuthService {
       return null;
     }
   }
-    
-    if (error) {
-      console.error('Error getting current user:', error);
-      return null;
-    }
-
-    return user;
-  }
 
   // Get user profile
   static async getUserProfile(userId: string): Promise<Profile | null> {

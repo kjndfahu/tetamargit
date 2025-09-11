@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { X, Mail, Lock, User } from "lucide-react";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth-context';
 
 type AuthType = "signup" | "login";
 
@@ -58,7 +58,10 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
         };
         
         await signUp(signUpData);
-        setSuccess('Registrácia bola úspešná! Skontrolujte svoj email pre potvrdenie.');
+        setSuccess('Registrácia bola úspešná!');
+        setTimeout(() => {
+          onClose();
+        }, 1000);
       } else {
         const signInData = {
           email: formData.get('email') as string,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth-context';
 import { User, Mail, Phone, Calendar, Save } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -9,8 +9,8 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: profile?.firstName || '',
-    lastName: profile?.lastName || '',
+    firstName: profile?.first_name || '',
+    lastName: profile?.last_name || '',
     phone: profile?.phone || '',
   });
 
@@ -31,7 +31,11 @@ export default function ProfilePage() {
     setSaving(true);
 
     try {
-      await updateProfile(formData);
+      await updateProfile({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone: formData.phone || null,
+      });
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -158,8 +162,8 @@ export default function ProfilePage() {
                   onClick={() => {
                     setIsEditing(false);
                     setFormData({
-                      firstName: profile?.firstName || '',
-                      lastName: profile?.lastName || '',
+                      firstName: profile?.first_name || '',
+                      lastName: profile?.last_name || '',
                       phone: profile?.phone || '',
                     });
                   }}
@@ -179,6 +183,7 @@ export default function ProfilePage() {
                     Meno
                   </span>
                   <p className="text-lg text-gray-900">{profile?.firstName || 'Nie je zadané'}</p>
+                  <p className="text-lg text-gray-900">{profile?.first_name || 'Nie je zadané'}</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -187,6 +192,7 @@ export default function ProfilePage() {
                     Priezvisko
                   </span>
                   <p className="text-lg text-gray-900">{profile?.lastName || 'Nie je zadané'}</p>
+                  <p className="text-lg text-gray-900">{profile?.last_name || 'Nie je zadané'}</p>
                 </div>
               </div>
 

@@ -1,21 +1,18 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { LocalAuthService, type Profile, type SignUpData, type SignInData } from './local-auth';
-
-interface User {
-  id: string;
-  email: string;
-}
+import { AuthService, type Profile, type SignUpData, type SignInData } from './auth';
+import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
+  session: Session | null;
   loading: boolean;
   signUp: (data: SignUpData) => Promise<void>;
   signIn: (data: SignInData) => Promise<void>;
-  signOut: () => void;
-  updateProfile: (updates: Partial<Omit<Profile, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>) => Promise<Profile>;
+  signOut: () => Promise<void>;
+  updateProfile: (updates: Partial<Pick<Profile, 'first_name' | 'last_name' | 'phone'>>) => Promise<Profile>;
   isAuthenticated: boolean;
 }
 
@@ -24,51 +21,47 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
-    const storedUser = localStorage.getItem('auth_user');
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-        
-        // Load profile from server
-        LocalAuthService.getUserProfile(userData.id).then(profileData => {
-          setProfile(profileData);
-          setLoading(false);
-        }).catch(() => {
-          // If profile loading fails, clear auth
-          localStorage.removeItem('auth_user');
+    // Get initial session
+    AuthService.getCurrentSession().then(session => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        AuthService.getUserProfile(session.user.id).then(profile => {
+          setProfile(profile);
           setLoading(false);
         });
-      } catch {
-        localStorage.removeItem('auth_user');
+      } else {
         setLoading(false);
       }
-    } else {
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = AuthService.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        const profile = await AuthService.getUserProfile(session.user.id);
+        setProfile(profile);
+      } else {
+        setProfile(null);
+      }
+      
       setLoading(false);
-    }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (data: SignUpData) => {
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Signup failed');
-      }
-
-      const result = await response.json();
-      setUser(result.user);
-      setProfile(result.profile);
-      localStorage.setItem('auth_user', JSON.stringify(result.user));
+      await AuthService.signUp(data);
+      // Note: User will be automatically set via onAuthStateChange
     } catch (error) {
       throw error;
     }
@@ -76,50 +69,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (data: SignInData) => {
     try {
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Signin failed');
-      }
-
-      const result = await response.json();
-      setUser(result.user);
-      setProfile(result.profile);
-      localStorage.setItem('auth_user', JSON.stringify(result.user));
+      await AuthService.signIn(data);
+      // Note: User will be automatically set via onAuthStateChange
     } catch (error) {
       throw error;
     }
   };
 
-  const signOut = () => {
-    setUser(null);
-    setProfile(null);
-    localStorage.removeItem('auth_user');
+  const signOut = async () => {
+    try {
+      await AuthService.signOut();
+      // Note: User will be automatically cleared via onAuthStateChange
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const updateProfile = async (updates: Partial<Omit<Profile, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>) => {
+  const updateProfile = async (updates: Partial<Pick<Profile, 'first_name' | 'last_name' | 'phone'>>) => {
     if (!user) throw new Error('No user logged in');
     
     try {
-      const response = await fetch('/api/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, ...updates }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Profile update failed');
-      }
-
-      const result = await response.json();
-      setProfile(result.profile);
-      return result.profile;
+      const updatedProfile = await AuthService.updateUserProfile(user.id, updates);
+      setProfile(updatedProfile);
+      return updatedProfile;
     } catch (error) {
       throw error;
     }
@@ -129,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       user,
       profile,
+      session,
       loading,
       signUp,
       signIn,

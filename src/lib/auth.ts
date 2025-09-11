@@ -56,7 +56,7 @@ export class AuthService {
   }
 
   static async signIn(data: SignInData) {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
     })
@@ -65,7 +65,7 @@ export class AuthService {
       throw new Error(error.message)
     }
 
-    return data
+    return authData
   }
 
   static async signOut() {

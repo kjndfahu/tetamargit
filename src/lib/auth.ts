@@ -53,9 +53,8 @@ export class AuthService {
       phone: phone || null,
     });
 
-    if (profileError) throw profileError;
+    if (profileError) throw new Error('Účet s týmto e-mailom už existuje alebo čaká na potvrdenie.');
   }
-
     return authData;
   }
 

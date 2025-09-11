@@ -74,7 +74,20 @@ export class AuthService {
 
   // Get current user
   static async getCurrentUser(): Promise<User | null> {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error) {
+        console.error('Error getting current user:', error);
+        return null;
+      }
+
+      return user;
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      return null;
+    }
+  }
     
     if (error) {
       console.error('Error getting current user:', error);

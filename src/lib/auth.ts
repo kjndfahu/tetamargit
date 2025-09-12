@@ -43,18 +43,7 @@ export class AuthService {
     if (error) {
       throw error;
     }
-
-    if (authData.user) {
-    // Insert into profiles
-    const { error: profileError } = await supabase.from('profiles').insert({
-      user_id: authData.user.id,
-      first_name: firstName,
-      last_name: lastName,
-      phone: phone || null,
-    });
-
-    if (profileError) throw new Error('Účet s týmto e-mailom už existuje alebo čaká na potvrdenie.');
-  }
+    
     return authData;
   }
 

@@ -76,6 +76,19 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
       setLoading(false);
     }
   };
+
+  const handleGoogleSignIn = async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    await AuthService.signInWithGoogle();
+  } catch (err: any) {
+    setError(err.message || 'Prihlásenie cez Google zlyhalo.');
+  } finally {
+    setLoading(false);
+  }
+};
+
   if (!open) return null;
 
   const isSignup = type === "signup";
@@ -219,6 +232,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
               <button 
                 type="button"
                 disabled={loading}
+                onClick={handleGoogleSignIn}
                 className="cursor-pointer border border-gray-300 hover:bg-gray-50 rounded-lg py-2 text-sm font-medium flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-5 w-5">

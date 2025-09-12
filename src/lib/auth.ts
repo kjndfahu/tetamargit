@@ -43,6 +43,10 @@ export class AuthService {
     if (error) {
       throw error;
     }
+
+    if (authData.user && !authData.session) {
+      throw new Error('Používateľ s týmto emailom už existuje.');
+    }
     
     return authData;
   }
@@ -57,6 +61,10 @@ export class AuthService {
     });
 
     if (error) {
+      if (error.message === 'Invalid login credentials') {
+        throw new Error('Nesprávne prihlasovacie údaje');
+      }
+
       throw error;
     }
 

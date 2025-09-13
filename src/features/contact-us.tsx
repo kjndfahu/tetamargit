@@ -51,22 +51,86 @@ export function ContactUs() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const sanitizeName = (value: string) => {
+    // Remove digits; allow letters (incl. diacritics), spaces, hyphens, apostrophes
+    return value
+      .replace(/[0-9]/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .trimStart();
+  };
+
+  const sanitizePhone = (value: string) => {
+    // Allow only digits, +, spaces, parentheses and dashes
+    return value.replace(/[^0-9+\-()\s]/g, '');
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string) => {
+    if (!phone.trim()) return true; // Phone is optional
+    // Phone format
+    const phoneRegex = /^(\+[1-9]\d{6,14}|0\d{8,14})$/;
+    return phoneRegex.test(phone.replace(/[\s\-()]/g, ''));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    if (name === 'name') {
+      setFormData(prev => ({ ...prev, name: sanitizeName(value) }));
+      return;
+    }
+    if (name === 'phone') {
+      setFormData(prev => ({ ...prev, phone: sanitizePhone(value) }));
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
+  // Spam checks
+  const isSpam = (data: typeof formData) => {
+    const text = `${data.name} ${data.email} ${data.message}`.toLowerCase();
+
+    const keywords = ['bitcoin', 'crypto', 'loan', 'viagra', 'seo', 'click here', 'free money'];
+    if (keywords.some(k => text.includes(k))) return true;
+
+    if (/(https?:\/\/|www\.)/i.test(text)) return true; // URLs
+    if (/(.)\1{6,}/.test(text)) return true; // 7+ repeated chars
+    if (data.message.trim().length < 10) return true; // too short
+
+    return false;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (isLoading) return;
 
-    console.log('Odosielame formulár:', formData);
+    // Validation
+    if (!validateEmail(formData.email)) {
+      setError('Zadajte platný email.');
+      return;
+    }
+    
+    if (!validatePhone(formData.phone)) {
+      setError('Zadajte platné telefónne číslo.');
+      return;
+    }
 
+    if (isSpam(formData)) {
+      setError('Správa vyzerá ako spam. Skúste upraviť text.');
+      return;
+    }
+
+    setError(null);
     setIsLoading(true);
 
     try {
@@ -76,7 +140,6 @@ export function ContactUs() {
         form.current!,
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
       );
-      console.log('Email sent successfully');
 
       setIsSubmitted(true);
 
@@ -93,6 +156,7 @@ export function ContactUs() {
       
     } catch (error) {
       console.error('Email sending failed:', error);
+      setError('Nastala chyba pri odosielaní správy. Skúste to znova.');
     } finally {
       setIsLoading(false);
     }    
@@ -127,13 +191,17 @@ export function ContactUs() {
                 </div>
               ))}
             </div>
-            
-
           </div>
 
           <div>
             <div className="bg-white rounded-xl shadow-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Odoslať správu</h3>
+
+              {error && (
+                <div className="mb-4 rounded-lg bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm">
+                  {error}
+                </div>
+              )}
               
               {isSubmitted ? (
                 <div className="text-center py-12">
@@ -206,11 +274,11 @@ export function ContactUs() {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                       >
                         <option value="">Vyberte tému</option>
-                        <option value="order">Otázka ohľadom objednávky</option>
-                        <option value="delivery">Doručenie</option>
-                        <option value="quality">Kvalita produktu</option>
-                        <option value="partnership">Spolupráca</option>
-                        <option value="other">Iné</option>
+                        <option value="Otázka ohľadom objednávky">Otázka ohľadom objednávky</option>
+                        <option value="Doručenie">Doručenie</option>
+                        <option value="Kvalita produktu">Kvalita produktu</option>
+                        <option value="Spolupráca">Spolupráca</option>
+                        <option value="Iné">Iné</option>
                       </select>
                     </div>
                   </div>
@@ -234,10 +302,10 @@ export function ContactUs() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-[#EE4C7C] cursor-pointer hover:bg-[#9A1750] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                    className="w-full bg-[#EE4C7C] cursor-pointer hover:bg-[#9A1750] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-60"
                   >
                     <Send className="w-5 h-5" />
-                    <span>Posielajte správy</span>
+                    <span>{isLoading ? 'Odosielam…' : 'Posielajte správy'}</span>
                   </button>
                 </form>
               )}
@@ -248,5 +316,3 @@ export function ContactUs() {
     </section>
   );
 }
-
-

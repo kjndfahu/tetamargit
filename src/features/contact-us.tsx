@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import { validators, spamDetection, useFormInputHandler } from '@/lib/shared/validators';
 
 const contactInfo = [
   {
@@ -41,6 +42,7 @@ const contactInfo = [
 
 export function ContactUs() {
   const form = useRef<HTMLFormElement>(null);
+  const { handleInputChange } = useFormInputHandler();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -53,79 +55,22 @@ export function ContactUs() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const sanitizeName = (value: string) => {
-    // Remove digits; allow letters (incl. diacritics), spaces, hyphens, apostrophes
-    return value
-      .replace(/[0-9]/g, '')
-      .replace(/\s{2,}/g, ' ')
-      .trimStart();
-  };
-
-  const sanitizePhone = (value: string) => {
-    // Allow only digits, +, spaces, parentheses and dashes
-    return value.replace(/[^0-9+\-()\s]/g, '');
-  };
-
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePhone = (phone: string) => {
-    if (!phone.trim()) return true; // Phone is optional
-    // Phone format
-    const phoneRegex = /^(\+[1-9]\d{6,14}|0\d{8,14})$/;
-    return phoneRegex.test(phone.replace(/[\s\-()]/g, ''));
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    if (name === 'name') {
-      setFormData(prev => ({ ...prev, name: sanitizeName(value) }));
-      return;
-    }
-    if (name === 'phone') {
-      setFormData(prev => ({ ...prev, phone: sanitizePhone(value) }));
-      return;
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  // Spam checks
-  const isSpam = (data: typeof formData) => {
-    const text = `${data.name} ${data.email} ${data.message}`.toLowerCase();
-
-    const keywords = ['bitcoin', 'crypto', 'loan', 'viagra', 'seo', 'click here', 'free money'];
-    if (keywords.some(k => text.includes(k))) return true;
-
-    if (/(https?:\/\/|www\.)/i.test(text)) return true; // URLs
-    if (/(.)\1{6,}/.test(text)) return true; // 7+ repeated chars
-    if (data.message.trim().length < 10) return true; // too short
-
-    return false;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
 
     // Validation
-    if (!validateEmail(formData.email)) {
+    if (!validators.email(formData.email)) {
       setError('Zadajte platný email.');
       return;
     }
     
-    if (!validatePhone(formData.phone)) {
+    if (!validators.phone(formData.phone, true)) { // Phone is optional
       setError('Zadajte platné telefónne číslo.');
       return;
     }
 
-    if (isSpam(formData)) {
+    if (spamDetection.check({ name: formData.name, email: formData.email, message: formData.message })) {
       setError('Správa vyzerá ako spam. Skúste upraviť text.');
       return;
     }
@@ -221,7 +166,7 @@ export function ContactUs() {
                         id="name"
                         name="name"
                         value={formData.name}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="Vaše meno"
@@ -237,7 +182,7 @@ export function ContactUs() {
                         id="email"
                         name="email"
                         value={formData.email}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="your@email.com"
@@ -255,7 +200,7 @@ export function ContactUs() {
                         id="phone"
                         name="phone"
                         value={formData.phone}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="+421 (999) 123-45-67"
                       />
@@ -269,7 +214,7 @@ export function ContactUs() {
                         id="subject"
                         name="subject"
                         value={formData.subject}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                       >
@@ -291,7 +236,7 @@ export function ContactUs() {
                       id="message"
                       name="message"
                       value={formData.message}
-                      onChange={handleInputChange}
+                      onChange={(e) => handleInputChange(e, setFormData)}
                       required
                       rows={5}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent resize-none"

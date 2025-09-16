@@ -100,7 +100,6 @@ export class AuthService {
     const { data: { user }, error } = await supabase.auth.getUser();
     
     if (error) {
-      console.error('Error getting current user:', error);
       return null;
     }
 

@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { SuccessModal } from "@/features/cart/success-modal";
 import { supabase } from '@/config/supabase';
+import { validators, useFormInputHandler } from '@/lib/shared/validators';
 
 export function Competitions() {
 	const [open, setOpen] = useState(false);
 	const [videoUrl, setVideoUrl] = useState<string>("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const { handleInputChange } = useFormInputHandler();
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
@@ -24,47 +26,6 @@ export function Competitions() {
 		setVideoUrl(data.publicUrl);
 	}, []);
 
-	const sanitizeName = (value: string) => {
-		// Remove digits; allow letters (incl. diacritics), spaces, hyphens, apostrophes
-		return value
-			.replace(/[0-9]/g, '')
-			.replace(/\s{2,}/g, ' ')
-			.trimStart();
-	};
-
-	const sanitizePhone = (value: string) => {
-		// Allow only digits, +, spaces, parentheses and dashes
-		return value.replace(/[^0-9+\-()\s]/g, '');
-	};
-
-	const validateEmail = (email: string) => {
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		return emailRegex.test(email);
-	};
-
-	const validatePhone = (phone: string) => {
-		const phoneRegex = /^(\+[1-9]\d{6,14}|0\d{8,14})$/;
-		return phoneRegex.test(phone.replace(/[\s\-()]/g, ''));
-	};
-
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-
-		if (name === 'firstName' || name === 'lastName') {
-			setFormData(prev => ({ ...prev, [name]: sanitizeName(value) }));
-			return;
-		}
-		if (name === 'phone') {
-			setFormData(prev => ({ ...prev, phone: sanitizePhone(value) }));
-			return;
-		}
-
-		setFormData(prev => ({
-			...prev,
-			[name]: value
-		}));
-	};
-
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setIsSubmitting(true);
@@ -79,11 +40,11 @@ export function Competitions() {
 			const videoFile = formDataFromForm.get('video') as File;
 
 			// Validation
-			if (!validateEmail(email)) {
+			if (!validators.email(email)) {
 				throw new Error('Zadajte platný email.');
 			}
 			
-			if (!validatePhone(phone)) {
+			if (!validators.phone(phone, false)) { // Phone is required
 				throw new Error('Zadajte platné telefónne číslo.');
 			}
 
@@ -178,7 +139,7 @@ export function Competitions() {
 							<input 
 								name="firstName"
 								value={formData.firstName}
-								onChange={handleInputChange}
+								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
 								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 
 								placeholder="Ján" 
@@ -189,7 +150,7 @@ export function Competitions() {
 							<input 
 								name="lastName"
 								value={formData.lastName}
-								onChange={handleInputChange}
+								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
 								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 
 								placeholder="Novák" 
@@ -200,7 +161,7 @@ export function Competitions() {
 							<input 
 								name="email"
 								value={formData.email}
-								onChange={handleInputChange}
+								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
 								type="email" 
 								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 
@@ -212,7 +173,7 @@ export function Competitions() {
 							<input 
 								name="phone"
 								value={formData.phone}
-								onChange={handleInputChange}
+								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
 								type="tel" 
 								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 

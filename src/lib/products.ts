@@ -24,10 +24,13 @@ export interface Category {
   description?: string;
   image_url?: string;
   image_path?: string;
+  parent_id?: string;
   is_active: boolean;
   display_order: number;
   created_at: string;
   updated_at: string;
+  children?: Category[];
+  parent?: Category;
 }
 
 export interface ProductFilters {
@@ -187,10 +190,14 @@ export class ProductService {
   }
 
   // Get all categories
-  static async getCategories(): Promise<Category[]> {
+  static async getCategories(includeChildren = true): Promise<Category[]> {
     const { data, error } = await supabase
       .from('categories')
-      .select('*')
+      .select(`
+        *,
+        parent:categories!parent_id(*),
+        children:categories!parent_id(*)
+      `)
       .eq('is_active', true)
       .order('display_order', { ascending: true });
 
@@ -199,6 +206,63 @@ export class ProductService {
     }
 
     // Add image URLs from storage
+    const categoriesWithImages = data?.map(category => ({
+      ...category,
+      image_url: category.image_path 
+        ? supabase.storage.from('Categories').getPublicUrl(category.image_path).data.publicUrl
+        : null,
+      children: category.children?.map((child: any) => ({
+        ...child,
+        image_url: child.image_path 
+          ? supabase.storage.from('Categories').getPublicUrl(child.image_path).data.publicUrl
+          : null
+      })) || []
+    })) || [];
+
+    if (includeChildren) {
+      // Return only parent categories with their children
+      return categoriesWithImages.filter(cat => !cat.parent_id);
+    }
+    
+    return categoriesWithImages;
+  }
+
+  // Get parent categories only
+  static async getParentCategories(): Promise<Category[]> {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('is_active', true)
+      .is('parent_id', null)
+      .order('display_order', { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    const categoriesWithImages = data?.map(category => ({
+      ...category,
+      image_url: category.image_path 
+        ? supabase.storage.from('Categories').getPublicUrl(category.image_path).data.publicUrl
+        : null
+    })) || [];
+
+    return categoriesWithImages;
+  }
+
+  // Get child categories by parent ID
+  static async getChildCategories(parentId: string): Promise<Category[]> {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('is_active', true)
+      .eq('parent_id', parentId)
+      .order('display_order', { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
     const categoriesWithImages = data?.map(category => ({
       ...category,
       image_url: category.image_path 

@@ -20,8 +20,9 @@ export function Filter() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { categories, parentCategories, loading: categoriesLoading } = useCategories();
   const { products, loading: productsLoading, error } = useProducts(filters, sort, 50);
 
   useEffect(() => {
@@ -56,6 +57,13 @@ export function Filter() {
     );
   };
 
+  const toggleCategoryExpansion = (categoryId: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(categoryId) 
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedPriceRange('');
@@ -160,17 +168,39 @@ export function Filter() {
                     </div>
                   ) : (
                     categories.map(category => (
-                    <button
-                      key={category.id}
-                      onClick={() => toggleCategory(category.id)}
-                      className={`w-full p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
-                        selectedCategories.includes(category.id)
-                          ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
-                          : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
-                      }`}
-                    >
-                      <span className="font-medium">{category.name}</span>
-                    </button>
+                      <div key={category.id} className="space-y-1">
+                        <div className="flex items-center">
+                          <button
+                            onClick={() => toggleCategoryExpansion(category.id)}
+                            className="flex-1 p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10 text-left"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">{category.name}</span>
+                              <span className="text-gray-400">
+                                {expandedCategories.includes(category.id) ? '−' : '+'}
+                              </span>
+                            </div>
+                          </button>
+                        </div>
+                        
+                        {expandedCategories.includes(category.id) && category.children && (
+                          <div className="ml-4 space-y-1">
+                            {category.children.map(child => (
+                              <button
+                                key={child.id}
+                                onClick={() => toggleCategory(child.id)}
+                                className={`w-full p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
+                                  selectedCategories.includes(child.id)
+                                    ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
+                                    : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
+                                }`}
+                              >
+                                <span className="font-medium">{child.name}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))
                   )}
                 </div>

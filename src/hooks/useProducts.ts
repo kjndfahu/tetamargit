@@ -75,6 +75,7 @@ export function useProduct(id: string) {
 
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [parentCategories, setParentCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,8 +85,13 @@ export function useCategories() {
         setLoading(true);
         setError(null);
         
-        const result = await ProductService.getCategories();
-        setCategories(result);
+        const [allCategories, parents] = await Promise.all([
+          ProductService.getCategories(true),
+          ProductService.getParentCategories()
+        ]);
+        
+        setCategories(allCategories);
+        setParentCategories(parents);
       } catch (err) {
         console.error('Error fetching categories:', err);
         setError('Nepodarilo sa načítať kategórie');
@@ -99,6 +105,7 @@ export function useCategories() {
 
   return {
     categories,
+    parentCategories,
     loading,
     error
   };

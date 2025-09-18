@@ -21,15 +21,21 @@ export function Filter() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [includeSubcategories, setIncludeSubcategories] = useState(false);
 
   const { categories, parentCategories, loading: categoriesLoading } = useCategories();
-  const { products, loading: productsLoading, error } = useProducts(filters, sort, 50);
+  const { products, loading: productsLoading, error } = useProducts(filters, sort, 50, includeSubcategories);
 
   useEffect(() => {
     const newFilters: ProductFilters = {};
     
     if (selectedCategories.length > 0) {
       newFilters.category = selectedCategories[0]; // For simplicity, use first selected category
+      
+      // Check if selected category is a parent category (has children)
+      const selectedCategory = categories.find(cat => cat.id === selectedCategories[0]);
+      const isParentCategory = selectedCategory && selectedCategory.children && selectedCategory.children.length > 0;
+      setIncludeSubcategories(isParentCategory || false);
     }
     
     if (selectedPriceRange) {
@@ -69,6 +75,7 @@ export function Filter() {
     setSelectedPriceRange('');
     setSearchQuery('');
     setSort({ field: 'created_at', direction: 'desc' });
+    setIncludeSubcategories(false);
   };
 
   const handleSortChange = (value: string) => {

@@ -4,8 +4,7 @@ import { ProductService, type Product, type Category, type ProductFilters, type 
 export function useProducts(
   filters?: ProductFilters,
   sort?: ProductSort,
-  limit?: number,
-  includeSubcategories?: boolean
+  limit?: number
 ) {
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
@@ -17,20 +16,9 @@ export function useProducts(
       setLoading(true);
       setError(null);
       
-      // If we have a category filter and includeSubcategories is true, use the special method
-      if (filters?.category && includeSubcategories) {
-        const products = await ProductService.getProductsByCategory(
-          filters.category, 
-          limit, 
-          true
-        );
-        setProducts(products);
-        setTotal(products.length);
-      } else {
-        const result = await ProductService.getProducts(filters, sort, limit);
-        setProducts(result.products);
-        setTotal(result.total);
-      }
+      const result = await ProductService.getProducts(filters, sort, limit);
+      setProducts(result.products);
+      setTotal(result.total);
     } catch (err) {
       console.error('Error fetching products:', err);
       setError('Nepodarilo sa načítať produkty');
@@ -41,7 +29,7 @@ export function useProducts(
 
   useEffect(() => {
     fetchProducts();
-  }, [filters, sort, limit, includeSubcategories]);
+  }, [filters, sort, limit]);
 
   return {
     products,

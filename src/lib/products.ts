@@ -35,6 +35,7 @@ export interface Category {
 
 export interface ProductFilters {
   category?: string;
+  categories?: string[]; // New field for multiple categories
   priceMin?: number;
   priceMax?: number;
   search?: string;
@@ -66,7 +67,11 @@ export class ProductService {
       .eq('is_active', true);
 
     // Apply filters
-    if (filters?.category) {
+    if (filters?.categories && filters.categories.length > 0) {
+      // Filter by multiple categories (for parent category + children)
+      query = query.in('category_id', filters.categories);
+    } else if (filters?.category) {
+      // Single category filter (fallback for individual subcategory selection)
       query = query.eq('category_id', filters.category);
     }
 
@@ -168,54 +173,7 @@ export class ProductService {
   }
 
   // Get products by category
-  static async getProductsByCategory(categoryId: string, limit?: number, includeSubcategories = false): Promise<Product[]> {
-    if (includeSubcategories) {
-      // Get all child categories
-      const { data: childCategories, error: childError } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('parent_id', categoryId)
-        .eq('is_active', true);
-
-      if (childError) {
-        throw childError;
-      }
-
-      // Include parent category and all child category IDs
-      const categoryIds = [categoryId, ...(childCategories?.map(cat => cat.id) || [])];
-
-      let query = supabase
-        .from('products')
-        .select(`
-          *,
-          category:categories(*)
-        `)
-        .eq('is_active', true)
-        .in('category_id', categoryIds);
-
-      if (limit) {
-        query = query.limit(limit);
-      }
-
-      query = query.order('name', { ascending: true });
-
-      const { data, error } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      // Add image URLs from storage
-      const productsWithImages = data?.map(product => ({
-        ...product,
-        image_url: product.image_path 
-          ? supabase.storage.from('Products').getPublicUrl(product.image_path).data.publicUrl
-          : null
-      })) || [];
-
-      return productsWithImages;
-    }
-
+  static async getProductsByCategory(categoryId: string, limit?: number): Promise<Product[]> {
     const { products } = await this.getProducts(
       { category: categoryId, inStock: true },
       { field: 'name', direction: 'asc' },

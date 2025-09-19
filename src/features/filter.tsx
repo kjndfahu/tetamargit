@@ -5,14 +5,12 @@ import { Search } from 'lucide-react';
 import { useProducts, useCategories } from '@/hooks/useProducts';
 import { ProductFilters, ProductSort } from '@/lib/products';
 
-
 const priceRanges = [
   { id: 'low', name: 'Do 2€', min: 0, max: 2 },
   { id: 'medium', name: '2€ - 10€', min: 2, max: 10 },
   { id: 'high', name: '10€ - 20€', min: 10, max: 20 },
   { id: 'premium', name: 'Od 20€', min: 20, max: Infinity }
 ];
-
 
 export function Filter() {
   const [filters, setFilters] = useState<ProductFilters>({});
@@ -21,21 +19,40 @@ export function Filter() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [includeSubcategories, setIncludeSubcategories] = useState(false);
 
   const { categories, parentCategories, loading: categoriesLoading } = useCategories();
-  const { products, loading: productsLoading, error } = useProducts(filters, sort, 50, includeSubcategories);
+  const { products, loading: productsLoading, error } = useProducts(filters, sort, 50);
+
+  // Helper function to get all child category IDs for a parent category
+  const getChildCategoryIds = (parentId: string): string[] => {
+    const parentCategory = categories.find(cat => cat.id === parentId);
+    if (parentCategory?.children) {
+      return parentCategory.children.map(child => child.id);
+    }
+    return [];
+  };
+
+  // Helper function to check if a category is a parent category
+  const isParentCategory = (categoryId: string): boolean => {
+    return categories.some(cat => cat.id === categoryId && cat.children && cat.children.length > 0);
+  };
 
   useEffect(() => {
     const newFilters: ProductFilters = {};
     
     if (selectedCategories.length > 0) {
-      newFilters.category = selectedCategories[0]; // For simplicity, use first selected category
+      const selectedCategoryId = selectedCategories[0];
       
-      // Check if selected category is a parent category (has children)
-      const selectedCategory = categories.find(cat => cat.id === selectedCategories[0]);
-      const isParentCategory = selectedCategory && selectedCategory.children && selectedCategory.children.length > 0;
-      setIncludeSubcategories(isParentCategory || false);
+      // Check if selected category is a parent category
+      if (isParentCategory(selectedCategoryId)) {
+        // Get all child category IDs
+        const childIds = getChildCategoryIds(selectedCategoryId);
+        // Include both parent and all child categories
+        newFilters.categories = [selectedCategoryId, ...childIds];
+      } else {
+        // Single category selection
+        newFilters.category = selectedCategoryId;
+      }
     }
     
     if (selectedPriceRange) {
@@ -53,14 +70,28 @@ export function Filter() {
     newFilters.inStock = true; // Only show products in stock
     
     setFilters(newFilters);
-  }, [selectedCategories, selectedPriceRange, searchQuery]);
+  }, [selectedCategories, selectedPriceRange, searchQuery, categories]);
 
   const toggleCategory = (categoryId: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(categoryId) 
-        ? prev.filter(id => id !== categoryId)
-        : [categoryId] // Only allow one category for now
-    );
+    setSelectedCategories(prev => {
+      const isSelected = prev.includes(categoryId);
+      
+      if (isSelected) {
+        // Deselect category
+        return prev.filter(id => id !== categoryId);
+      } else {
+        // Select category (only allow one at a time)
+        // If it's a parent category, also expand it
+        if (isParentCategory(categoryId)) {
+          setExpandedCategories(prevExpanded => 
+            prevExpanded.includes(categoryId) 
+              ? prevExpanded 
+              : [...prevExpanded, categoryId]
+          );
+        }
+        return [categoryId];
+      }
+    });
   };
 
   const toggleCategoryExpansion = (categoryId: string) => {
@@ -70,26 +101,26 @@ export function Filter() {
         : [...prev, categoryId]
     );
   };
+
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedPriceRange('');
     setSearchQuery('');
     setSort({ field: 'created_at', direction: 'desc' });
-    setIncludeSubcategories(false);
   };
 
   const handleSortChange = (value: string) => {
     switch (value) {
-      case 'price-low':
+      case 'price-asc':
         setSort({ field: 'price', direction: 'asc' });
         break;
-      case 'price-high':
+      case 'price-desc':
         setSort({ field: 'price', direction: 'desc' });
         break;
-      case 'name':
+      case 'name-asc':
         setSort({ field: 'name', direction: 'asc' });
         break;
-      case 'new':
+      case 'created_at-desc':
         setSort({ field: 'created_at', direction: 'desc' });
         break;
       default:
@@ -140,9 +171,9 @@ export function Filter() {
                   className="w-full py-2 px-2 cursor-pointer text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                 >
                   <option className="cursor-pointer" value="created_at-desc">Najnovšie</option>
-                  <option className="cursor-pointer" value="price-low">Cena ↑</option>
-                  <option className="cursor-pointer" value="price-high">Cena ↓</option>
-                  <option className="cursor-pointer" value="name">Názov</option>
+                  <option className="cursor-pointer" value="price-asc">Cena ↑</option>
+                  <option className="cursor-pointer" value="price-desc">Cena ↓</option>
+                  <option className="cursor-pointer" value="name-asc">Názov</option>
                 </select>
               </div>
 
@@ -178,14 +209,26 @@ export function Filter() {
                       <div key={category.id} className="space-y-1">
                         <div className="flex items-center">
                           <button
-                            onClick={() => toggleCategoryExpansion(category.id)}
-                            className="flex-1 p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10 text-left"
+                            onClick={() => toggleCategory(category.id)}
+                            className={`flex-1 p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
+                              selectedCategories.includes(category.id)
+                                ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
+                                : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
+                            } text-left`}
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-medium">{category.name}</span>
-                              <span className="text-gray-400">
-                                {expandedCategories.includes(category.id) ? '−' : '+'}
-                              </span>
+                              {category.children && category.children.length > 0 && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleCategoryExpansion(category.id);
+                                  }}
+                                  className="text-gray-400 hover:text-[#EE4C7C] hover:bg-gray-100 rounded px-2 py-1 ml-2 min-w-[24px] h-6 flex items-center justify-center text-base font-bold transition-all duration-200"
+                                >
+                                  {expandedCategories.includes(category.id) ? '−' : '+'}
+                                </button>
+                              )}
                             </div>
                           </button>
                         </div>
@@ -253,7 +296,7 @@ export function Filter() {
                 <div key={product.id} className="group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                   <div className="relative overflow-hidden rounded-t-xl">
                     <img
-                      src={product.image_url || 'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=300&h=300&fit=crop'}
+                      src={product.image_url || 'products.svg'}
                       alt={product.name}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                     />
@@ -307,5 +350,3 @@ export function Filter() {
     </section>
   );
 }
-
-

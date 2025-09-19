@@ -111,7 +111,7 @@ export class AuthService {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('user_id', userId)
+      .eq('id', userId)
       .single();
 
     if (error) {
@@ -127,7 +127,7 @@ export class AuthService {
     const { data, error } = await supabase
       .from('profiles')
       .update(updates)
-      .eq('user_id', userId)
+      .eq('id', userId)
       .select()
       .single();
 

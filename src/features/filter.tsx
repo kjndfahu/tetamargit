@@ -208,8 +208,16 @@ export function Filter() {
                     categories.map(category => (
                       <div key={category.id} className="space-y-1">
                         <div className="flex items-center">
-                          <button
+                          <div
+                            role="button"
+                            tabIndex={0}
                             onClick={() => toggleCategory(category.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                toggleCategory(category.id);
+                              }
+                            }}
                             className={`flex-1 p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
                               selectedCategories.includes(category.id)
                                 ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
@@ -230,7 +238,7 @@ export function Filter() {
                                 </button>
                               )}
                             </div>
-                          </button>
+                          </div>
                         </div>
                         
                         {expandedCategories.includes(category.id) && category.children && (

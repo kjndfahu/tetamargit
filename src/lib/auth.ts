@@ -44,10 +44,6 @@ export class AuthService {
       throw error;
     }
 
-    if (authData.user && !authData.session) {
-      throw new Error('Používateľ s týmto emailom už existuje.');
-    }
-    
     return authData;
   }
 
@@ -111,7 +107,7 @@ export class AuthService {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', userId)
+      .eq('user_id', userId)
       .single();
 
     if (error) {
@@ -127,7 +123,7 @@ export class AuthService {
     const { data, error } = await supabase
       .from('profiles')
       .update(updates)
-      .eq('id', userId)
+      .eq('user_id', userId)
       .select()
       .single();
 

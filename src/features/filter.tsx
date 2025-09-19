@@ -107,6 +107,7 @@ export function Filter() {
     setSelectedPriceRange('');
     setSearchQuery('');
     setSort({ field: 'created_at', direction: 'desc' });
+    setFilters({ inStock: true });
   };
 
   const handleSortChange = (value: string) => {
@@ -212,12 +213,6 @@ export function Filter() {
                             role="button"
                             tabIndex={0}
                             onClick={() => toggleCategory(category.id)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                toggleCategory(category.id);
-                              }
-                            }}
                             className={`flex-1 p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
                               selectedCategories.includes(category.id)
                                 ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'

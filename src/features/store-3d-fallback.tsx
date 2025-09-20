@@ -1,32 +1,17 @@
 'use client';
 
 import { Suspense, useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls, Environment, Html } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Environment, Html, Box, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
-function StoreModel({ progress }: { progress: number }) {
-  let gltf;
-  try {
-    gltf = useLoader(GLTFLoader, '/models/store.glb');
-  } catch (error) {
-    console.error('Error loading GLB model:', error);
-    // Fallback to a simple box if model fails to load
-    return (
-      <mesh>
-        <boxGeometry args={[2, 2, 2]} />
-        <meshStandardMaterial color="#EE4C7C" />
-      </mesh>
-    );
-  }
-  
-  const meshRef = useRef<THREE.Group>(null);
+function SimpleStoreModel({ progress }: { progress: number }) {
+  const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
-    if (meshRef.current) {
+    if (groupRef.current) {
       // Плавное вращение модели
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.1;
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
       
       // Приближение камеры при прогрессе
       const camera = state.camera;
@@ -34,21 +19,44 @@ function StoreModel({ progress }: { progress: number }) {
       camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.1);
       
       // Движение модели
-      meshRef.current.position.y = Math.sin(progress * Math.PI) * 0.5;
+      groupRef.current.position.y = Math.sin(progress * Math.PI) * 0.5;
     }
   });
 
-  if (!gltf || !gltf.scene) {
-    return (
-      <mesh>
-        <boxGeometry args={[2, 2, 2]} />
-        <meshStandardMaterial color="#EE4C7C" />
-      </mesh>
-    );
-  }
   return (
-    <group ref={meshRef} scale={[1, 1, 1]} position={[0, -1, 0]}>
-      <primitive object={gltf.scene} />
+    <group ref={groupRef} scale={[1, 1, 1]} position={[0, -1, 0]}>
+      {/* Основание магазина */}
+      <Box args={[4, 0.2, 3]} position={[0, -1, 0]}>
+        <meshStandardMaterial color="#8B4513" />
+      </Box>
+      
+      {/* Стены магазина */}
+      <Box args={[4, 2, 3]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#EE4C7C" />
+      </Box>
+      
+      {/* Крыша */}
+      <Box args={[4.5, 0.3, 3.5]} position={[0, 1.2, 0]}>
+        <meshStandardMaterial color="#9A1750" />
+      </Box>
+      
+      {/* Дверь */}
+      <Box args={[0.8, 1.5, 0.1]} position={[0, -0.25, 1.51]}>
+        <meshStandardMaterial color="#8B4513" />
+      </Box>
+      
+      {/* Окна */}
+      <Box args={[0.8, 0.6, 0.1]} position={[-1.2, 0.3, 1.51]}>
+        <meshStandardMaterial color="#87CEEB" />
+      </Box>
+      <Box args={[0.8, 0.6, 0.1]} position={[1.2, 0.3, 1.51]}>
+        <meshStandardMaterial color="#87CEEB" />
+      </Box>
+      
+      {/* Вывеска */}
+      <Box args={[2, 0.4, 0.1]} position={[0, 1.8, 1.51]}>
+        <meshStandardMaterial color="#FFFFFF" />
+      </Box>
     </group>
   );
 }
@@ -58,7 +66,7 @@ function LoadingSpinner() {
     <Html center>
       <div className="flex flex-col items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EE4C7C]"></div>
-        <p className="text-white mt-4 text-lg">Načítavanie 3D modelu...</p>
+        <p className="text-white mt-4 text-lg">Загружаем 3D магазин...</p>
       </div>
     </Html>
   );
@@ -68,7 +76,6 @@ export function Store3D() {
   const [progress, setProgress] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -158,7 +165,7 @@ export function Store3D() {
         <pointLight position={[-10, -10, -5]} intensity={0.5} />
         
         <Suspense fallback={<LoadingSpinner />}>
-          <StoreModel progress={progress} />
+          <SimpleStoreModel progress={progress} />
           <Environment preset="city" />
         </Suspense>
         

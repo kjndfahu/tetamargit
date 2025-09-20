@@ -55,7 +55,7 @@ export function Store3DModel() {
     <div className="w-full h-full absolute inset-0">
       <Canvas
         camera={{ 
-          position: [15, 50, 50], 
+          position: [10, 50, 50], 
           fov: 100 
         }}
         style={{ 

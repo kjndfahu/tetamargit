@@ -82,7 +82,7 @@ export function Store3DModel() {
           enableRotate={true}
           minDistance={12}
           maxDistance={50}
-          minPolarAngle={Math.PI / 3}
+          minPolarAngle={Math.PI / 2}
           maxPolarAngle={Math.PI / 1}
         />
       </Canvas>

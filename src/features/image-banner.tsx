@@ -110,7 +110,12 @@ export function ImageBanner() {
 
   if (banners.length === 0) {
     return (
-      <section>
+      <section className="relative h-96 overflow-hidden bg-gray-600">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-white text-center">
+            <p className="text-xl">Žiadne bannery nie sú k dispozícii.</p>
+          </div>
+        </div>
       </section>
     );
   }

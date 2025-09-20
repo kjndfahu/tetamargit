@@ -41,7 +41,7 @@ export function SuccessModal({ open, onClose, title = "Objednávka bola úspešn
 					<p className="mt-2 text-gray-600">{message}</p>
 					<div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
 						{primaryHref ? (
-							<Link href={primaryHref} onClick={onClose} className="w-full text-center px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-black">{primaryText}</Link>
+							<Link href={primaryHref} className="w-full text-center px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-black">{primaryText}</Link>
 						) : (
 							<button onClick={onPrimaryClick ?? onClose} className="w-full cursor-pointer px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-black">{primaryText}</button>
 						)}

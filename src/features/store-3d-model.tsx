@@ -52,13 +52,17 @@ function StoreModel() {
 
 export function Store3DModel() {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full absolute inset-0">
       <Canvas
         camera={{ 
-          position: [10, 50, 80], 
+          position: [10, 8, 12], 
           fov: 50 
         }}
-        style={{ background: 'transparent' }}
+        style={{ 
+          background: 'transparent',
+          width: '100%',
+          height: '100%'
+        }}
       >
         <ambientLight intensity={0.5} />
         <directionalLight 
@@ -76,8 +80,8 @@ export function Store3DModel() {
           enablePan={false}
           enableZoom={true}
           enableRotate={true}
-          minDistance={5}
-          maxDistance={20}
+          minDistance={8}
+          maxDistance={30}
           minPolarAngle={Math.PI / 6}
           maxPolarAngle={Math.PI / 2}
         />

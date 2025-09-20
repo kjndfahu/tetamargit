@@ -113,11 +113,8 @@ export function Store3D() {
       </div>
 
       {/* 3D Store Model */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        {/* 3D Model Container */}
-        <div className="w-96 h-96 relative">
-          <Store3DModel />
-        </div>
+      <div className="absolute inset-0">
+        <Store3DModel />
       </div>
 
       {/* Content Overlay */}

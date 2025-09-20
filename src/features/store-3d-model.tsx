@@ -55,7 +55,7 @@ export function Store3DModel() {
     <div className="w-full h-full">
       <Canvas
         camera={{ 
-          position: [5, 3, 5], 
+          position: [8, 5, 8], 
           fov: 50 
         }}
         style={{ background: 'transparent' }}
@@ -76,8 +76,8 @@ export function Store3DModel() {
           enablePan={false}
           enableZoom={true}
           enableRotate={true}
-          minDistance={3}
-          maxDistance={15}
+          minDistance={5}
+          maxDistance={20}
           minPolarAngle={Math.PI / 6}
           maxPolarAngle={Math.PI / 2}
         />

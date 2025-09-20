@@ -6,7 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls, Environment, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
-function StoreModel({ scrollProgress }: { scrollProgress: number }) {
+function StoreModel({ progress }: { progress: number }) {
   const gltf = useLoader(GLTFLoader, '/models/store.glb');
   const meshRef = useRef<THREE.Group>(null);
 
@@ -15,18 +15,18 @@ function StoreModel({ scrollProgress }: { scrollProgress: number }) {
       // Плавное вращение модели
       meshRef.current.rotation.y = state.clock.elapsedTime * 0.1;
       
-      // Приближение камеры при скролле
+      // Приближение камеры при прогрессе
       const camera = state.camera;
-      const targetZ = 5 - scrollProgress * 3; // От 5 до 2
+      const targetZ = 10 - progress * 8; // От 10 до 2
       camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.1);
       
-      // Небольшое движение модели при скролле
-      meshRef.current.position.y = Math.sin(scrollProgress * Math.PI) * 0.5;
+      // Движение модели
+      meshRef.current.position.y = Math.sin(progress * Math.PI) * 0.5;
     }
   });
 
   return (
-    <group ref={meshRef} scale={[2, 2, 2]} position={[0, -1, 0]}>
+    <group ref={meshRef} scale={[1, 1, 1]} position={[0, -1, 0]}>
       <primitive object={gltf.scene} />
     </group>
   );
@@ -44,32 +44,92 @@ function LoadingSpinner() {
 }
 
 export function Store3D() {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [isActive, setIsActive] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        // Вычисляем прогресс скролла для этого блока
-        const progress = Math.max(0, Math.min(1, (windowHeight - rect.top) / windowHeight));
-        setScrollProgress(progress);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          // Блокируем скролл страницы
+          document.body.style.overflow = 'hidden';
+        } else {
+          // Разблокируем скролл страницы
+          document.body.style.overflow = 'auto';
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      
+      const delta = e.deltaY > 0 ? 0.05 : -0.05;
+      setProgress(prev => Math.max(0, Math.min(1, prev + delta)));
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        e.preventDefault();
+        setProgress(prev => Math.min(1, prev + 0.1));
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        setProgress(prev => Math.max(0, prev - 0.1));
+      } else if (e.key === 'Escape') {
+        setIsActive(false);
+        document.body.style.overflow = 'auto';
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Вызываем сразу для инициализации
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('keydown', handleKeyDown);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isActive]);
+
+  // Автоматический выход из блока при достижении 100%
+  useEffect(() => {
+    if (progress >= 1) {
+      setTimeout(() => {
+        setIsActive(false);
+        document.body.style.overflow = 'auto';
+        // Скроллим к следующему блоку
+        const nextSection = containerRef.current?.nextElementSibling;
+        if (nextSection) {
+          nextSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 1000);
+    }
+  }, [progress]);
 
   return (
-    <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-gray-900 to-gray-800">
+    <section 
+      ref={containerRef}
+      className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center"
+    >
       {/* 3D Canvas */}
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 75 }}
+        camera={{ position: [0, 0, 10], fov: 75 }}
         className="absolute inset-0"
       >
         <ambientLight intensity={0.5} />
@@ -77,62 +137,87 @@ export function Store3D() {
         <pointLight position={[-10, -10, -5]} intensity={0.5} />
         
         <Suspense fallback={<LoadingSpinner />}>
-          <StoreModel scrollProgress={scrollProgress} />
+          <StoreModel progress={progress} />
           <Environment preset="city" />
         </Suspense>
         
         <OrbitControls
           enablePan={false}
-          enableZoom={true}
+          enableZoom={false}
           enableRotate={true}
           maxPolarAngle={Math.PI / 2}
-          minDistance={2}
-          maxDistance={8}
         />
       </Canvas>
 
       {/* Overlay Content */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="text-center text-white z-10">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+        <div className="text-center text-white">
+          <h2 
+            className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-lg transition-all duration-1000"
+            style={{
+              opacity: progress < 0.8 ? 1 : 1 - (progress - 0.8) * 5
+            }}
+          >
             Vitajte v našom obchode
           </h2>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 drop-shadow-md max-w-2xl mx-auto">
-            Preskúmajte náš 3D model obchodu. Skrolujte nadol pre priblíženie a použite myš pre otáčanie.
+          <p 
+            className="text-xl md:text-2xl text-gray-200 mb-8 drop-shadow-md max-w-2xl mx-auto transition-all duration-1000"
+            style={{
+              opacity: progress < 0.6 ? 1 : 1 - (progress - 0.6) * 2.5
+            }}
+          >
+            Použite koliesko myši alebo šípky pre vstup do obchodu
           </p>
-          <div className="flex flex-col items-center">
-            <div className="animate-bounce">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
+          
+          {progress < 0.2 && (
+            <div className="flex flex-col items-center animate-bounce">
+              <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+                <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
+              </div>
+              <span className="text-sm text-gray-300 mt-2">Skrolujte pre vstup</span>
             </div>
-            <span className="text-sm text-gray-300 mt-2">Skrolujte pre priblíženie</span>
-          </div>
+          )}
         </div>
       </div>
 
       {/* Progress Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className="w-32 h-1 bg-white/20 rounded-full overflow-hidden">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+        <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-[#EE4C7C] transition-all duration-300 ease-out"
-            style={{ width: `${scrollProgress * 100}%` }}
+            className="h-full bg-gradient-to-r from-[#EE4C7C] to-[#9A1750] transition-all duration-300 ease-out"
+            style={{ width: `${progress * 100}%` }}
           />
         </div>
-        <p className="text-white text-xs text-center mt-2">
-          Priblíženie: {Math.round(scrollProgress * 100)}%
+        <p className="text-white text-sm text-center mt-2">
+          Vstup do obchodu: {Math.round(progress * 100)}%
         </p>
+        {progress >= 1 && (
+          <p className="text-green-400 text-sm text-center mt-1 animate-pulse">
+            Vstupujete do obchodu...
+          </p>
+        )}
       </div>
 
-      {/* Interactive Hints */}
-      <div className="absolute top-8 right-8 text-white text-sm bg-black/30 backdrop-blur-sm rounded-lg p-4">
-        <h3 className="font-semibold mb-2">Ovládanie:</h3>
+      {/* Controls Hint */}
+      <div className="absolute top-8 right-8 text-white text-sm bg-black/50 backdrop-blur-sm rounded-lg p-4 z-20">
+        <h3 className="font-semibold mb-2 text-[#EE4C7C]">Ovládanie:</h3>
         <ul className="space-y-1 text-xs">
-          <li>🖱️ Ťahanie myšou - otáčanie</li>
-          <li>🔍 Koliesko myši - zoom</li>
-          <li>📜 Skrolovanie - automatické priblíženie</li>
+          <li>🖱️ Koliesko myši - vstup/výstup</li>
+          <li>⌨️ ↑↓ šípky - vstup/výstup</li>
+          <li>🖱️ Ťahanie - otáčanie pohľadu</li>
+          <li>⎋ Escape - opustiť režim</li>
         </ul>
       </div>
+
+      {/* Exit hint */}
+      {progress > 0.8 && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center z-20 animate-fade-in">
+          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-6">
+            <h3 className="text-2xl font-bold mb-2 text-[#EE4C7C]">Vitajte v obchode!</h3>
+            <p className="text-lg">Pokračujte v skrolovaní pre vstup...</p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

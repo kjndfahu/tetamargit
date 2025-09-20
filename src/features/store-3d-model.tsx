@@ -83,7 +83,7 @@ export function Store3DModel() {
           minDistance={12}
           maxDistance={50}
           minPolarAngle={Math.PI / 4}
-          maxPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 2}
         />
       </Canvas>
     </div>

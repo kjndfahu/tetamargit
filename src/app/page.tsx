@@ -1,5 +1,5 @@
 import { ImageBanner } from "@/features/image-banner";
-import { Store3D } from "@/features/store-3d-fallback";
+import { Store3D } from "@/features/store-3d-css";
 import { Filter } from "@/features/filter";
 import { RecentlyViewed } from "@/features/recently-viewed";
 import { FlipCards } from "@/features/flip-cards";

@@ -6,6 +6,7 @@ import { Store3DModel } from './store-3d-model';
 export function Store3D() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -14,16 +15,35 @@ export function Store3D() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsActive(entry.isIntersecting);
-        if (entry.isIntersecting) {
-          // Блокируем скролл страницы
+        const isIntersecting = entry.intersectionRatio > 0.3;
+        setIsActive(isIntersecting);
+        setIsFullscreen(isIntersecting);
+        
+        if (isIntersecting) {
+          // Блокируем скролл и делаем блок на весь экран
           document.body.style.overflow = 'hidden';
+          if (container) {
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100vw';
+            container.style.height = '100vh';
+            container.style.zIndex = '1000';
+          }
         } else {
-          // Разблокируем скролл страницы
+          // Возвращаем нормальное состояние
           document.body.style.overflow = 'auto';
+          if (container) {
+            container.style.position = 'relative';
+            container.style.top = 'auto';
+            container.style.left = 'auto';
+            container.style.width = 'auto';
+            container.style.height = '100vh';
+            container.style.zIndex = 'auto';
+          }
         }
       },
-      { threshold: 0.5 }
+      { threshold: [0, 0.3, 0.7, 1] }
     );
 
     observer.observe(container);
@@ -31,6 +51,15 @@ export function Store3D() {
     return () => {
       observer.disconnect();
       document.body.style.overflow = 'auto';
+      // Сбрасываем стили при размонтировании
+      if (container) {
+        container.style.position = 'relative';
+        container.style.top = 'auto';
+        container.style.left = 'auto';
+        container.style.width = 'auto';
+        container.style.height = '100vh';
+        container.style.zIndex = 'auto';
+      }
     };
   }, []);
 
@@ -71,9 +100,17 @@ export function Store3D() {
     if (scrollProgress >= 1) {
       setTimeout(() => {
         setIsActive(false);
+        setIsFullscreen(false);
         document.body.style.overflow = 'auto';
-        // Скроллим к следующему блоку
-        // Убираем автоматический переход к следующему блоку
+        const container = containerRef.current;
+        if (container) {
+          container.style.position = 'relative';
+          container.style.top = 'auto';
+          container.style.left = 'auto';
+          container.style.width = 'auto';
+          container.style.height = '100vh';
+          container.style.zIndex = 'auto';
+        }
       }, 1000);
     }
   }, [scrollProgress]);
@@ -81,7 +118,9 @@ export function Store3D() {
   return (
     <section 
       ref={containerRef}
-      className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900"
+      className={`relative h-screen w-full overflow-hidden bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 transition-all duration-500 ${
+        isFullscreen ? 'fixed top-0 left-0 w-screen h-screen z-[1000]' : ''
+      }`}
       style={{ perspective: '1000px' }}
     >
       {/* Animated Background */}
@@ -169,13 +208,16 @@ export function Store3D() {
       </div>
 
       {/* Controls Hint */}
-      <div className="absolute top-8 right-8 text-white text-sm bg-black/50 backdrop-blur-sm rounded-lg p-4 z-20 border border-white/20">
+      <div className={`absolute top-8 right-8 text-white text-sm bg-black/50 backdrop-blur-sm rounded-lg p-4 z-20 border border-white/20 transition-opacity duration-500 ${
+        isFullscreen ? 'opacity-100' : 'opacity-70'
+      }`}>
         <h3 className="font-semibold mb-2 text-[#EE4C7C]">🎮 Ovládanie:</h3>
         <ul className="space-y-1 text-xs">
           <li>🖱️ Koliesko myši - priblíženie</li>
           <li>🖱️ Ľavé tlačidlo - otáčanie</li>
           <li>⌨️ ↑↓ šípky - priblíženie</li>
           <li>⎋ Escape - opustiť režim</li>
+          {isFullscreen && <li className="text-[#EE4C7C]">🔒 Režim na celú obrazovku</li>}
         </ul>
       </div>
 
@@ -189,6 +231,14 @@ export function Store3D() {
 
       {/* Bottom fade effect */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none" />
+      
+      {/* Exit hint when fullscreen */}
+      {isFullscreen && (
+        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 text-white text-sm bg-black/70 backdrop-blur-sm rounded-lg p-3 z-20 animate-pulse">
+          <p className="text-[#EE4C7C] font-semibold">Režim na celú obrazovku</p>
+          <p className="text-xs mt-1">Stlačte ESC pre návrat</p>
+        </div>
+      )}
     </section>
   );
 }

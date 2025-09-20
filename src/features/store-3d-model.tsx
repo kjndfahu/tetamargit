@@ -56,7 +56,7 @@ export function Store3DModel() {
       <Canvas
         camera={{ 
           position: [15, 50, 50], 
-          fov: 10 
+          fov: 100 
         }}
         style={{ 
           background: 'transparent',

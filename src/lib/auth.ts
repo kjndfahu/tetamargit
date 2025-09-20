@@ -27,6 +27,12 @@ export class AuthService {
   // Sign up new user
   static async signUp(data: SignUpData) {
     const { email, password, firstName, lastName, phone } = data;
+
+    // Check if user already exists
+    const userExists = await this.checkUserExists(email);
+    if (userExists) {
+      throw new Error('Používateľ s týmto emailom už existuje');
+    }
     
     const { data: authData, error } = await supabase.auth.signUp({
       email,
@@ -161,5 +167,31 @@ export class AuthService {
     return supabase.auth.onAuthStateChange((event, session) => {
       callback(session?.user || null);
     });
+  }
+
+  static async checkUserExists(email: string): Promise<boolean> {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        // If error is 'PGRST116' it means no rows found, user doesn't exist
+        if (error.code === 'PGRST116') {
+          return false;
+        }
+        // For other errors, log and throw
+        console.error('Error checking user existence:', error);
+        throw error;
+      }
+
+      // If we got data back, user exists
+      return data !== null;
+    } catch (error) {
+      console.error('Error in checkUserExists:', error);
+      throw error;
+    }
   }
 }

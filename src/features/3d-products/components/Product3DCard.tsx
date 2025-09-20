@@ -14,33 +14,36 @@ interface Product3DCardProps {
 export function Product3DCard({ product, index, rotation, totalProducts }: Product3DCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  // Вычисляем позицию карточки в 3D пространстве
+  // Вычисляем позицию карточки в круговой карусели
   const angleOffset = (360 / totalProducts) * index;
   const currentAngle = rotation + angleOffset;
-  const radius = 300; // Радиус окружности
+  const radius = 280; // Радиус окружности
 
-  // 3D позиционирование
+  // Позиционирование в 2D с эффектом глубины
   const x = Math.sin((currentAngle * Math.PI) / 180) * radius;
   const z = Math.cos((currentAngle * Math.PI) / 180) * radius;
-  const rotateY = currentAngle;
 
-  // Определяем видимость карточки (передние карточки более видимы)
+  // Определяем видимость и масштаб карточки
   const visibility = Math.cos((currentAngle * Math.PI) / 180);
-  const opacity = Math.max(0.3, (visibility + 1) / 2);
-  const scale = Math.max(0.7, (visibility + 1) / 2);
+  const opacity = Math.max(0.4, (visibility + 1) / 2);
+  const scale = Math.max(0.6, (visibility + 1) / 2);
 
   return (
     <div
-      className="absolute product-3d-card"
+      className="absolute transition-all duration-300 ease-out"
       style={{
-        transform: `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${isHovered ? scale * 1.1 : scale})`,
+        transform: `translateX(${x}px) translateZ(${z}px) scale(${isHovered ? scale * 1.1 : scale})`,
         opacity: opacity,
         zIndex: Math.round(z + 300),
+        left: '50%',
+        top: '50%',
+        marginLeft: '-128px', // половина ширины карточки
+        marginTop: '-160px',  // половина высоты карточки
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="bg-white rounded-xl shadow-2xl overflow-hidden w-64 h-80 transform-gpu transition-all duration-300">
+      <div className="bg-white rounded-xl shadow-2xl overflow-hidden w-64 h-80 transition-all duration-300 hover:shadow-3xl">
         {/* Изображение товара */}
         <div className="relative h-48 overflow-hidden">
           <img

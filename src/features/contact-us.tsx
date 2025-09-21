@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import { validators, spamDetection, useFormInputHandler } from '@/lib/shared/validators';
 
 const contactInfo = [
   {
@@ -41,6 +42,7 @@ const contactInfo = [
 
 export function ContactUs() {
   const form = useRef<HTMLFormElement>(null);
+  const { handleInputChange } = useFormInputHandler();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -51,22 +53,29 @@ export function ContactUs() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (isLoading) return;
 
-    console.log('Odosielame formulár:', formData);
+    // Validation
+    if (!validators.email(formData.email)) {
+      setError('Zadajte platný email.');
+      return;
+    }
+    
+    if (!validators.phone(formData.phone, true)) { // Phone is optional
+      setError('Zadajte platné telefónne číslo.');
+      return;
+    }
 
+    if (spamDetection.check({ name: formData.name, email: formData.email, message: formData.message })) {
+      setError('Správa vyzerá ako spam. Skúste upraviť text.');
+      return;
+    }
+
+    setError(null);
     setIsLoading(true);
 
     try {
@@ -76,7 +85,6 @@ export function ContactUs() {
         form.current!,
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
       );
-      console.log('Email sent successfully');
 
       setIsSubmitted(true);
 
@@ -93,6 +101,7 @@ export function ContactUs() {
       
     } catch (error) {
       console.error('Email sending failed:', error);
+      setError('Nastala chyba pri odosielaní správy. Skúste to znova.');
     } finally {
       setIsLoading(false);
     }    
@@ -127,13 +136,17 @@ export function ContactUs() {
                 </div>
               ))}
             </div>
-            
-
           </div>
 
           <div>
             <div className="bg-white rounded-xl shadow-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Odoslať správu</h3>
+
+              {error && (
+                <div className="mb-4 rounded-lg bg-red-50 text-red-700 border border-red-200 px-4 py-3 text-sm">
+                  {error}
+                </div>
+              )}
               
               {isSubmitted ? (
                 <div className="text-center py-12">
@@ -153,7 +166,7 @@ export function ContactUs() {
                         id="name"
                         name="name"
                         value={formData.name}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="Vaše meno"
@@ -169,7 +182,7 @@ export function ContactUs() {
                         id="email"
                         name="email"
                         value={formData.email}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="your@email.com"
@@ -187,7 +200,7 @@ export function ContactUs() {
                         id="phone"
                         name="phone"
                         value={formData.phone}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                         placeholder="+421 (999) 123-45-67"
                       />
@@ -201,16 +214,16 @@ export function ContactUs() {
                         id="subject"
                         name="subject"
                         value={formData.subject}
-                        onChange={handleInputChange}
+                        onChange={(e) => handleInputChange(e, setFormData)}
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                       >
                         <option value="">Vyberte tému</option>
-                        <option value="order">Otázka ohľadom objednávky</option>
-                        <option value="delivery">Doručenie</option>
-                        <option value="quality">Kvalita produktu</option>
-                        <option value="partnership">Spolupráca</option>
-                        <option value="other">Iné</option>
+                        <option value="Otázka ohľadom objednávky">Otázka ohľadom objednávky</option>
+                        <option value="Doručenie">Doručenie</option>
+                        <option value="Kvalita produktu">Kvalita produktu</option>
+                        <option value="Spolupráca">Spolupráca</option>
+                        <option value="Iné">Iné</option>
                       </select>
                     </div>
                   </div>
@@ -223,7 +236,7 @@ export function ContactUs() {
                       id="message"
                       name="message"
                       value={formData.message}
-                      onChange={handleInputChange}
+                      onChange={(e) => handleInputChange(e, setFormData)}
                       required
                       rows={5}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent resize-none"
@@ -234,10 +247,10 @@ export function ContactUs() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-[#EE4C7C] cursor-pointer hover:bg-[#9A1750] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                    className="w-full bg-[#EE4C7C] cursor-pointer hover:bg-[#9A1750] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-60"
                   >
                     <Send className="w-5 h-5" />
-                    <span>Posielajte správy</span>
+                    <span>{isLoading ? 'Odosielam…' : 'Posielajte správy'}</span>
                   </button>
                 </form>
               )}
@@ -248,5 +261,3 @@ export function ContactUs() {
     </section>
   );
 }
-
-

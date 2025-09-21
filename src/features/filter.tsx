@@ -1,15 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-
-const categories = [
-  { id: 'vegetables', name: 'Zelenina' },
-  { id: 'fruits', name: 'Ovocie' },
-  { id: 'meat', name: 'Mäso' },
-  { id: 'dairy', name: 'Mliečne' },
-  { id: 'bakery', name: 'Pečivo' }
-];
+import { useProducts, useCategories } from '@/hooks/useProducts';
+import { ProductFilters, ProductSort } from '@/lib/products';
 
 const priceRanges = [
   { id: 'low', name: 'Do 2€', min: 0, max: 2 },
@@ -18,78 +12,90 @@ const priceRanges = [
   { id: 'premium', name: 'Od 20€', min: 20, max: Infinity }
 ];
 
-const sampleProducts = [
-  {
-    id: 1,
-    name: 'Čerstvé paradajky',
-    category: 'Zelenina',
-    price: 2.50,
-    oldPrice: 3.20,
-    image: 'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=300&h=300&fit=crop',
-    isFavorite: false,
-    isInCart: false
-  },
-  {
-    id: 2,
-    name: 'Avokádo Hass',
-    category: 'Ovocie',
-    price: 3.50,
-    oldPrice: 4.20,
-    image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=300&h=300&fit=crop',
-    isFavorite: true,
-    isInCart: false
-  },
-  {
-    id: 3,
-    name: 'Hovädzie sviečkové',
-    category: 'Mäso',
-    price: 15.90,
-    oldPrice: 18.50,
-    image: 'https://images.unsplash.com/photo-1607623814075-e51df1616ee7?w=300&h=300&fit=crop',
-    isFavorite: false,
-    isInCart: true
-  },
-  {
-    id: 4,
-    name: 'Dedinské mlieko',
-    category: 'Mliečne',
-    price: 1.80,
-    oldPrice: 2.10,
-    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=300&h=300&fit=crop',
-    isFavorite: false,
-    isInCart: false
-  },
-  {
-    id: 5,
-    name: 'Banány',
-    category: 'Ovocie',
-    price: 2.20,
-    oldPrice: 2.80,
-    image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300&h=300&fit=crop',
-    isFavorite: true,
-    isInCart: false
-  },
-  {
-    id: 6,
-    name: 'Čerstvá zelenina',
-    category: 'Zelenina',
-    price: 1.50,
-    oldPrice: 1.90,
-    image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=300&h=300&fit=crop',
-    isFavorite: false,
-    isInCart: false
-  }
-];
-
 export function Filter() {
+  const [filters, setFilters] = useState<ProductFilters>({});
+  const [sort, setSort] = useState<ProductSort>({ field: 'created_at', direction: 'desc' });
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('popular');
-  const [products] = useState(sampleProducts);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+
+  const { categories, parentCategories, loading: categoriesLoading } = useCategories();
+  const { products, loading: productsLoading, error } = useProducts(filters, sort, 50);
+
+  // Helper function to get all child category IDs for a parent category
+  const getChildCategoryIds = (parentId: string): string[] => {
+    const parentCategory = categories.find(cat => cat.id === parentId);
+    if (parentCategory?.children) {
+      return parentCategory.children.map(child => child.id);
+    }
+    return [];
+  };
+
+  // Helper function to check if a category is a parent category
+  const isParentCategory = (categoryId: string): boolean => {
+    return categories.some(cat => cat.id === categoryId && cat.children && cat.children.length > 0);
+  };
+
+  useEffect(() => {
+    const newFilters: ProductFilters = {};
+    
+    if (selectedCategories.length > 0) {
+      const selectedCategoryId = selectedCategories[0];
+      
+      // Check if selected category is a parent category
+      if (isParentCategory(selectedCategoryId)) {
+        // Get all child category IDs
+        const childIds = getChildCategoryIds(selectedCategoryId);
+        // Include both parent and all child categories
+        newFilters.categories = [selectedCategoryId, ...childIds];
+      } else {
+        // Single category selection
+        newFilters.category = selectedCategoryId;
+      }
+    }
+    
+    if (selectedPriceRange) {
+      const range = priceRanges.find(r => r.id === selectedPriceRange);
+      if (range) {
+        newFilters.priceMin = range.min;
+        newFilters.priceMax = range.max === Infinity ? undefined : range.max;
+      }
+    }
+    
+    if (searchQuery.trim()) {
+      newFilters.search = searchQuery.trim();
+    }
+    
+    newFilters.inStock = true; // Only show products in stock
+    
+    setFilters(newFilters);
+  }, [selectedCategories, selectedPriceRange, searchQuery, categories]);
 
   const toggleCategory = (categoryId: string) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories(prev => {
+      const isSelected = prev.includes(categoryId);
+      
+      if (isSelected) {
+        // Deselect category
+        return prev.filter(id => id !== categoryId);
+      } else {
+        // Select category (only allow one at a time)
+        // If it's a parent category, also expand it
+        if (isParentCategory(categoryId)) {
+          setExpandedCategories(prevExpanded => 
+            prevExpanded.includes(categoryId) 
+              ? prevExpanded 
+              : [...prevExpanded, categoryId]
+          );
+        }
+        return [categoryId];
+      }
+    });
+  };
+
+  const toggleCategoryExpansion = (categoryId: string) => {
+    setExpandedCategories(prev => 
       prev.includes(categoryId) 
         ? prev.filter(id => id !== categoryId)
         : [...prev, categoryId]
@@ -100,16 +106,26 @@ export function Filter() {
     setSelectedCategories([]);
     setSelectedPriceRange('');
     setSearchQuery('');
-    setSortBy('popular');
+    setSort({ field: 'created_at', direction: 'desc' });
   };
 
-  const applyFilters = () => {
-    console.log('Aplikujeme filtre:', {
-      categories: selectedCategories,
-      priceRange: selectedPriceRange,
-      search: searchQuery,
-      sort: sortBy
-    });
+  const handleSortChange = (value: string) => {
+    switch (value) {
+      case 'price-asc':
+        setSort({ field: 'price', direction: 'asc' });
+        break;
+      case 'price-desc':
+        setSort({ field: 'price', direction: 'desc' });
+        break;
+      case 'name-asc':
+        setSort({ field: 'name', direction: 'asc' });
+        break;
+      case 'created_at-desc':
+        setSort({ field: 'created_at', direction: 'desc' });
+        break;
+      default:
+        setSort({ field: 'created_at', direction: 'desc' });
+    }
   };
 
   return (
@@ -150,15 +166,14 @@ export function Filter() {
                   Zoradenie
                 </label>
                 <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  value={`${sort.field}-${sort.direction}`}
+                  onChange={(e) => handleSortChange(e.target.value)}
                   className="w-full py-2 px-2 cursor-pointer text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                 >
-                  <option className="cursor-pointer" value="popular">Popularita</option>
-                  <option className="cursor-pointer" value="price-low">Cena ↑</option>
-                  <option className="cursor-pointer" value="price-high">Cena ↓</option>
-                  <option className="cursor-pointer" value="name">Názov</option>
-                  <option className="cursor-pointer" value="new">Nové</option>
+                  <option className="cursor-pointer" value="created_at-desc">Najnovšie</option>
+                  <option className="cursor-pointer" value="price-asc">Cena ↑</option>
+                  <option className="cursor-pointer" value="price-desc">Cena ↓</option>
+                  <option className="cursor-pointer" value="name-asc">Názov</option>
                 </select>
               </div>
 
@@ -185,29 +200,71 @@ export function Filter() {
                   Kategórie
                 </label>
                 <div className="space-y-1">
-                  {categories.map(category => (
-                    <button
-                      key={category.id}
-                      onClick={() => toggleCategory(category.id)}
-                      className={`w-full p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
-                        selectedCategories.includes(category.id)
-                          ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
-                          : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
-                      }`}
-                    >
-                      <span className="font-medium">{category.name}</span>
-                    </button>
-                  ))}
+                  {categoriesLoading ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#EE4C7C] mx-auto"></div>
+                    </div>
+                  ) : (
+                    categories.map(category => (
+                      <div key={category.id} className="space-y-1">
+                        <div className="flex items-center">
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => toggleCategory(category.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                toggleCategory(category.id);
+                              }
+                            }}
+                            className={`flex-1 p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
+                              selectedCategories.includes(category.id)
+                                ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
+                                : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
+                            } text-left`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">{category.name}</span>
+                              {category.children && category.children.length > 0 && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleCategoryExpansion(category.id);
+                                  }}
+                                  className="text-gray-400 hover:text-[#EE4C7C] hover:bg-gray-100 rounded px-2 py-1 ml-2 min-w-[24px] h-6 flex items-center justify-center text-base font-bold transition-all duration-200"
+                                >
+                                  {expandedCategories.includes(category.id) ? '−' : '+'}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {expandedCategories.includes(category.id) && category.children && (
+                          <div className="ml-4 space-y-1">
+                            {category.children.map(child => (
+                              <button
+                                key={child.id}
+                                onClick={() => toggleCategory(child.id)}
+                                className={`w-full p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
+                                  selectedCategories.includes(child.id)
+                                    ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
+                                    : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
+                                }`}
+                              >
+                                <span className="font-medium">{child.name}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <button
-                  onClick={applyFilters}
-                  className="w-full cursor-pointer bg-[#EE4C7C] hover:bg-[#9A1750] text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm"
-                >
-                  Aplikovať
-                </button>
                 <button
                   onClick={clearFilters}
                   className="w-full bg-gray-200 cursor-pointer hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-sm"
@@ -219,12 +276,35 @@ export function Filter() {
           </div>
 
           <div className="lg:w-4/5">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600">{error}</p>
+              </div>
+            )}
+            
+            {productsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl shadow-lg animate-pulse">
+                    <div className="h-48 bg-gray-200 rounded-t-xl"></div>
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                      <div className="flex justify-between items-center">
+                        <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+                        <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
                 <div key={product.id} className="group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                   <div className="relative overflow-hidden rounded-t-xl">
                     <img
-                      src={product.image}
+                      src={product.image_url || 'products.svg'}
                       alt={product.name}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                     />
@@ -232,7 +312,7 @@ export function Filter() {
                   
                   <div className="p-4">
                     <div className="text-xs text-[#EE4C7C] font-medium mb-2">
-                      {product.category}
+                      {product.category?.name || 'Bez kategórie'}
                     </div>
                     
                     <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">
@@ -244,9 +324,9 @@ export function Filter() {
                         <span className="text-lg font-bold text-black">
                           {product.price}€
                         </span>
-                        {product.oldPrice > product.price && (
+                        {product.old_price && product.old_price > product.price && (
                           <span className="text-sm text-gray-500 line-through">
-                            {product.oldPrice}€
+                            {product.old_price}€
                           </span>
                         )}
                       </div>
@@ -259,11 +339,22 @@ export function Filter() {
                 </div>
               ))}
             </div>
+            )}
+            
+            {!productsLoading && products.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">Žiadne produkty neboli nájdené</p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-4 text-[#EE4C7C] hover:underline"
+                >
+                  Vymazať filtre
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </section>
   );
 }
-
-

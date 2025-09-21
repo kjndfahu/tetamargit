@@ -13,6 +13,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Teta Margit",
   description: "",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({

@@ -6,12 +6,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { AuthModal } from '@/features/auth/auth-modal';
 import { useAuth } from '@/hooks/useAuth';
+import { useCartItemCount } from '@/hooks/useCart';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAuth, setOpenAuth] = useState(false);
   const [authType, setAuthType] = useState<'signup' | 'login'>('signup');
   const { user, profile, loading, signOut, isAuthenticated } = useAuth();
+  const { itemCount, loading: cartLoading } = useCartItemCount();
 
   const handleSignOut = async () => {
     try {
@@ -70,7 +72,11 @@ export function Header() {
               )}
               <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-[#EE4C7C] transition-colors">
                 <ShoppingCart className="cursor-pointer h-6 w-6" />
-                <span className="absolute -top-1 -right-1 bg-[#EE4C7C] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                {!cartLoading && itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#EE4C7C] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {itemCount > 99 ? '99+' : itemCount}
+                  </span>
+                )}
               </a>
             </div>
 
@@ -102,7 +108,7 @@ export function Header() {
               />
               <a href="/cart" className="w-full flex items-center cursor-pointer justify-center p-2 text-black hover:text-[#EE4C7C] transition-colors">
                 <ShoppingCart className="cursor-pointer h-6 w-6 mr-2" />
-                Košík (3)
+                Košík {!cartLoading && itemCount > 0 ? `(${itemCount})` : ''}
               </a>
               {!loading && (
                 <>

@@ -327,7 +327,7 @@ export function Filter() {
                       </div>
                       
                       <button className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
-                        Do košíka
+                        Zobraziť
                       </button>
                     </div>
                   </div>

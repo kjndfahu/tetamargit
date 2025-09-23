@@ -90,14 +90,13 @@ export function RecentlyViewed() {
                       </span>
                     )}
                   </div>
-                    <button className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
                     <button 
                       onClick={() => handleAddToCart(product.id, product.price)}
                       disabled={addingToCart === product.id}
                       className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
                     >
                       {addingToCart === product.id ? 'Pridávam...' : 'Do košíka'}
-                  </button>
+                    </button>
                 </div>
               </div>
             </div>

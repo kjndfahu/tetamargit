@@ -67,6 +67,10 @@ export class AuthService {
         throw new Error('Nesprávne prihlasovacie údaje');
       }
 
+      if (error.message === 'Email not confirmed') {
+        throw new Error('E-mail nebol potvrdený');
+      }
+
       throw error;
     }
 

@@ -78,6 +78,13 @@ export function Header() {
                   </span>
                 )}
               </a>
+              <button 
+                data-auth-login
+                onClick={() => { setAuthType('login'); setOpenAuth(true); }} 
+                className="hidden"
+              >
+                Hidden Login Trigger
+              </button>
             </div>
 
           <button

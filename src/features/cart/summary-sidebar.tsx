@@ -2,6 +2,7 @@
 
 import { FileText } from "lucide-react";
 import { CartSummary } from "@/lib/cart";
+import { useEffect, useState } from "react";
 
 interface SummarySidebarProps {
 	cartSummary: CartSummary;
@@ -11,8 +12,12 @@ interface SummarySidebarProps {
 }
 
 export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymentMethod }: SummarySidebarProps) {
+	const [total, setTotal] = useState(0);
 	const deliveryFee = deliveryMethod === "courier" ? 4.99 : 0;
-	const total = cartSummary.subtotal + deliveryFee;
+
+	useEffect(() => {
+		setTotal(cartSummary.subtotal + deliveryFee);
+	}, [cartSummary.subtotal, deliveryFee]);
 
 	return (
 		<aside className="lg:col-span-1">

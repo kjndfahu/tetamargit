@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthModal } from "@/features/auth/auth-modal";
 import { DeliverySection, type DeliveryMethod } from "@/features/cart/delivery-section";
 import { PaymentSection, type PaymentMethod } from "@/features/cart/payment-section";
 import { CartProductsSection } from "@/features/cart/cart-products-section";
@@ -14,8 +16,21 @@ export default function CartPage() {
 	const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("pickup");
 	const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
 	const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+	const [showAuthModal, setShowAuthModal] = useState(false);
+	const hasCheckedAuth = useRef(false);
 	const { cartSummary, loading, error, clearCart } = useCart();
+	const { isAuthenticated, loading: authLoading } = useAuth();
 	const router = useRouter();
+
+	// Check authentication when component mounts
+	useEffect(() => {
+		if (!authLoading && !hasCheckedAuth.current) {
+			hasCheckedAuth.current = true;
+			if (!isAuthenticated) {
+				setShowAuthModal(true);
+			}
+		}
+	}, [isAuthenticated, authLoading]);
 
 	useEffect(() => {
 		if (!isSuccessOpen) return;
@@ -36,6 +51,11 @@ export default function CartPage() {
 			console.error('Checkout error:', error);
 		}
 	};
+
+	const handleAuthSuccess = () => {
+		setShowAuthModal(false);
+	};
+
 	return (
 		<main className=" px-4 sm:px-6 lg:px-20 py-10 w-full">
 			<h1 className="text-3xl font-bold mb-8 text-black">Košík</h1>
@@ -46,7 +66,7 @@ export default function CartPage() {
 				</div>
 			)}
 
-			{loading ? (
+			{loading || authLoading ? (
 				<div className="text-center py-12">
 					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EE4C7C] mx-auto"></div>
 					<p className="mt-4 text-gray-600">Načítavam košík...</p>
@@ -76,6 +96,12 @@ export default function CartPage() {
 			)}
 
 			<SuccessModal open={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} />
+			
+			<AuthModal 
+				open={showAuthModal && !isAuthenticated} 
+				onClose={() => router.push('/')} 
+				type="login" 
+			/>
 		</main>
 	);
 } 

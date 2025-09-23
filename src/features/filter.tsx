@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { useProducts, useCategories } from '@/hooks/useProducts';
+import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import { ProductFilters, ProductSort } from '@/lib/products';
 
 const priceRanges = [
@@ -19,9 +21,13 @@ export function Filter() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const { categories, parentCategories, loading: categoriesLoading } = useCategories();
   const { products, loading: productsLoading, error } = useProducts(filters, sort, 50);
+  const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   // Helper function to get all child category IDs for a parent category
   const getChildCategoryIds = (parentId: string): string[] => {
@@ -129,8 +135,29 @@ export function Filter() {
     }
   };
 
+  const handleAddToCart = async (productId: string, price: number) => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    try {
+      setAddingToCart(productId);
+      await addToCart({
+        product_id: productId,
+        quantity: 1,
+        price: price
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    } finally {
+      setAddingToCart(null);
+    }
+  };
+
   return (
-    <section className="bg-gray-50">
+    <>
+      <section className="bg-gray-50">
       <div className="mx-auto px-4 sm:px-6 lg:px-20">
         <div className="text-center mb-25">
           <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
@@ -326,8 +353,12 @@ export function Filter() {
                         )}
                       </div>
                       
-                      <button className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
-                        Zobraziť
+                      <button 
+                        onClick={() => handleAddToCart(product.id, product.price)}
+                        disabled={addingToCart === product.id}
+                        className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+                      >
+                        {addingToCart === product.id ? 'Pridávam...' : 'Do košíka'}
                       </button>
                     </div>
                   </div>
@@ -350,6 +381,36 @@ export function Filter() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+      
+      {!isAuthenticated && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ display: showAuthModal ? 'flex' : 'none' }}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowAuthModal(false)} />
+          <div className="relative bg-white rounded-xl shadow-xl p-6 max-w-md mx-4">
+            <h3 className="text-xl font-semibold text-black mb-4">Prihlásenie potrebné</h3>
+            <p className="text-gray-600 mb-6">Pre pridanie produktov do košíka sa musíte prihlásiť.</p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowAuthModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-black"
+              >
+                Zrušiť
+              </button>
+              <button 
+                onClick={() => {
+                  setShowAuthModal(false);
+                  // This will trigger the auth modal in the header
+                  const loginButton = document.querySelector('[data-auth-login]') as HTMLButtonElement;
+                  if (loginButton) loginButton.click();
+                }}
+                className="flex-1 px-4 py-2 bg-[#EE4C7C] hover:bg-[#9A1750] text-white rounded-lg"
+              >
+                Prihlásiť sa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

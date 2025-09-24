@@ -17,7 +17,9 @@ export default function CartPage() {
 	const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
 	const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 	const [showAuthModal, setShowAuthModal] = useState(false);
+	const [shouldRedirectHomeAfterAuth, setShouldRedirectHomeAfterAuth] = useState(false);
 	const hasCheckedAuth = useRef(false);
+	const wasAuthenticated = useRef<boolean | undefined>(undefined);
 	const { cartSummary, loading, error, clearCart } = useCart();
 	const { isAuthenticated, loading: authLoading } = useAuth();
 	const router = useRouter();
@@ -28,9 +30,31 @@ export default function CartPage() {
 			hasCheckedAuth.current = true;
 			if (!isAuthenticated) {
 				setShowAuthModal(true);
+				setShouldRedirectHomeAfterAuth(true);
 			}
 		}
 	}, [isAuthenticated, authLoading]);
+
+	// If user logged in while on /cart after being unauthenticated, redirect them home
+	useEffect(() => {
+		if (shouldRedirectHomeAfterAuth && isAuthenticated) {
+			router.replace("/");
+		}
+	}, [shouldRedirectHomeAfterAuth, isAuthenticated, router]);
+
+	// If user logs out while on cart, redirect to home
+	useEffect(() => {
+		if (authLoading) return;
+		if (wasAuthenticated.current === undefined) {
+			wasAuthenticated.current = isAuthenticated;
+			return;
+		}
+		// Detect transition from logged-in -> logged-out
+		if (wasAuthenticated.current && !isAuthenticated) {
+			router.replace("/");
+		}
+		wasAuthenticated.current = isAuthenticated;
+	}, [isAuthenticated, authLoading, router]);
 
 	useEffect(() => {
 		if (!isSuccessOpen) return;
@@ -104,4 +128,4 @@ export default function CartPage() {
 			/>
 		</main>
 	);
-} 
+}

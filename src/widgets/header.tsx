@@ -15,6 +15,15 @@ export function Header() {
   const { user, profile, loading, signOut, isAuthenticated } = useAuth();
   const { itemCount, loading: cartLoading } = useCartItemCount();
 
+  // Prevent cart navigation if not authenticated
+  const handleCartClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      setAuthType('login');
+      setOpenAuth(true);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -70,7 +79,11 @@ export function Header() {
                   )}
                 </>
               )}
-              <a href="/cart" className="relative p-2 text-black cursor-pointer hover:text-[#EE4C7C] transition-colors">
+              <a
+                href="/cart"
+                onClick={handleCartClick}
+                className="relative p-2 text-black cursor-pointer hover:text-[#EE4C7C] transition-colors"
+              >
                 <ShoppingCart className="cursor-pointer h-6 w-6" />
                 {!cartLoading && itemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#EE4C7C] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -113,7 +126,11 @@ export function Header() {
                 placeholder="Hľadať produkty..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
               />
-              <a href="/cart" className="w-full flex items-center cursor-pointer justify-center p-2 text-black hover:text-[#EE4C7C] transition-colors">
+              <a
+                href="/cart"
+                onClick={handleCartClick}
+                className="w-full flex items-center cursor-pointer justify-center p-2 text-black hover:text-[#EE4C7C] transition-colors"
+              >
                 <ShoppingCart className="cursor-pointer h-6 w-6 mr-2" />
                 Košík {!cartLoading && itemCount > 0 ? `(${itemCount})` : ''}
               </a>

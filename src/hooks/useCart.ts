@@ -162,11 +162,6 @@ export function useCartItemCount() {
     fetchItemCount();
   }, [user?.id]);
 
-  // Set up interval to refresh cart count periodically
-  useEffect(() => {
-    const interval = setInterval(fetchItemCount, 5000); // Refresh every 5 seconds
-    return () => clearInterval(interval);
-  }, [user?.id]);
   return {
     itemCount,
     loading,

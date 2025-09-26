@@ -12,7 +12,7 @@ interface StoreUIProps {
   totalSections: number;
   onNavigateToSection: (section: number) => void;
   onEnterStore: () => void;
-  onEnterStore: () => void;
+  onExitStore: () => void;
 }
 
 export function StoreUI({ 
@@ -22,7 +22,8 @@ export function StoreUI({
   hasEnteredStore,
   totalSections,
   onNavigateToSection,
-  onEnterStore
+  onEnterStore,
+  onExitStore
 }: StoreUIProps) {
   const [addingToCart, setAddingToCart] = useState(false);
 

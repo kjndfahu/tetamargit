@@ -109,6 +109,12 @@ export class VirtualStore extends EventEmitter {
   }
 
   private onMouseClick(event: MouseEvent): void {
+    // Если еще не вошли в магазин, запускаем вход
+    if (!this.cameraController.hasEnteredStore()) {
+      this.cameraController.enterStore();
+      return;
+    }
+
     const rect = this.container.getBoundingClientRect();
     this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -143,6 +149,10 @@ export class VirtualStore extends EventEmitter {
 
   private onWheel(event: WheelEvent): void {
     event.preventDefault();
+    // Скролл работает только после входа в магазин
+    if (!this.cameraController.hasEnteredStore()) {
+      return;
+    }
     this.cameraController.handleScroll(event.deltaY);
   }
 

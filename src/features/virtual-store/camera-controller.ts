@@ -72,12 +72,6 @@ export class CameraController {
   }
 
   public handleScroll(deltaY: number): void {
-    // Если еще не вошли в магазин, запускаем анимацию входа
-    if (!this.hasEnteredStore) {
-      this.enterStore();
-      return;
-    }
-
     const scrollDirection = deltaY > 0 ? 1 : -1;
     
     // 6 секций для 6 продуктов
@@ -92,6 +86,10 @@ export class CameraController {
     }
   }
   public enterStore(): void {
+  public hasEnteredStore(): boolean {
+    return this.hasEnteredStore;
+  }
+
     if (this.hasEnteredStore) return;
     
     this.hasEnteredStore = true;

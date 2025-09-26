@@ -203,8 +203,8 @@ export function VirtualStoreSection() {
         hasEnteredStore={hasEnteredStore}
         totalSections={products.length}
         onNavigateToSection={(section) => storeInstance?.navigateToSection(section)}
+        onEnterStore={() => storeInstance?.enterStore()}
       />
-      onEnterStore={() => storeInstance?.enterStore()}
     </section>
   );
 }

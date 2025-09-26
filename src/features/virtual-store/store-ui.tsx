@@ -12,6 +12,7 @@ interface StoreUIProps {
   totalSections: number;
   onNavigateToSection: (section: number) => void;
   onEnterStore: () => void;
+  onEnterStore: () => void;
 }
 
 export function StoreUI({ 

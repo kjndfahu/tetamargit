@@ -112,6 +112,7 @@ export class VirtualStore extends EventEmitter {
   private onMouseClick(event: MouseEvent): void {
     // Ak sme ešte nevošli do obchodu, spustíme vstup
     if (!this.hasEnteredStore) {
+      console.log('Clicking to enter store...');
       this.enterStore();
       return;
     }
@@ -224,9 +225,11 @@ export class VirtualStore extends EventEmitter {
   public enterStore(): void {
     if (this.hasEnteredStore) return;
     
+    console.log('Entering store...');
     this.hasEnteredStore = true;
     this.cameraController.enterStore();
     setTimeout(() => {
+      console.log('Store entered successfully');
       this.emit('storeEntered');
     }, 500);
   }

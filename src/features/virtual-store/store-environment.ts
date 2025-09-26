@@ -160,10 +160,6 @@ export class StoreEnvironment {
     sign.position.set(0, 3.5, -9.9);
     this.group.add(sign);
     
-    // Добавляем текст на вывеску (упрощенно)
-    const loader = new THREE.FontLoader();
-    // В реальном проекте здесь бы загружался шрифт и создавался текст
-    
     // Корзины для покупок (декоративные)
     const basketGeometry = new THREE.CylinderGeometry(0.3, 0.25, 0.4, 8);
     const basketMaterial = new THREE.MeshLambertMaterial({ color: 0x666666 });

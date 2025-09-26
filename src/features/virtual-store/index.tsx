@@ -185,7 +185,7 @@ export function VirtualStoreSection() {
   }
 
   return (
-    <section className="relative h-screen overflow-hidden bg-gradient-to-b from-gray-900 to-gray-800">
+    <section className="relative w-full min-h-[60vh] h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden bg-gradient-to-b from-gray-900 to-gray-800">
       {/* 3D Canvas Container */}
       <div ref={containerRef} className="absolute inset-0" />
       

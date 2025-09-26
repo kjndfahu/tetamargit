@@ -128,6 +128,7 @@ export function VirtualStoreSection() {
     };
 
     const handleStoreEntered = () => {
+      console.log('Store entered event received');
       setHasEnteredStore(true);
     };
 

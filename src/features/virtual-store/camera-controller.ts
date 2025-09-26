@@ -88,14 +88,16 @@ export class CameraController {
   public enterStore(): void {
     if (this.hasEnteredStore) return;
     
+    console.log('Entering store...');
     this.hasEnteredStore = true;
     this.isAnimating = true;
     
     // Анимация входа в магазин
-    const entrancePosition = new THREE.Vector3(0, 2, 8);
+    const entrancePosition = new THREE.Vector3(0, 2, 6);
     const entranceLookAt = new THREE.Vector3(0, 1, 0);
     
     this.animateToPosition(entrancePosition, entranceLookAt, 2000, () => {
+      console.log('Store entrance complete');
       // После входа переходим к первому продукту
       setTimeout(() => {
         this.navigateToSection(0);

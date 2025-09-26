@@ -111,7 +111,7 @@ export class VirtualStore extends EventEmitter {
   private onMouseClick(event: MouseEvent): void {
     // Если еще не вошли в магазин, запускаем вход
     if (!this.cameraController.hasEnteredStore()) {
-      this.cameraController.enterStore();
+      this.enterStore();
       return;
     }
 
@@ -219,7 +219,9 @@ export class VirtualStore extends EventEmitter {
 
   public enterStore(): void {
     this.cameraController.enterStore();
-    this.emit('storeEntered');
+    setTimeout(() => {
+      this.emit('storeEntered');
+    }, 100);
   }
   private animate(): void {
     if (this.animationId) {

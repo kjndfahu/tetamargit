@@ -72,14 +72,21 @@ export class CameraController {
   }
 
   public handleScroll(deltaY: number): void {
+    if (!this._hasEnteredStore || this.isAnimating) return;
+
     const scrollDirection = deltaY > 0 ? 1 : -1;
+    const totalSections = this.productPositions.length;
     
-    // 6 sekcií pre 6 produktov
-    const sectionsCount = 6;
+    if (totalSections === 0) return;
+    
     let newSection = this.currentSection + scrollDirection;
     
-    // Obmedzíme rozsah sekcií
-    newSection = Math.max(0, Math.min(sectionsCount - 1, newSection));
+    // Cyklické prechádzanie - po poslednom ide prvý a naopak
+    if (newSection >= totalSections) {
+      newSection = 0;
+    } else if (newSection < 0) {
+      newSection = totalSections - 1;
+    }
     
     if (newSection !== this.currentSection) {
       this.navigateToSection(newSection);
@@ -110,40 +117,37 @@ export class CameraController {
   public navigateToSection(sectionIndex: number): void {
     if (!this._hasEnteredStore) return;
     
-    if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= 6) return;
+    const totalSections = this.productPositions.length;
+    if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= totalSections) return;
     
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
-    // Získame pozíciu produktu
     const productPos = this.productPositions[sectionIndex];
     
     if (!productPos) {
+      this.isAnimating = false;
       return;
     }
     
-    // Umiestnime kameru pred produkt
     const cameraDistance = 4;
     const cameraHeight = 2.5;
     
-    // Určíme stranu (ľavá alebo pravá) pre správne umiestnenie kamery
     const isLeftSide = productPos.x < 0;
     
-    // Pozícia kamery - bližšie k centru od produktu
     const cameraPos = new THREE.Vector3();
     if (isLeftSide) {
-      // Pre ľavé produkty - kamera vpravo od nich
       cameraPos.set(productPos.x + cameraDistance, cameraHeight, productPos.z);
     } else {
-      // Pre pravé produkty - kamera vľavo od nich
       cameraPos.set(productPos.x - cameraDistance, cameraHeight, productPos.z);
     }
     
-    // Pozeráme na produkt
     const lookAtPos = new THREE.Vector3().copy(productPos);
-    lookAtPos.y = 1.3; // Výška produktu
+    lookAtPos.y = 1.3;
     
-    this.animateToPosition(cameraPos, lookAtPos);
+    this.animateToPosition(cameraPos, lookAtPos, 1200, () => {
+      this.isAnimating = false;
+    });
   }
 
   private animateToPosition(targetPos: THREE.Vector3, targetLookAt: THREE.Vector3, duration: number = 1200, onComplete?: () => void): void {

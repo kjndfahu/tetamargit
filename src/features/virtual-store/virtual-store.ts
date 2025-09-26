@@ -151,8 +151,7 @@ export class VirtualStore extends EventEmitter {
 
   private onWheel(event: WheelEvent): void {
     event.preventDefault();
-    // Скролл работает только после входа в магазин
-    if (!this.cameraController.hasEnteredStore()) {
+    if (!this.hasEnteredStore) {
       return;
     }
     this.cameraController.handleScroll(event.deltaY);

@@ -31,7 +31,7 @@ export class ProductDisplay {
     // Определяем тип продукта по категории и создаем соответствующую модель
     const categoryName = this.product.category?.name?.toLowerCase() || '';
     
-    if (categoryName.includes('мясо') || categoryName.includes('мясные') || categoryName.includes('колбаса')) {
+    if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
       // Модель мясных изделий - цилиндр
       geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.8, 8);
       material = new THREE.MeshLambertMaterial({ 
@@ -39,7 +39,7 @@ export class ProductDisplay {
         transparent: true,
         opacity: 0.9
       });
-    } else if (categoryName.includes('молоко') || categoryName.includes('молочные') || categoryName.includes('сыр')) {
+    } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
       // Модель молочных продуктов - параллелепипед
       geometry = new THREE.BoxGeometry(0.4, 0.6, 0.3);
       material = new THREE.MeshLambertMaterial({ 
@@ -47,7 +47,7 @@ export class ProductDisplay {
         transparent: true,
         opacity: 0.9
       });
-    } else if (categoryName.includes('хлеб') || categoryName.includes('хлебобулочные') || categoryName.includes('выпечка')) {
+    } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
       // Модель хлебобулочных изделий - овальная форма
       geometry = new THREE.SphereGeometry(0.4, 8, 6);
       geometry.scale(1, 0.6, 1.2);
@@ -56,7 +56,7 @@ export class ProductDisplay {
         transparent: true,
         opacity: 0.9
       });
-    } else if (categoryName.includes('овощи') || categoryName.includes('фрукты')) {
+    } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
       // Модель овощей/фруктов - сфера
       geometry = new THREE.SphereGeometry(0.35, 12, 8);
       material = new THREE.MeshLambertMaterial({ 
@@ -64,7 +64,7 @@ export class ProductDisplay {
         transparent: true,
         opacity: 0.9
       });
-    } else if (categoryName.includes('консервы') || categoryName.includes('варенье')) {
+    } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
       // Модель консервов - цилиндр
       geometry = new THREE.CylinderGeometry(0.25, 0.25, 0.6, 12);
       material = new THREE.MeshLambertMaterial({ 
@@ -147,15 +147,15 @@ export class ProductDisplay {
     const categoryName = this.product.category?.name?.toLowerCase() || '';
     let labelText = 'Produkty';
     
-    if (categoryName.includes('мясо') || categoryName.includes('мясные') || categoryName.includes('колбаса')) {
+    if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
       labelText = 'Výrobky z mäsa';
-    } else if (categoryName.includes('молоко') || categoryName.includes('молочные') || categoryName.includes('сыр')) {
+    } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
       labelText = 'Mliečne výrobky';
-    } else if (categoryName.includes('хлеб') || categoryName.includes('хлебобулочные') || categoryName.includes('выпечка')) {
+    } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
       labelText = 'Pečivo a chlieb';
-    } else if (categoryName.includes('овощи') || categoryName.includes('фрукты')) {
+    } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
       labelText = 'Ovocie a zelenina';
-    } else if (categoryName.includes('консервы') || categoryName.includes('варенье')) {
+    } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
       labelText = 'Konzervy a džemy';
     } else {
       labelText = 'Čerstvé produkty';

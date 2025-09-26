@@ -9,8 +9,8 @@ import { Product } from '@/lib/products';
 const mockProducts: Product[] = [
   {
     id: '1',
-    name: 'Домашняя колбаса',
-    description: 'Традиционная домашняя колбаса из качественного мяса',
+    name: 'Domáca klobása',
+    description: 'Tradičná domáca klobása z kvalitného mäsa',
     price: 8.50,
     old_price: 10.00,
     category_id: 'meat',
@@ -21,12 +21,12 @@ const mockProducts: Product[] = [
     unit: 'г',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: { id: 'meat', name: 'Мясные изделия', slug: 'meat', is_active: true, display_order: 1, created_at: '', updated_at: '' }
+    category: { id: 'meat', name: 'Mäsové výrobky', slug: 'meat', is_active: true, display_order: 1, created_at: '', updated_at: '' }
   },
   {
     id: '2',
-    name: 'Домашний сыр',
-    description: 'Свежий домашний сыр из натурального молока',
+    name: 'Domáci syr',
+    description: 'Čerstvý domáci syr z prírodného mlieka',
     price: 6.20,
     category_id: 'dairy',
     stock_quantity: 8,
@@ -36,12 +36,12 @@ const mockProducts: Product[] = [
     unit: 'г',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: { id: 'dairy', name: 'Молочные продукты', slug: 'dairy', is_active: true, display_order: 2, created_at: '', updated_at: '' }
+    category: { id: 'dairy', name: 'Mliečne výrobky', slug: 'dairy', is_active: true, display_order: 2, created_at: '', updated_at: '' }
   },
   {
     id: '3',
-    name: 'Свежий хлеб',
-    description: 'Домашний хлеб, выпеченный по традиционному рецепту',
+    name: 'Čerstvý chlieb',
+    description: 'Domáci chlieb, upečený podľa tradičného receptu',
     price: 2.80,
     category_id: 'bakery',
     stock_quantity: 20,
@@ -51,12 +51,12 @@ const mockProducts: Product[] = [
     unit: 'г',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: { id: 'bakery', name: 'Хлебобулочные изделия', slug: 'bakery', is_active: true, display_order: 3, created_at: '', updated_at: '' }
+    category: { id: 'bakery', name: 'Pečivo a chlieb', slug: 'bakery', is_active: true, display_order: 3, created_at: '', updated_at: '' }
   },
   {
     id: '4',
-    name: 'Свежие овощи',
-    description: 'Сезонные овощи с нашего огорода',
+    name: 'Čerstvá zelenina',
+    description: 'Sezónna zelenina z našej záhrady',
     price: 4.50,
     category_id: 'vegetables',
     stock_quantity: 25,
@@ -66,12 +66,12 @@ const mockProducts: Product[] = [
     unit: 'г',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: { id: 'vegetables', name: 'Овощи', slug: 'vegetables', is_active: true, display_order: 4, created_at: '', updated_at: '' }
+    category: { id: 'vegetables', name: 'Zelenina', slug: 'vegetables', is_active: true, display_order: 4, created_at: '', updated_at: '' }
   },
   {
     id: '5',
-    name: 'Домашнее варенье',
-    description: 'Варенье из свежих ягод по бабушкиному рецепту',
+    name: 'Domáci džem',
+    description: 'Džem z čerstvých bobúľ podľa babičkiného receptu',
     price: 5.90,
     category_id: 'preserves',
     stock_quantity: 12,
@@ -81,12 +81,12 @@ const mockProducts: Product[] = [
     unit: 'г',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: { id: 'preserves', name: 'Консервы', slug: 'preserves', is_active: true, display_order: 5, created_at: '', updated_at: '' }
+    category: { id: 'preserves', name: 'Konzervy', slug: 'preserves', is_active: true, display_order: 5, created_at: '', updated_at: '' }
   },
   {
     id: '6',
-    name: 'Свежее молоко',
-    description: 'Натуральное коровье молоко от местных фермеров',
+    name: 'Čerstvé mlieko',
+    description: 'Prírodné kravy mlieko od miestnych farmárov',
     price: 3.20,
     category_id: 'dairy',
     stock_quantity: 30,
@@ -96,7 +96,7 @@ const mockProducts: Product[] = [
     unit: 'мл',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: { id: 'dairy', name: 'Молочные продукты', slug: 'dairy', is_active: true, display_order: 2, created_at: '', updated_at: '' }
+    category: { id: 'dairy', name: 'Mliečne výrobky', slug: 'dairy', is_active: true, display_order: 2, created_at: '', updated_at: '' }
   }
 ];
 
@@ -193,9 +193,9 @@ export function VirtualStoreSection() {
       {isLoading && (
         <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
           <div className="text-center text-white">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#EE4C7C] mx-auto mb-4"></div>
-            <h3 className="text-xl font-semibold mb-2">Загружаем виртуальный магазин</h3>
-            <p className="text-gray-300">Подготавливаем 3D модели продуктов...</p>
+              <h3 className="text-xl font-semibold mb-2">Načítavame virtuálny obchod</h3>
+              <p className="text-gray-300">Pripravujeme 3D modely produktov...</p>
+            <p className="text-gray-600">Načítavame produkty...</p>
           </div>
         </div>
       )}

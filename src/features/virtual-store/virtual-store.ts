@@ -175,7 +175,7 @@ export class VirtualStore extends EventEmitter {
         this.emit('loadingComplete');
       }, 500);
     } catch (error) {
-      console.error('Error initializing virtual store:', error);
+      console.error('Chyba pri inicializácii virtuálneho obchodu:', error);
       this.emit('loadingComplete'); // Завершаем загрузку даже при ошибке
     }
   }

@@ -136,7 +136,7 @@ export function StoreUI({
         >
           <div className="text-center text-white">
             <h2 className="text-4xl font-bold mb-4">Vitajte v obchode Teta Márgit!</h2>
-            <p className="text-xl mb-6">Kliknite ľavým tlačidlom myši pre vstup do obchodu</p>
+            <p className="text-xl mb-6">Kliknite pre vstup do obchodu</p>
             <div className="animate-bounce">
               <div className="w-6 h-10 border-2 border-white rounded-full mx-auto">
                 <div className="w-1 h-3 bg-white rounded-full mx-auto mt-2 animate-pulse"></div>

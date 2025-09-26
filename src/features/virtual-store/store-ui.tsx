@@ -113,7 +113,7 @@ export function StoreUI({
         <div className="absolute inset-0 z-20 flex items-center justify-center">
           <div className="text-center text-white">
             <h2 className="text-4xl font-bold mb-4">Добро пожаловать в магазин Тета Маргит!</h2>
-            <p className="text-xl mb-6">Прокрутите мышью, чтобы войти в магазин</p>
+            <p className="text-xl mb-6">Нажмите левую кнопку мыши, чтобы войти в магазин</p>
             <div className="animate-bounce">
               <div className="w-6 h-10 border-2 border-white rounded-full mx-auto">
                 <div className="w-1 h-3 bg-white rounded-full mx-auto mt-2 animate-pulse"></div>

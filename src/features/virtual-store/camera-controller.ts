@@ -8,6 +8,7 @@ export class CameraController {
   private targetPosition: THREE.Vector3;
   private targetLookAt: THREE.Vector3;
   private isAnimating: boolean = false;
+  private hasEnteredStore: boolean = false;
   private mouse: THREE.Vector2;
   private isMouseDown: boolean = false;
   private mouseSpeed: number = 0.002;
@@ -15,7 +16,8 @@ export class CameraController {
   constructor(camera: THREE.PerspectiveCamera, container: HTMLElement) {
     this.camera = camera;
     this.container = container;
-    this.targetPosition = camera.position.clone();
+    // Начальная позиция - перед входом в магазин
+    this.targetPosition = new THREE.Vector3(0, 2, 12);
     this.targetLookAt = new THREE.Vector3(0, 1, 0);
     this.mouse = new THREE.Vector2();
 
@@ -70,12 +72,16 @@ export class CameraController {
   }
 
   public handleScroll(deltaY: number): void {
-    // Убираем блокировку для более отзывчивой навигации
+    // Если еще не вошли в магазин, запускаем анимацию входа
+    if (!this.hasEnteredStore) {
+      this.enterStore();
+      return;
+    }
 
     const scrollDirection = deltaY > 0 ? 1 : -1;
     
-    // Определяем новую секцию - теперь по количеству продуктов + 1 (общий вид)
-    const sectionsCount = this.productPositions.length + 1;
+    // 6 секций для 6 продуктов
+    const sectionsCount = 6;
     let newSection = this.currentSection + scrollDirection;
     
     // Ограничиваем диапазон секций
@@ -85,16 +91,34 @@ export class CameraController {
       this.navigateToSection(newSection);
     }
   }
+  public enterStore(): void {
+    if (this.hasEnteredStore) return;
+    
+    this.hasEnteredStore = true;
+    this.isAnimating = true;
+    
+    // Анимация входа в магазин
+    const entrancePosition = new THREE.Vector3(0, 2, 8);
+    const entranceLookAt = new THREE.Vector3(0, 1, 0);
+    
+    this.animateToPosition(entrancePosition, entranceLookAt, 2000, () => {
+      // После входа переходим к первому продукту
+      setTimeout(() => {
+        this.navigateToSection(0);
+      }, 500);
+    });
+  }
 
   public navigateToSection(sectionIndex: number): void {
-    if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= this.productPositions.length) return;
+    if (!this.hasEnteredStore) return;
+    
+    if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= 6) return;
     
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
-    // Все секции фокусируются на конкретных продуктах
-    const productIndex = sectionIndex;
-    const productPos = this.productPositions[productIndex];
+    // Получаем позицию продукта
+    const productPos = this.productPositions[sectionIndex];
     
     if (!productPos) {
       console.warn(`No product position found for section ${sectionIndex}`);
@@ -122,19 +146,13 @@ export class CameraController {
     const lookAtPos = new THREE.Vector3().copy(productPos);
     lookAtPos.y = 1.3; // Высота продукта
     
-    const targetSection = { 
-      position: cameraPos, 
-      lookAt: lookAtPos 
-    };
-
-    this.animateToPosition(targetSection.position, targetSection.lookAt);
+    this.animateToPosition(cameraPos, lookAtPos);
   }
 
-  private animateToPosition(targetPos: THREE.Vector3, targetLookAt: THREE.Vector3): void {
+  private animateToPosition(targetPos: THREE.Vector3, targetLookAt: THREE.Vector3, duration: number = 1200, onComplete?: () => void): void {
     const startPosition = this.camera.position.clone();
     const startLookAt = this.targetLookAt.clone();
     
-    const duration = 1200; // 1.2 секунды для более быстрой навигации
     const startTime = Date.now();
 
     const animate = () => {
@@ -152,6 +170,7 @@ export class CameraController {
         requestAnimationFrame(animate);
       } else {
         this.isAnimating = false;
+        if (onComplete) onComplete();
       }
     };
 

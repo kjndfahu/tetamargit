@@ -8,7 +8,7 @@ interface StoreUIProps {
   selectedProduct: Product | null;
   onCloseProduct: () => void;
   currentSection: number;
-  totalSections: number;
+  hasEnteredStore: boolean;
   onNavigateToSection: (section: number) => void;
 }
 
@@ -16,7 +16,7 @@ export function StoreUI({
   selectedProduct, 
   onCloseProduct, 
   currentSection, 
-  totalSections, 
+  hasEnteredStore,
   onNavigateToSection 
 }: StoreUIProps) {
   const [addingToCart, setAddingToCart] = useState(false);
@@ -38,16 +38,29 @@ export function StoreUI({
   };
 
   const getSectionName = (index: number) => {
-    if (index < 3) {
-      return `Левая ${index + 1}`;
+    const productNames = [
+      'Колбаса',
+      'Сыр', 
+      'Хлеб',
+      'Овощи',
+      'Варенье',
+      'Молоко'
+    ];
+    return productNames[index] || `Продукт ${index + 1}`;
+  };
+
+  const getSectionSide = (index: number) => {
+    if (index <= 2) {
+      return 'Левая сторона';
     } else {
-      return `Правая ${index - 2}`;
+      return 'Правая сторона';
     }
   };
   return (
     <>
       {/* Navigation Controls */}
-      <div className="absolute top-6 right-6 z-20">
+      {hasEnteredStore && (
+        <div className="absolute top-6 right-6 z-20">
         <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3 flex items-center gap-3">
           <button
             onClick={() => onNavigateToSection(Math.max(0, currentSection - 1))}
@@ -59,23 +72,25 @@ export function StoreUI({
           
           <div className="text-white font-medium px-3 text-center min-w-[120px]">
             <div className="text-sm">{getSectionName(currentSection)}</div>
-            <div className="text-xs opacity-75">{currentSection + 1} / {totalSections}</div>
+            <div className="text-xs opacity-75">{getSectionSide(currentSection)}</div>
           </div>
           
           <button
-            onClick={() => onNavigateToSection(Math.min(totalSections - 1, currentSection + 1))}
-            disabled={currentSection === totalSections - 1}
+            onClick={() => onNavigateToSection(Math.min(5, currentSection + 1))}
+            disabled={currentSection === 5}
             className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
           >
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Section Indicators */}
-      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-20">
+      {hasEnteredStore && (
+        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-20">
         <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3 flex items-center gap-2">
-          {Array.from({ length: totalSections }, (_, i) => (
+          {Array.from({ length: 6 }, (_, i) => (
             <button
               key={i}
               onClick={() => onNavigateToSection(i)}
@@ -88,8 +103,23 @@ export function StoreUI({
             />
           ))}
         </div>
-      </div>
+        </div>
+      )}
 
+      {/* Welcome Message */}
+      {!hasEnteredStore && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className="text-center text-white">
+            <h2 className="text-4xl font-bold mb-4">Добро пожаловать в магазин Тета Маргит!</h2>
+            <p className="text-xl mb-6">Прокрутите мышью, чтобы войти в магазин</p>
+            <div className="animate-bounce">
+              <div className="w-6 h-10 border-2 border-white rounded-full mx-auto">
+                <div className="w-1 h-3 bg-white rounded-full mx-auto mt-2 animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Product Details Modal */}
       {selectedProduct && (
         <div className="absolute inset-0 z-30 flex items-center justify-center">

@@ -86,10 +86,6 @@ export class CameraController {
     }
   }
   public enterStore(): void {
-  public hasEnteredStore(): boolean {
-    return this.hasEnteredStore;
-  }
-
     if (this.hasEnteredStore) return;
     
     this.hasEnteredStore = true;
@@ -105,6 +101,10 @@ export class CameraController {
         this.navigateToSection(0);
       }, 500);
     });
+  }
+
+  public hasEnteredStore(): boolean {
+    return this.hasEnteredStore;
   }
 
   public navigateToSection(sectionIndex: number): void {

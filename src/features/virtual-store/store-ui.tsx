@@ -9,6 +9,7 @@ interface StoreUIProps {
   onCloseProduct: () => void;
   currentSection: number;
   hasEnteredStore: boolean;
+  totalSections: number;
   onNavigateToSection: (section: number) => void;
 }
 
@@ -17,6 +18,7 @@ export function StoreUI({
   onCloseProduct, 
   currentSection, 
   hasEnteredStore,
+  totalSections,
   onNavigateToSection 
 }: StoreUIProps) {
   const [addingToCart, setAddingToCart] = useState(false);
@@ -76,8 +78,8 @@ export function StoreUI({
           </div>
           
           <button
-            onClick={() => onNavigateToSection(Math.min(5, currentSection + 1))}
-            disabled={currentSection === 5}
+            onClick={() => onNavigateToSection(Math.min(totalSections - 1, currentSection + 1))}
+            disabled={currentSection === totalSections - 1}
             className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
           >
             <ArrowRight className="w-5 h-5" />
@@ -90,7 +92,7 @@ export function StoreUI({
       {hasEnteredStore && (
         <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-20">
         <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3 flex items-center gap-2">
-          {Array.from({ length: 6 }, (_, i) => (
+          {Array.from({ length: totalSections }, (_, i) => (
             <button
               key={i}
               onClick={() => onNavigateToSection(i)}

@@ -107,6 +107,7 @@ export function VirtualStoreSection() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentSection, setCurrentSection] = useState(0);
+  const [hasEnteredStore, setHasEnteredStore] = useState(false);
   const [products] = useState<Product[]>(mockProducts);
   const productsLoading = false;
 
@@ -126,6 +127,10 @@ export function VirtualStoreSection() {
       setCurrentSection(section);
     };
 
+    const handleStoreEntered = () => {
+      setHasEnteredStore(true);
+    };
+
     const handleLoadingComplete = () => {
       setIsLoading(false);
       initializingRef.current = false;
@@ -133,6 +138,7 @@ export function VirtualStoreSection() {
 
     store.on('productClick', handleProductClick);
     store.on('sectionChange', handleSectionChange);
+    store.on('storeEntered', handleStoreEntered);
     store.on('loadingComplete', handleLoadingComplete);
 
     // Инициализация магазина
@@ -196,28 +202,9 @@ export function VirtualStoreSection() {
         onCloseProduct={() => setSelectedProduct(null)}
         currentSection={currentSection}
         hasEnteredStore={hasEnteredStore}
+        totalSections={products.length}
         onNavigateToSection={(section) => storeInstance?.navigateToSection(section)}
       />
-
-      {/* Instructions */}
-      {!isLoading && (
-        <div className="absolute bottom-6 left-6 text-white/80 text-sm">
-          <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 space-y-2">
-            <p className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Прокрутите мышью для просмотра продуктов
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Кликните на продукт для подробной информации
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Используйте стрелки или точки для навигации
-            </p>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

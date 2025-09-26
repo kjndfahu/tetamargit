@@ -88,7 +88,6 @@ export class CameraController {
   public enterStore(): void {
     if (this.hasEnteredStore()) return;
     
-    console.log('Vstupujeme do obchodu...');
     this.hasEnteredStore = true;
     this.isAnimating = true;
     
@@ -97,7 +96,6 @@ export class CameraController {
     const entranceLookAt = new THREE.Vector3(0, 1, 0);
     
     this.animateToPosition(entrancePosition, entranceLookAt, 2000, () => {
-      console.log('Vstup do obchodu dokončený');
       // Po vstupe prejdeme k prvému produktu
       setTimeout(() => {
         this.navigateToSection(0);
@@ -121,7 +119,6 @@ export class CameraController {
     const productPos = this.productPositions[sectionIndex];
     
     if (!productPos) {
-      console.warn(`Nenašla sa pozícia produktu pre sekciu ${sectionIndex}`);
       return;
     }
     

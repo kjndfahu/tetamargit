@@ -210,7 +210,6 @@ export class VirtualStore extends EventEmitter {
       this.productDisplays.push(productDisplay);
     }
     
-    console.log(`Created ${this.productDisplays.length} product displays`);
   }
 
   public hasUserEnteredStore(): boolean {
@@ -225,7 +224,6 @@ export class VirtualStore extends EventEmitter {
   public enterStore(): void {
     if (this.hasEnteredStore) return;
     
-    console.log('Vstupujeme do obchodu...');
     this.hasEnteredStore = true;
     this.cameraController.enterStore();
     setTimeout(() => {

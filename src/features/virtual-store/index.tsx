@@ -128,7 +128,6 @@ export function VirtualStoreSection() {
     };
 
     const handleStoreEntered = () => {
-      console.log('Store entered event received');
       setHasEnteredStore(true);
     };
 
@@ -145,7 +144,6 @@ export function VirtualStoreSection() {
     // Инициализация магазина
     store.init().then(() => {
       setStoreInstance(store);
-      console.log('Virtual store initialized');
     }).catch((error) => {
       console.error('Failed to initialize virtual store:', error);
       initializingRef.current = false;

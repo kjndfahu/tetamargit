@@ -232,6 +232,18 @@ export class VirtualStore extends EventEmitter {
       this.emit('storeEntered');
     }, 500);
   }
+
+  public exitStore(): void {
+    if (!this.hasEnteredStore) return;
+    
+    console.log('Exiting store...');
+    this.hasEnteredStore = false;
+    this.cameraController.exitStore();
+    setTimeout(() => {
+      console.log('Store exited successfully');
+      this.emit('exitStore');
+    }, 500);
+  }
   private animate(): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);

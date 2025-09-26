@@ -23,7 +23,6 @@ export function StoreUI({
   totalSections,
   onNavigateToSection,
   onEnterStore
-  onExitStore
 }: StoreUIProps) {
   const [addingToCart, setAddingToCart] = useState(false);
 
@@ -67,6 +66,18 @@ export function StoreUI({
       {/* Navigation Controls */}
       {hasEnteredStore && (
         <div className="absolute top-6 right-6 z-20">
+        <div className="flex flex-col gap-3">
+          {/* Exit Button */}
+          <button
+            onClick={onExitStore}
+            className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-lg p-3 text-white transition-colors cursor-pointer flex items-center gap-2"
+            title="Opustiť simulátor"
+          >
+            <X className="w-5 h-5" />
+            <span className="text-sm font-medium">Opustiť</span>
+          </button>
+          
+          {/* Navigation Controls */}
         <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3 flex items-center gap-3">
           <button
             onClick={() => {
@@ -92,6 +103,7 @@ export function StoreUI({
           >
             <ArrowRight className="w-5 h-5" />
           </button>
+        </div>
         </div>
         </div>
       )}

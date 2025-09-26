@@ -114,6 +114,21 @@ export class CameraController {
     return this._hasEnteredStore;
   }
 
+  public exitStore(): void {
+    if (!this._hasEnteredStore) return;
+    
+    this._hasEnteredStore = false;
+    this.isAnimating = true;
+    this.currentSection = 0;
+    
+    // Возвращаемся к начальной позиции - перед входом в магазин
+    const exitPosition = new THREE.Vector3(0, 2, 12);
+    const exitLookAt = new THREE.Vector3(0, 1, 0);
+    
+    this.animateToPosition(exitPosition, exitLookAt, 2000, () => {
+      this.isAnimating = false;
+    });
+  }
   public navigateToSection(sectionIndex: number): void {
     if (!this._hasEnteredStore) return;
     

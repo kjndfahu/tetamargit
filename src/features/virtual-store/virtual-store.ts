@@ -207,6 +207,10 @@ export class VirtualStore extends EventEmitter {
     this.emit('sectionChange', sectionIndex);
   }
 
+  public enterStore(): void {
+    this.cameraController.enterStore();
+    this.emit('storeEntered');
+  }
   private animate(): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);

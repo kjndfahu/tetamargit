@@ -120,6 +120,27 @@ export function StoreUI({
           </div>
         </div>
       )}
+
+      {/* Instructions */}
+      {hasEnteredStore && (
+        <div className="absolute bottom-6 left-6 text-white/80 text-sm">
+          <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 space-y-2">
+            <p className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
+              Прокрутите мышью для просмотра продуктов
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
+              Кликните на продукт для подробной информации
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
+              Используйте стрелки или точки для навигации
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Product Details Modal */}
       {selectedProduct && (
         <div className="absolute inset-0 z-30 flex items-center justify-center">

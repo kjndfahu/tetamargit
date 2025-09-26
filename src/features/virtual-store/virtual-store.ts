@@ -231,6 +231,7 @@ export class VirtualStore extends EventEmitter {
   public dispose(): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
+      this.animationId = null;
     }
     
     // Очищаем ресурсы
@@ -239,14 +240,15 @@ export class VirtualStore extends EventEmitter {
     this.cameraController.dispose();
     
     // Удаляем обработчики событий
-    this.container.removeEventListener('click', this.onMouseClick.bind(this));
-    window.removeEventListener('resize', this.onWindowResize.bind(this));
-    this.container.removeEventListener('wheel', this.onWheel.bind(this));
+    this.removeAllListeners();
     
     // Очищаем renderer
     if (this.container.contains(this.renderer.domElement)) {
       this.container.removeChild(this.renderer.domElement);
     }
     this.renderer.dispose();
+    
+    // Очищаем сцену
+    this.scene.clear();
   }
 }

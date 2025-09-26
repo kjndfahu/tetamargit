@@ -9,6 +9,7 @@ import { Product } from '@/lib/products';
 export function VirtualStoreSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeInstance, setStoreInstance] = useState<VirtualStore | null>(null);
+  const initializingRef = useRef(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentSection, setCurrentSection] = useState(0);
@@ -21,14 +22,17 @@ export function VirtualStoreSection() {
   );
 
   useEffect(() => {
-    if (!containerRef.current || productsLoading || products.length === 0) return;
+    if (!containerRef.current || productsLoading || products.length === 0 || initializingRef.current) return;
 
+    initializingRef.current = true;
+    
     // Очищаем предыдущий экземпляр если есть
     if (storeInstance) {
       storeInstance.dispose();
+      setStoreInstance(null);
     }
+    
     const store = new VirtualStore(containerRef.current, products);
-    setStoreInstance(store);
 
     // Обработчики событий
     const handleProductClick = (product: Product) => {
@@ -41,6 +45,7 @@ export function VirtualStoreSection() {
 
     const handleLoadingComplete = () => {
       setIsLoading(false);
+      initializingRef.current = false;
     };
 
     store.on('productClick', handleProductClick);
@@ -49,15 +54,21 @@ export function VirtualStoreSection() {
 
     // Инициализация магазина
     store.init().then(() => {
+      setStoreInstance(store);
       console.log('Virtual store initialized');
+    }).catch((error) => {
+      console.error('Failed to initialize virtual store:', error);
+      initializingRef.current = false;
+      setIsLoading(false);
     });
 
     return () => {
+      initializingRef.current = false;
       if (store) {
         store.dispose();
       }
     };
-  }, [products, productsLoading]);
+  }, [products, productsLoading, storeInstance]);
 
   if (productsLoading) {
     return (

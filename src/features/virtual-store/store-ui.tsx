@@ -68,8 +68,10 @@ export function StoreUI({
         <div className="absolute top-6 right-6 z-20">
         <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3 flex items-center gap-3">
           <button
-            onClick={() => onNavigateToSection(Math.max(0, currentSection - 1))}
-            disabled={currentSection === 0}
+            onClick={() => {
+              const newSection = currentSection === 0 ? totalSections - 1 : currentSection - 1;
+              onNavigateToSection(newSection);
+            }}
             className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -81,8 +83,10 @@ export function StoreUI({
           </div>
           
           <button
-            onClick={() => onNavigateToSection(Math.min(totalSections - 1, currentSection + 1))}
-            disabled={currentSection === totalSections - 1}
+            onClick={() => {
+              const newSection = currentSection === totalSections - 1 ? 0 : currentSection + 1;
+              onNavigateToSection(newSection);
+            }}
             className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
           >
             <ArrowRight className="w-5 h-5" />

@@ -117,14 +117,24 @@ export class CameraController {
   public navigateToSection(sectionIndex: number): void {
     if (!this._hasEnteredStore) return;
     
-    const totalSections = this.productPositions.length;
+    const totalSections = this.productPositions.length + 1; // +1 for overview
     if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= totalSections) return;
     
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
-    const productPos = this.productPositions[sectionIndex];
+    // Если это последняя секция - показываем обзорную позицию
+    if (sectionIndex === this.productPositions.length) {
+      const overviewPos = new THREE.Vector3(0, 4, 8);
+      const overviewLookAt = new THREE.Vector3(0, 1, 0);
+      
+      this.animateToPosition(overviewPos, overviewLookAt, 1500, () => {
+        this.isAnimating = false;
+      });
+      return;
+    }
     
+    const productPos = this.productPositions[sectionIndex];
     if (!productPos) {
       this.isAnimating = false;
       return;

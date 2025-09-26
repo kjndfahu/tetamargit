@@ -143,9 +143,10 @@ export class CartService {
   }
 
   // Update cart item quantity
-  static async updateCartItem(itemId: string, quantity: number): Promise<CartItem> {
+  static async updateCartItem(itemId: string, quantity: number): Promise<CartItem | null> {
     if (quantity <= 0) {
-      return this.removeCartItem(itemId);
+      await this.removeCartItem(itemId);
+      return null;
     }
 
     const { data, error } = await supabase

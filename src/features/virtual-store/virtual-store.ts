@@ -24,11 +24,21 @@ export class VirtualStore extends EventEmitter {
     this.container = container;
     this.products = products;
     this.scene = new THREE.Scene();
+    
+    // Initialize camera directly in constructor
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
+    this.camera.position.set(0, 1.5, 8);
+    this.camera.lookAt(0, 0.8, 0);
+    
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
 
     this.initRenderer();
-    this.initCamera();
     this.initLighting();
     this.initEventListeners();
 
@@ -54,19 +64,6 @@ export class VirtualStore extends EventEmitter {
     this.renderer.sortObjects = true;
     
     this.container.appendChild(this.renderer.domElement);
-  }
-
-  private initCamera(): void {
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      this.container.clientWidth / this.container.clientHeight,
-      0.1,
-      1000
-    );
-    
-    // Начальная позиция камеры - перед входом в магазин
-    this.camera.position.set(0, 1.5, 8);
-    this.camera.lookAt(0, 0.8, 0);
   }
 
   private initLighting(): void {

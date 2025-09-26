@@ -205,7 +205,7 @@ export function VirtualStoreSection() {
           <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 space-y-2">
             <p className="flex items-center gap-2">
               <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Прокрутите мышью для перемещения по магазину
+              Прокрутите мышью для просмотра продуктов
             </p>
             <p className="flex items-center gap-2">
               <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
@@ -213,7 +213,7 @@ export function VirtualStoreSection() {
             </p>
             <p className="flex items-center gap-2">
               <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Используйте мышь для поворота камеры
+              Используйте стрелки или точки для навигации
             </p>
           </div>
         </div>

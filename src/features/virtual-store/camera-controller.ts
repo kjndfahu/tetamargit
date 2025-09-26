@@ -70,12 +70,12 @@ export class CameraController {
   }
 
   public handleScroll(deltaY: number): void {
-    if (this.isAnimating) return;
+    // Убираем блокировку для более отзывчивой навигации
 
     const scrollDirection = deltaY > 0 ? 1 : -1;
     
-    // Определяем новую секцию
-    const sectionsCount = 5; // Фиксированное количество секций
+    // Определяем новую секцию - теперь по количеству продуктов + 1 (общий вид)
+    const sectionsCount = this.productPositions.length + 1;
     let newSection = this.currentSection + scrollDirection;
     
     // Ограничиваем диапазон секций
@@ -92,22 +92,50 @@ export class CameraController {
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
-    // Вычисляем позицию камеры для данной секции
-    const sectionPositions = [
-      // Вход в магазин
-      { position: new THREE.Vector3(0, 2.5, 8), lookAt: new THREE.Vector3(0, 1.5, 0) },
-      // Левая сторона
-      { position: new THREE.Vector3(-6, 2.5, 0), lookAt: new THREE.Vector3(-4, 1.5, 0) },
-      // Правая сторона  
-      { position: new THREE.Vector3(6, 2.5, 0), lookAt: new THREE.Vector3(4, 1.5, 0) },
-      // Центр магазина
-      { position: new THREE.Vector3(0, 3.5, 0), lookAt: new THREE.Vector3(0, 1.5, 0) },
-      // Задняя часть
-      { position: new THREE.Vector3(0, 2.5, -6), lookAt: new THREE.Vector3(0, 1.5, -3) }
-    ];
-
-    const targetSection = sectionPositions[Math.min(sectionIndex, sectionPositions.length - 1)];
+    let targetSection;
     
+    if (sectionIndex === 0) {
+      // Первая секция - общий вид магазина
+      targetSection = { 
+        position: new THREE.Vector3(0, 3, 8), 
+        lookAt: new THREE.Vector3(0, 1.5, 0) 
+      };
+    } else {
+      // Остальные секции - фокус на конкретных продуктах
+      const productIndex = sectionIndex - 1;
+      if (productIndex < this.productPositions.length) {
+        const productPos = this.productPositions[productIndex];
+        
+        // Позиционируем камеру перед продуктом
+        const cameraDistance = 3;
+        const cameraHeight = 2;
+        
+        // Вычисляем направление от центра к продукту
+        const direction = new THREE.Vector3().subVectors(productPos, new THREE.Vector3(0, 0, 0)).normalize();
+        
+        // Позиция камеры - отодвигаем от продукта в противоположном направлении
+        const cameraPos = new THREE.Vector3()
+          .copy(productPos)
+          .add(direction.clone().multiplyScalar(cameraDistance));
+        cameraPos.y = cameraHeight;
+        
+        // Смотрим на продукт
+        const lookAtPos = new THREE.Vector3().copy(productPos);
+        lookAtPos.y = 1.3; // Высота продукта
+        
+        targetSection = { 
+          position: cameraPos, 
+          lookAt: lookAtPos 
+        };
+      } else {
+        // Fallback на общий вид
+        targetSection = { 
+          position: new THREE.Vector3(0, 3, 8), 
+          lookAt: new THREE.Vector3(0, 1.5, 0) 
+        };
+      }
+    }
+
     this.animateToPosition(targetSection.position, targetSection.lookAt);
   }
 
@@ -115,7 +143,7 @@ export class CameraController {
     const startPosition = this.camera.position.clone();
     const startLookAt = this.targetLookAt.clone();
     
-    const duration = 1500; // 1.5 секунды
+    const duration = 1200; // 1.2 секунды для более быстрой навигации
     const startTime = Date.now();
 
     const animate = () => {
@@ -145,7 +173,7 @@ export class CameraController {
 
   public update(): void {
     // Плавно перемещаем камеру к целевой позиции
-    this.camera.position.lerp(this.targetPosition, 0.02);
+    this.camera.position.lerp(this.targetPosition, 0.05);
     this.camera.lookAt(this.targetLookAt);
     this.camera.updateMatrixWorld();
   }

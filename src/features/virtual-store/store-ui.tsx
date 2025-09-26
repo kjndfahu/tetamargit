@@ -37,6 +37,10 @@ export function StoreUI({
     }
   };
 
+  const getSectionName = (index: number) => {
+    if (index === 0) return 'Обзор';
+    return `Продукт ${index}`;
+  };
   return (
     <>
       {/* Navigation Controls */}
@@ -50,9 +54,10 @@ export function StoreUI({
             <ArrowLeft className="w-5 h-5" />
           </button>
           
-          <span className="text-white font-medium px-3">
-            {currentSection + 1} / {totalSections}
-          </span>
+          <div className="text-white font-medium px-3 text-center min-w-[120px]">
+            <div className="text-sm">{getSectionName(currentSection)}</div>
+            <div className="text-xs opacity-75">{currentSection + 1} / {totalSections}</div>
+          </div>
           
           <button
             onClick={() => onNavigateToSection(Math.min(totalSections - 1, currentSection + 1))}
@@ -71,6 +76,7 @@ export function StoreUI({
             <button
               key={i}
               onClick={() => onNavigateToSection(i)}
+              title={getSectionName(i)}
               className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer ${
                 i === currentSection
                   ? 'bg-[#EE4C7C] scale-125'

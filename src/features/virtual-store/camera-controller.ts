@@ -8,7 +8,7 @@ export class CameraController {
   private targetPosition: THREE.Vector3;
   private targetLookAt: THREE.Vector3;
   private isAnimating: boolean = false;
-  private hasEnteredStore: boolean = false;
+  private _hasEnteredStore: boolean = false;
   private mouse: THREE.Vector2;
   private isMouseDown: boolean = false;
   private mouseSpeed: number = 0.002;
@@ -86,9 +86,9 @@ export class CameraController {
     }
   }
   public enterStore(): void {
-    if (this.hasEnteredStore()) return;
+    if (this._hasEnteredStore) return;
     
-    this.hasEnteredStore = true;
+    this._hasEnteredStore = true;
     this.isAnimating = true;
     
     // Animácia vstupu do obchodu
@@ -104,11 +104,11 @@ export class CameraController {
   }
 
   public hasEnteredStore(): boolean {
-    return this.hasEnteredStore;
+    return this._hasEnteredStore;
   }
 
   public navigateToSection(sectionIndex: number): void {
-    if (!this.hasEnteredStore()) return;
+    if (!this._hasEnteredStore) return;
     
     if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= 6) return;
     

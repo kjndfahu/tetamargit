@@ -132,34 +132,12 @@ export class ProductDisplay {
     } else {
       // Для правой стороны - табличка слева от продукта, повернута к левой стороне  
       this.labelMesh.position.set(-0.8, 0.8, 0);
-      this.labelMesh.rotation.y = -Math.PI / 2; // Поворот к центру магазина (исправлен)
+      this.labelMesh.rotation.y = -Math.PI / 2; // Поворот к центру магазина
     }
     
     this.group.add(this.labelMesh);
 
     // Добавляем рамку для таблички
-    const frameGeometry = new THREE.PlaneGeometry(1.3, 0.5);
-    const frameMaterial = new THREE.MeshLambertMaterial({ 
-      color: 0x1a1a1a,
-      transparent: true,
-      opacity: 0.95,
-      side: THREE.DoubleSide,
-      depthWrite: true,
-      depthTest: true
-    });
-
-    const frame = new THREE.Mesh(frameGeometry, frameMaterial);
-    
-    if (isLeftSide) {
-      frame.position.set(0.8, 0.8, -0.01);
-      frame.rotation.y = Math.PI / 2;
-    } else {
-      frame.position.set(-0.8, 0.8, -0.01);
-      frame.rotation.y = -Math.PI / 2;
-    }
-    
-    this.group.add(frame);
-    
     // Добавляем текст на табличку
     this.createLabelText();
   }
@@ -185,48 +163,30 @@ export class ProductDisplay {
     
     // Создаем canvas для текста
     const canvas = document.createElement('canvas');
-    canvas.width = 2048;
-    canvas.height = 512;
+    canvas.width = 1024;
+    canvas.height = 256;
     const ctx = canvas.getContext('2d')!;
     
-    // Заливаем фон темным цветом
-    ctx.fillStyle = '#2a2a2a';
+    // Заливаем фон белым цветом
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Настройки текста
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 96px Arial, sans-serif';
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 64px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetX = 4;
-    ctx.shadowOffsetY = 4;
     
     // Рисуем текст
     ctx.fillText(labelText, canvas.width / 2, canvas.height / 2);
     
     // Создаем текстуру из canvas
     const textTexture = new THREE.CanvasTexture(canvas);
-    textTexture.flipY = false;
-    textTexture.generateMipmaps = false;
-    textTexture.minFilter = THREE.LinearFilter;
-    textTexture.magFilter = THREE.LinearFilter;
-    textTexture.wrapS = THREE.ClampToEdgeWrapping;
-    textTexture.wrapT = THREE.ClampToEdgeWrapping;
-    textTexture.format = THREE.RGBAFormat;
-    textTexture.type = THREE.UnsignedByteType;
-    textTexture.needsUpdate = true;
     
     // Применяем текстуру к табличке
     if (this.labelMesh && this.labelMesh.material instanceof THREE.MeshLambertMaterial) {
       this.labelMesh.material.color.setHex(0xffffff);
       this.labelMesh.material.map = textTexture;
-      this.labelMesh.material.transparent = false;
-      this.labelMesh.material.opacity = 1.0;
-      this.labelMesh.material.depthWrite = true;
-      this.labelMesh.material.depthTest = true;
-      this.labelMesh.material.alphaTest = 0.1;
       this.labelMesh.material.needsUpdate = true;
     }
   }

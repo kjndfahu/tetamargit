@@ -56,11 +56,11 @@ export function ImageBanner() {
   useEffect(() => {
     if (banners.length === 0) return;
 
-    const timer = setInterval(() => {
+    const timer = window.setInterval(() => {
       setCurrentSlideIndex((prev) => (prev + 1) % banners.length);
     }, 5000);
 
-    return () => clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, [banners.length]);
 
   const goToPrevious = () => {

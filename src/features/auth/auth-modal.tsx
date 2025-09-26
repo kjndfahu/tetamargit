@@ -66,7 +66,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
         
         await AuthService.signIn(signInData);
         setSuccess('Prihlásenie bolo úspešné!');
-        setTimeout(() => {
+        window.setTimeout(() => {
           onClose();
         }, 1000);
       }

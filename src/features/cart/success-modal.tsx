@@ -19,11 +19,11 @@ interface SuccessModalProps {
 export function SuccessModal({ open, onClose, title = "Objednávka bola úspešne odoslaná", message = "Ďakujeme za nákup! Potvrdenie nájdete v e‑maile.", primaryHref = "/", primaryText = "Pokračovať v nákupe", secondaryText = "Zavrieť", autoCloseMs, onPrimaryClick }: SuccessModalProps) {
 	useEffect(() => {
 		if (!open || !autoCloseMs) return;
-		const t = setTimeout(() => {
+		const t = window.setTimeout(() => {
 			onClose();
 			if (onPrimaryClick) onPrimaryClick();
 		}, autoCloseMs);
-		return () => clearTimeout(t);
+		return () => window.clearTimeout(t);
 	}, [open, autoCloseMs, onClose, onPrimaryClick]);
 
 	if (!open) return null;

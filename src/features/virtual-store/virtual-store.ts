@@ -171,7 +171,7 @@ export class VirtualStore extends EventEmitter {
       this.animate();
       
       // Небольшая задержка перед завершением загрузки
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.emit('loadingComplete');
       }, 500);
     } catch (error) {
@@ -224,7 +224,7 @@ export class VirtualStore extends EventEmitter {
     console.log('Entering store...');
     this.hasEnteredStore = true;
     this.cameraController.enterStore();
-    setTimeout(() => {
+    window.setTimeout(() => {
       console.log('Store entered successfully');
       this.emit('storeEntered');
     }, 500);
@@ -236,17 +236,17 @@ export class VirtualStore extends EventEmitter {
     console.log('Exiting store...');
     this.hasEnteredStore = false;
     this.cameraController.exitStore();
-    setTimeout(() => {
+    window.setTimeout(() => {
       console.log('Store exited successfully');
       this.emit('exitStore');
     }, 500);
   }
   private animate(): void {
     if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
+      window.cancelAnimationFrame(this.animationId);
     }
     
-    this.animationId = requestAnimationFrame(() => this.animate());
+    this.animationId = window.requestAnimationFrame(() => this.animate());
     
     // Обновляем контроллер камеры
     this.cameraController.update();
@@ -263,7 +263,7 @@ export class VirtualStore extends EventEmitter {
 
   public dispose(): void {
     if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
+      window.cancelAnimationFrame(this.animationId);
       this.animationId = null;
     }
     

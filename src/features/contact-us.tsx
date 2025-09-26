@@ -88,7 +88,7 @@ export function ContactUs() {
 
       setIsSubmitted(true);
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         setIsSubmitted(false);
         setFormData({
           name: '',

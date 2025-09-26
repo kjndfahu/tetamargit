@@ -58,11 +58,11 @@ export default function CartPage() {
 
 	useEffect(() => {
 		if (!isSuccessOpen) return;
-		const t = setTimeout(() => {
+		const t = window.setTimeout(() => {
 			setIsSuccessOpen(false);
 			router.push("/");
 		}, 2000);
-		return () => clearTimeout(t);
+		return () => window.clearTimeout(t);
 	}, [isSuccessOpen, router]);
 
 	const handleCheckout = async () => {

@@ -41,21 +41,21 @@ export function StoreUI({
 
   const getSectionName = (index: number) => {
     const productNames = [
-      'Колбаса',
-      'Сыр', 
-      'Хлеб',
-      'Овощи',
-      'Варенье',
-      'Молоко'
+      'Klobása',
+      'Syr', 
+      'Chlieb',
+      'Zelenina',
+      'Džem',
+      'Mlieko'
     ];
-    return productNames[index] || `Продукт ${index + 1}`;
+    return productNames[index] || `Produkt ${index + 1}`;
   };
 
   const getSectionSide = (index: number) => {
     if (index <= 2) {
-      return 'Левая сторона';
+      return 'Ľavá strana';
     } else {
-      return 'Правая сторона';
+      return 'Pravá strana';
     }
   };
   return (
@@ -112,8 +112,8 @@ export function StoreUI({
       {!hasEnteredStore && (
         <div className="absolute inset-0 z-20 flex items-center justify-center">
           <div className="text-center text-white">
-            <h2 className="text-4xl font-bold mb-4">Добро пожаловать в магазин Тета Маргит!</h2>
-            <p className="text-xl mb-6">Нажмите левую кнопку мыши, чтобы войти в магазин</p>
+            <h2 className="text-4xl font-bold mb-4">Vitajte v obchode Teta Márgit!</h2>
+            <p className="text-xl mb-6">Kliknite ľavým tlačidlom myši pre vstup do obchodu</p>
             <div className="animate-bounce">
               <div className="w-6 h-10 border-2 border-white rounded-full mx-auto">
                 <div className="w-1 h-3 bg-white rounded-full mx-auto mt-2 animate-pulse"></div>
@@ -129,15 +129,15 @@ export function StoreUI({
           <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 space-y-2">
             <p className="flex items-center gap-2">
               <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Прокрутите мышью для просмотра продуктов
+              Rolujte myšou pre prezeranie produktov
             </p>
             <p className="flex items-center gap-2">
               <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Кликните на продукт для подробной информации
+              Kliknite na produkt pre podrobné informácie
             </p>
             <p className="flex items-center gap-2">
               <span className="w-2 h-2 bg-[#EE4C7C] rounded-full"></span>
-              Используйте стрелки или точки для навигации
+              Použite šípky alebo bodky pre navigáciu
             </p>
           </div>
         </div>
@@ -157,7 +157,7 @@ export function StoreUI({
                     {selectedProduct.name}
                   </h3>
                   <p className="text-white/90 text-sm">
-                    {selectedProduct.category?.name || 'Без категории'}
+                    {selectedProduct.category?.name || 'Bez kategórie'}
                   </p>
                 </div>
                 <button
@@ -197,7 +197,7 @@ export function StoreUI({
               <div className="space-y-2 mb-6">
                 {selectedProduct.weight && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Вес:</span>
+                    <span className="text-gray-500">Hmotnosť:</span>
                     <span className="text-gray-900">
                       {selectedProduct.weight} {selectedProduct.unit}
                     </span>
@@ -205,9 +205,9 @@ export function StoreUI({
                 )}
                 
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">В наличии:</span>
+                  <span className="text-gray-500">Na sklade:</span>
                   <span className="text-gray-900">
-                    {selectedProduct.stock_quantity} шт.
+                    {selectedProduct.stock_quantity} ks
                   </span>
                 </div>
               </div>
@@ -233,8 +233,8 @@ export function StoreUI({
                 className="w-full bg-[#EE4C7C] hover:bg-[#9A1750] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <ShoppingCart className="w-5 h-5" />
-                {addingToCart ? 'Добавляем...' : 
-                 selectedProduct.stock_quantity === 0 ? 'Нет в наличии' : 'Добавить в корзину'}
+                {addingToCart ? 'Pridávam...' : 
+                 selectedProduct.stock_quantity === 0 ? 'Nie je na sklade' : 'Pridať do košíka'}
               </button>
             </div>
           </div>

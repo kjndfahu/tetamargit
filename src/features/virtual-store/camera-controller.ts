@@ -74,11 +74,11 @@ export class CameraController {
   public handleScroll(deltaY: number): void {
     const scrollDirection = deltaY > 0 ? 1 : -1;
     
-    // 6 секций для 6 продуктов
+    // 6 sekcií pre 6 produktov
     const sectionsCount = 6;
     let newSection = this.currentSection + scrollDirection;
     
-    // Ограничиваем диапазон секций
+    // Obmedzíme rozsah sekcií
     newSection = Math.max(0, Math.min(sectionsCount - 1, newSection));
     
     if (newSection !== this.currentSection) {
@@ -86,19 +86,19 @@ export class CameraController {
     }
   }
   public enterStore(): void {
-    if (this.hasEnteredStore) return;
+    if (this.hasEnteredStore()) return;
     
-    console.log('Entering store...');
+    console.log('Vstupujeme do obchodu...');
     this.hasEnteredStore = true;
     this.isAnimating = true;
     
-    // Анимация входа в магазин
+    // Animácia vstupu do obchodu
     const entrancePosition = new THREE.Vector3(0, 2, 6);
     const entranceLookAt = new THREE.Vector3(0, 1, 0);
     
     this.animateToPosition(entrancePosition, entranceLookAt, 2000, () => {
-      console.log('Store entrance complete');
-      // После входа переходим к первому продукту
+      console.log('Vstup do obchodu dokončený');
+      // Po vstupe prejdeme k prvému produktu
       setTimeout(() => {
         this.navigateToSection(0);
       }, 500);
@@ -110,41 +110,41 @@ export class CameraController {
   }
 
   public navigateToSection(sectionIndex: number): void {
-    if (!this.hasEnteredStore) return;
+    if (!this.hasEnteredStore()) return;
     
     if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= 6) return;
     
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
-    // Получаем позицию продукта
+    // Získame pozíciu produktu
     const productPos = this.productPositions[sectionIndex];
     
     if (!productPos) {
-      console.warn(`No product position found for section ${sectionIndex}`);
+      console.warn(`Nenašla sa pozícia produktu pre sekciu ${sectionIndex}`);
       return;
     }
     
-    // Позиционируем камеру перед продуктом
+    // Umiestnime kameru pred produkt
     const cameraDistance = 4;
     const cameraHeight = 2.5;
     
-    // Определяем сторону (левая или правая) для правильного позиционирования камеры
+    // Určíme stranu (ľavá alebo pravá) pre správne umiestnenie kamery
     const isLeftSide = productPos.x < 0;
     
-    // Позиция камеры - ближе к центру от продукта
+    // Pozícia kamery - bližšie k centru od produktu
     const cameraPos = new THREE.Vector3();
     if (isLeftSide) {
-      // Для левых продуктов - камера справа от них
+      // Pre ľavé produkty - kamera vpravo od nich
       cameraPos.set(productPos.x + cameraDistance, cameraHeight, productPos.z);
     } else {
-      // Для правых продуктов - камера слева от них
+      // Pre pravé produkty - kamera vľavo od nich
       cameraPos.set(productPos.x - cameraDistance, cameraHeight, productPos.z);
     }
     
-    // Смотрим на продукт
+    // Pozeráme na produkt
     const lookAtPos = new THREE.Vector3().copy(productPos);
-    lookAtPos.y = 1.3; // Высота продукта
+    lookAtPos.y = 1.3; // Výška produktu
     
     this.animateToPosition(cameraPos, lookAtPos);
   }

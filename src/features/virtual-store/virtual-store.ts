@@ -17,6 +17,7 @@ export class VirtualStore extends EventEmitter {
   private products: Product[];
   private container: HTMLElement;
   private animationId: number | null = null;
+  private hasEnteredStore: boolean = false;
 
   constructor(container: HTMLElement, products: Product[]) {
     super();
@@ -109,8 +110,8 @@ export class VirtualStore extends EventEmitter {
   }
 
   private onMouseClick(event: MouseEvent): void {
-    // Если еще не вошли в магазин, запускаем вход
-    if (!this.cameraController.hasEnteredStore()) {
+    // Ak sme ešte nevošli do obchodu, spustíme vstup
+    if (!this.hasEnteredStore) {
       this.enterStore();
       return;
     }
@@ -212,16 +213,24 @@ export class VirtualStore extends EventEmitter {
     console.log(`Created ${this.productDisplays.length} product displays`);
   }
 
+  public hasUserEnteredStore(): boolean {
+    return this.hasEnteredStore;
+  }
+
   public navigateToSection(sectionIndex: number): void {
     this.cameraController.navigateToSection(sectionIndex);
     this.emit('sectionChange', sectionIndex);
   }
 
   public enterStore(): void {
+    if (this.hasEnteredStore) return;
+    
+    console.log('Vstupujeme do obchodu...');
+    this.hasEnteredStore = true;
     this.cameraController.enterStore();
     setTimeout(() => {
       this.emit('storeEntered');
-    }, 100);
+    }, 500);
   }
   private animate(): void {
     if (this.animationId) {

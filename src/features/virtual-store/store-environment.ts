@@ -21,10 +21,6 @@ export class StoreEnvironment {
 
   private createFloor(): void {
     const floorGeometry = new THREE.PlaneGeometry(20, 20);
-    const floorMaterial = new THREE.MeshLambertMaterial({ 
-      color: 0xf0f0f0,
-      transparent: false
-    });
     
     // Создаем текстуру плитки
     const canvas = document.createElement('canvas');
@@ -56,6 +52,11 @@ export class StoreEnvironment {
     floorTexture.wrapT = THREE.RepeatWrapping;
     floorTexture.repeat.set(4, 4);
     
+    const floorMaterial = new THREE.MeshLambertMaterial({ 
+      color: 0xf0f0f0,
+      map: floorTexture
+    });
+    
     floorMaterial.map = floorTexture;
     
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -82,8 +83,6 @@ export class StoreEnvironment {
     const leftWall = new THREE.Mesh(wallGeometry, wallMaterial);
     leftWall.position.set(-10, wallHeight / 2, 0);
     leftWall.rotation.y = Math.PI / 2;
-    this.group.add(leftWall);
-
     // Правая стена
     const rightWall = new THREE.Mesh(wallGeometry, wallMaterial);
     rightWall.position.set(10, wallHeight / 2, 0);
@@ -94,8 +93,7 @@ export class StoreEnvironment {
   private createCeiling(): void {
     const ceilingGeometry = new THREE.PlaneGeometry(20, 20);
     const ceilingMaterial = new THREE.MeshLambertMaterial({ 
-      color: 0xffffff,
-      transparent: false
+      color: 0xffffff
     });
     
     const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);

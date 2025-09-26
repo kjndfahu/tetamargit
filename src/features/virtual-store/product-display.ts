@@ -31,7 +31,7 @@ export class ProductDisplay {
     // Определяем тип продукта по категории и создаем соответствующую модель
     const categoryName = this.product.category?.name?.toLowerCase() || '';
     
-    if (categoryName.includes('мясо') || categoryName.includes('колбаса')) {
+    if (categoryName.includes('мясо') || categoryName.includes('мясные') || categoryName.includes('колбаса')) {
       // Модель мясных изделий - цилиндр
       geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.8, 8);
       material = new THREE.MeshLambertMaterial({ 
@@ -39,7 +39,7 @@ export class ProductDisplay {
         transparent: true,
         opacity: 0.9
       });
-    } else if (categoryName.includes('молоко') || categoryName.includes('сыр')) {
+    } else if (categoryName.includes('молоко') || categoryName.includes('молочные') || categoryName.includes('сыр')) {
       // Модель молочных продуктов - параллелепипед
       geometry = new THREE.BoxGeometry(0.4, 0.6, 0.3);
       material = new THREE.MeshLambertMaterial({ 
@@ -47,7 +47,7 @@ export class ProductDisplay {
         transparent: true,
         opacity: 0.9
       });
-    } else if (categoryName.includes('хлеб') || categoryName.includes('выпечка')) {
+    } else if (categoryName.includes('хлеб') || categoryName.includes('хлебобулочные') || categoryName.includes('выпечка')) {
       // Модель хлебобулочных изделий - овальная форма
       geometry = new THREE.SphereGeometry(0.4, 8, 6);
       geometry.scale(1, 0.6, 1.2);
@@ -61,6 +61,14 @@ export class ProductDisplay {
       geometry = new THREE.SphereGeometry(0.35, 12, 8);
       material = new THREE.MeshLambertMaterial({ 
         color: 0x228B22,
+        transparent: true,
+        opacity: 0.9
+      });
+    } else if (categoryName.includes('консервы') || categoryName.includes('варенье')) {
+      // Модель консервов - цилиндр
+      geometry = new THREE.CylinderGeometry(0.25, 0.25, 0.6, 12);
+      material = new THREE.MeshLambertMaterial({ 
+        color: 0xFF6347,
         transparent: true,
         opacity: 0.9
       });

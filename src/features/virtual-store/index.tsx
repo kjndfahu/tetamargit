@@ -3,8 +3,102 @@
 import { useEffect, useRef, useState } from 'react';
 import { VirtualStore } from './virtual-store';
 import { StoreUI } from './store-ui';
-import { useProducts } from '@/hooks/useProducts';
 import { Product } from '@/lib/products';
+
+// Mock data for testing when Supabase is not available
+const mockProducts: Product[] = [
+  {
+    id: '1',
+    name: 'Домашняя колбаса',
+    description: 'Традиционная домашняя колбаса из качественного мяса',
+    price: 8.50,
+    old_price: 10.00,
+    category_id: 'meat',
+    stock_quantity: 15,
+    is_active: true,
+    is_featured: true,
+    weight: 500,
+    unit: 'г',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: { id: 'meat', name: 'Мясные изделия', slug: 'meat', is_active: true, display_order: 1, created_at: '', updated_at: '' }
+  },
+  {
+    id: '2',
+    name: 'Домашний сыр',
+    description: 'Свежий домашний сыр из натурального молока',
+    price: 6.20,
+    category_id: 'dairy',
+    stock_quantity: 8,
+    is_active: true,
+    is_featured: true,
+    weight: 300,
+    unit: 'г',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: { id: 'dairy', name: 'Молочные продукты', slug: 'dairy', is_active: true, display_order: 2, created_at: '', updated_at: '' }
+  },
+  {
+    id: '3',
+    name: 'Свежий хлеб',
+    description: 'Домашний хлеб, выпеченный по традиционному рецепту',
+    price: 2.80,
+    category_id: 'bakery',
+    stock_quantity: 20,
+    is_active: true,
+    is_featured: true,
+    weight: 400,
+    unit: 'г',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: { id: 'bakery', name: 'Хлебобулочные изделия', slug: 'bakery', is_active: true, display_order: 3, created_at: '', updated_at: '' }
+  },
+  {
+    id: '4',
+    name: 'Свежие овощи',
+    description: 'Сезонные овощи с нашего огорода',
+    price: 4.50,
+    category_id: 'vegetables',
+    stock_quantity: 25,
+    is_active: true,
+    is_featured: true,
+    weight: 1000,
+    unit: 'г',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: { id: 'vegetables', name: 'Овощи', slug: 'vegetables', is_active: true, display_order: 4, created_at: '', updated_at: '' }
+  },
+  {
+    id: '5',
+    name: 'Домашнее варенье',
+    description: 'Варенье из свежих ягод по бабушкиному рецепту',
+    price: 5.90,
+    category_id: 'preserves',
+    stock_quantity: 12,
+    is_active: true,
+    is_featured: true,
+    weight: 500,
+    unit: 'г',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: { id: 'preserves', name: 'Консервы', slug: 'preserves', is_active: true, display_order: 5, created_at: '', updated_at: '' }
+  },
+  {
+    id: '6',
+    name: 'Свежее молоко',
+    description: 'Натуральное коровье молоко от местных фермеров',
+    price: 3.20,
+    category_id: 'dairy',
+    stock_quantity: 30,
+    is_active: true,
+    is_featured: true,
+    weight: 1000,
+    unit: 'мл',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    category: { id: 'dairy', name: 'Молочные продукты', slug: 'dairy', is_active: true, display_order: 2, created_at: '', updated_at: '' }
+  }
+];
 
 export function VirtualStoreSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -13,13 +107,8 @@ export function VirtualStoreSection() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentSection, setCurrentSection] = useState(0);
-  
-  // Получаем продукты для отображения в магазине
-  const { products, loading: productsLoading } = useProducts(
-    { inStock: true, featured: true }, 
-    { field: 'created_at', direction: 'desc' }, 
-    12
-  );
+  const [products] = useState<Product[]>(mockProducts);
+  const productsLoading = false;
 
   useEffect(() => {
     if (!containerRef.current || productsLoading || products.length === 0 || initializingRef.current) return;

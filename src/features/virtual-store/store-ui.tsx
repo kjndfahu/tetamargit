@@ -2,7 +2,6 @@
 
 import { X, ShoppingCart, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Product } from '@/lib/products';
-import { useCart } from '@/hooks/useCart';
 import { useState } from 'react';
 
 interface StoreUIProps {
@@ -20,7 +19,6 @@ export function StoreUI({
   totalSections, 
   onNavigateToSection 
 }: StoreUIProps) {
-  const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
 
   const handleAddToCart = async () => {
@@ -28,11 +26,9 @@ export function StoreUI({
     
     try {
       setAddingToCart(true);
-      await addToCart({
-        product_id: selectedProduct.id,
-        quantity: 1,
-        price: selectedProduct.price
-      });
+      // Mock add to cart functionality
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Added to cart:', selectedProduct.name);
       onCloseProduct();
     } catch (error) {
       console.error('Error adding to cart:', error);

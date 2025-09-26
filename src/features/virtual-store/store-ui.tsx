@@ -38,8 +38,11 @@ export function StoreUI({
   };
 
   const getSectionName = (index: number) => {
-    if (index === 0) return 'Обзор';
-    return `Продукт ${index}`;
+    if (index < 3) {
+      return `Левая ${index + 1}`;
+    } else {
+      return `Правая ${index - 2}`;
+    }
   };
   return (
     <>

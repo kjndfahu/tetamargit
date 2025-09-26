@@ -195,7 +195,7 @@ export function VirtualStoreSection() {
         selectedProduct={selectedProduct}
         onCloseProduct={() => setSelectedProduct(null)}
         currentSection={currentSection}
-        totalSections={Math.ceil(products.length / 4)}
+        totalSections={6}
         onNavigateToSection={(section) => storeInstance?.navigateToSection(section)}
       />
 

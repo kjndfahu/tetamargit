@@ -174,28 +174,21 @@ export class VirtualStore extends EventEmitter {
 
   private async createProductDisplays(): Promise<void> {
     const positions = [
-      // Левая стена
-      { x: -4, y: 0, z: -2 },
-      { x: -4, y: 0, z: 0 },
-      { x: -4, y: 0, z: 2 },
+      // Левая сторона (3 продукта)
+      { x: -6, y: 0, z: -3 },
+      { x: -6, y: 0, z: 0 },
+      { x: -6, y: 0, z: 3 },
       
-      // Правая стена
-      { x: 4, y: 0, z: -2 },
-      { x: 4, y: 0, z: 0 },
-      { x: 4, y: 0, z: 2 },
-      
-      // Центральные островки
-      { x: -1.5, y: 0, z: -1 },
-      { x: 1.5, y: 0, z: -1 },
-      { x: -1.5, y: 0, z: 1 },
-      { x: 1.5, y: 0, z: 1 },
-      
-      // Дополнительные позиции
-      { x: 0, y: 0, z: -3 },
-      { x: 0, y: 0, z: 3 }
+      // Правая сторона (3 продукта)
+      { x: 6, y: 0, z: -3 },
+      { x: 6, y: 0, z: 0 },
+      { x: 6, y: 0, z: 3 }
     ];
 
-    for (let i = 0; i < Math.min(this.products.length, positions.length); i++) {
+    // Используем только первые 6 продуктов и позиций
+    const maxProducts = Math.min(6, this.products.length, positions.length);
+    
+    for (let i = 0; i < maxProducts; i++) {
       const product = this.products[i];
       const position = positions[i];
       
@@ -205,6 +198,8 @@ export class VirtualStore extends EventEmitter {
       this.scene.add(productDisplay.getGroup());
       this.productDisplays.push(productDisplay);
     }
+    
+    console.log(`Created ${this.productDisplays.length} product displays`);
   }
 
   public navigateToSection(sectionIndex: number): void {

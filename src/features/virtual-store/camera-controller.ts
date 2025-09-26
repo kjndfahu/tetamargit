@@ -87,54 +87,45 @@ export class CameraController {
   }
 
   public navigateToSection(sectionIndex: number): void {
-    if (sectionIndex === this.currentSection) return;
+    if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= this.productPositions.length) return;
     
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
-    let targetSection;
+    // Все секции фокусируются на конкретных продуктах
+    const productIndex = sectionIndex;
+    const productPos = this.productPositions[productIndex];
     
-    if (sectionIndex === 0) {
-      // Первая секция - общий вид магазина
-      targetSection = { 
-        position: new THREE.Vector3(0, 3, 8), 
-        lookAt: new THREE.Vector3(0, 1.5, 0) 
-      };
-    } else {
-      // Остальные секции - фокус на конкретных продуктах
-      const productIndex = sectionIndex - 1;
-      if (productIndex < this.productPositions.length) {
-        const productPos = this.productPositions[productIndex];
-        
-        // Позиционируем камеру перед продуктом
-        const cameraDistance = 3;
-        const cameraHeight = 2;
-        
-        // Вычисляем направление от центра к продукту
-        const direction = new THREE.Vector3().subVectors(productPos, new THREE.Vector3(0, 0, 0)).normalize();
-        
-        // Позиция камеры - отодвигаем от продукта в противоположном направлении
-        const cameraPos = new THREE.Vector3()
-          .copy(productPos)
-          .add(direction.clone().multiplyScalar(cameraDistance));
-        cameraPos.y = cameraHeight;
-        
-        // Смотрим на продукт
-        const lookAtPos = new THREE.Vector3().copy(productPos);
-        lookAtPos.y = 1.3; // Высота продукта
-        
-        targetSection = { 
-          position: cameraPos, 
-          lookAt: lookAtPos 
-        };
-      } else {
-        // Fallback на общий вид
-        targetSection = { 
-          position: new THREE.Vector3(0, 3, 8), 
-          lookAt: new THREE.Vector3(0, 1.5, 0) 
-        };
-      }
+    if (!productPos) {
+      console.warn(`No product position found for section ${sectionIndex}`);
+      return;
     }
+    
+    // Позиционируем камеру перед продуктом
+    const cameraDistance = 4;
+    const cameraHeight = 2.5;
+    
+    // Определяем сторону (левая или правая) для правильного позиционирования камеры
+    const isLeftSide = productPos.x < 0;
+    
+    // Позиция камеры - ближе к центру от продукта
+    const cameraPos = new THREE.Vector3();
+    if (isLeftSide) {
+      // Для левых продуктов - камера справа от них
+      cameraPos.set(productPos.x + cameraDistance, cameraHeight, productPos.z);
+    } else {
+      // Для правых продуктов - камера слева от них
+      cameraPos.set(productPos.x - cameraDistance, cameraHeight, productPos.z);
+    }
+    
+    // Смотрим на продукт
+    const lookAtPos = new THREE.Vector3().copy(productPos);
+    lookAtPos.y = 1.3; // Высота продукта
+    
+    const targetSection = { 
+      position: cameraPos, 
+      lookAt: lookAtPos 
+    };
 
     this.animateToPosition(targetSection.position, targetSection.lookAt);
   }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, CircleCheck as CheckCircle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { validators, spamDetection, useFormInputHandler } from '@/lib/shared/validators';
 

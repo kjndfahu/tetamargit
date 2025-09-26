@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { CheckCircle2, X } from "lucide-react";
+import { CircleCheck as CheckCircle2, X } from "lucide-react";
 
 interface SuccessModalProps {
 	open: boolean;

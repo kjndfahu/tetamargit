@@ -75,13 +75,13 @@ export class CameraController {
     if (!this._hasEnteredStore || this.isAnimating) return;
 
     const scrollDirection = deltaY > 0 ? 1 : -1;
-    const totalSections = this.productPositions.length;
+    const totalSections = this.productPositions.length + 1; // +1 for overview position
     
     if (totalSections === 0) return;
     
     let newSection = this.currentSection + scrollDirection;
     
-    // Cyklické prechádzanie - po poslednom ide prvý a naopak
+    // Циклическая навигация включая обзорную позицию
     if (newSection >= totalSections) {
       newSection = 0;
     } else if (newSection < 0) {

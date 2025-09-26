@@ -185,8 +185,8 @@ export class ProductDisplay {
     
     // Создаем canvas для текста
     const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 256;
+    canvas.width = 2048;
+    canvas.height = 512;
     const ctx = canvas.getContext('2d')!;
     
     // Заливаем фон темным цветом
@@ -195,24 +195,27 @@ export class ProductDisplay {
     
     // Настройки текста
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 48px Arial, sans-serif';
+    ctx.font = 'bold 96px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 4;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 4;
     
     // Рисуем текст
     ctx.fillText(labelText, canvas.width / 2, canvas.height / 2);
     
     // Создаем текстуру из canvas
     const textTexture = new THREE.CanvasTexture(canvas);
+    textTexture.flipY = false;
     textTexture.generateMipmaps = false;
     textTexture.minFilter = THREE.LinearFilter;
     textTexture.magFilter = THREE.LinearFilter;
     textTexture.wrapS = THREE.ClampToEdgeWrapping;
     textTexture.wrapT = THREE.ClampToEdgeWrapping;
+    textTexture.format = THREE.RGBAFormat;
+    textTexture.type = THREE.UnsignedByteType;
     textTexture.needsUpdate = true;
     
     // Применяем текстуру к табличке
@@ -223,6 +226,7 @@ export class ProductDisplay {
       this.labelMesh.material.opacity = 1.0;
       this.labelMesh.material.depthWrite = true;
       this.labelMesh.material.depthTest = true;
+      this.labelMesh.material.alphaTest = 0.1;
       this.labelMesh.material.needsUpdate = true;
     }
   }

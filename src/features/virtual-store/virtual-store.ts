@@ -196,8 +196,8 @@ export class VirtualStore extends EventEmitter {
       { x: 6, y: 0, z: 3 }
     ];
 
-    // Используем только первые 6 продуктов и позиций
-    const maxProducts = Math.min(6, this.products.length, positions.length);
+    // Используем все доступные продукты и позиции
+    const maxProducts = Math.min(this.products.length, positions.length);
     
     for (let i = 0; i < maxProducts; i++) {
       const product = this.products[i];

@@ -111,8 +111,8 @@ export class ProductDisplay {
   }
 
   private createLabel(): void {
-    // Создаем ценник/этикетку
-    const labelGeometry = new THREE.PlaneGeometry(1, 0.3);
+    // Создаем табличку с названием типа продукции
+    const labelGeometry = new THREE.PlaneGeometry(1.2, 0.4);
     const labelMaterial = new THREE.MeshLambertMaterial({ 
       color: 0xffffff,
       transparent: true,
@@ -121,13 +121,24 @@ export class ProductDisplay {
     });
 
     this.labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
-    this.labelMesh.position.set(0, 0.8, 0.7);
-    this.labelMesh.lookAt(0, 0.8, 10); // Поворачиваем к камере
+    
+    // Определяем сторону продукта (левая или правая)
+    const isLeftSide = this.position.x < 0;
+    
+    if (isLeftSide) {
+      // Для левой стороны - табличка справа от продукта, повернута к правой стороне
+      this.labelMesh.position.set(0.8, 0.8, 0);
+      this.labelMesh.rotation.y = -Math.PI / 2; // Поворот к центру магазина
+    } else {
+      // Для правой стороны - табличка слева от продукта, повернута к левой стороне  
+      this.labelMesh.position.set(-0.8, 0.8, 0);
+      this.labelMesh.rotation.y = Math.PI / 2; // Поворот к центру магазина
+    }
     
     this.group.add(this.labelMesh);
 
-    // Добавляем рамку для ценника
-    const frameGeometry = new THREE.PlaneGeometry(1.1, 0.4);
+    // Добавляем рамку для таблички
+    const frameGeometry = new THREE.PlaneGeometry(1.3, 0.5);
     const frameMaterial = new THREE.MeshLambertMaterial({ 
       color: 0x333333,
       transparent: true,
@@ -136,10 +147,64 @@ export class ProductDisplay {
     });
 
     const frame = new THREE.Mesh(frameGeometry, frameMaterial);
-    frame.position.set(0, 0.8, 0.69);
-    frame.lookAt(0, 0.8, 10);
+    
+    if (isLeftSide) {
+      frame.position.set(0.8, 0.8, -0.01);
+      frame.rotation.y = -Math.PI / 2;
+    } else {
+      frame.position.set(-0.8, 0.8, -0.01);
+      frame.rotation.y = Math.PI / 2;
+    }
     
     this.group.add(frame);
+    
+    // Добавляем текст на табличку
+    this.createLabelText();
+  }
+
+  private createLabelText(): void {
+    // Определяем тип продукции по категории
+    const categoryName = this.product.category?.name?.toLowerCase() || '';
+    let labelText = 'Produkty';
+    
+    if (categoryName.includes('мясо') || categoryName.includes('мясные') || categoryName.includes('колбаса')) {
+      labelText = 'Výrobky z mäsa';
+    } else if (categoryName.includes('молоко') || categoryName.includes('молочные') || categoryName.includes('сыр')) {
+      labelText = 'Mliečne výrobky';
+    } else if (categoryName.includes('хлеб') || categoryName.includes('хлебобулочные') || categoryName.includes('выпечка')) {
+      labelText = 'Pečivo a chlieb';
+    } else if (categoryName.includes('овощи') || categoryName.includes('фрукты')) {
+      labelText = 'Ovocie a zelenina';
+    } else if (categoryName.includes('консервы') || categoryName.includes('варенье')) {
+      labelText = 'Konzervy a džemy';
+    } else {
+      labelText = 'Čerstvé produkty';
+    }
+    
+    // Создаем canvas для текста
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d')!;
+    
+    // Настройки текста
+    ctx.fillStyle = '#333333';
+    ctx.font = 'bold 32px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Рисуем текст
+    ctx.fillText(labelText, canvas.width / 2, canvas.height / 2);
+    
+    // Создаем текстуру из canvas
+    const textTexture = new THREE.CanvasTexture(canvas);
+    textTexture.needsUpdate = true;
+    
+    // Применяем текстуру к табличке
+    if (this.labelMesh && this.labelMesh.material instanceof THREE.MeshLambertMaterial) {
+      this.labelMesh.material.map = textTexture;
+      this.labelMesh.material.needsUpdate = true;
+    }
   }
 
   private createHoverEffects(): void {

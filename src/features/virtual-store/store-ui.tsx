@@ -11,6 +11,7 @@ interface StoreUIProps {
   hasEnteredStore: boolean;
   totalSections: number;
   onNavigateToSection: (section: number) => void;
+  onEnterStore: () => void;
 }
 
 export function StoreUI({ 
@@ -19,7 +20,8 @@ export function StoreUI({
   currentSection, 
   hasEnteredStore,
   totalSections,
-  onNavigateToSection 
+  onNavigateToSection,
+  onEnterStore
 }: StoreUIProps) {
   const [addingToCart, setAddingToCart] = useState(false);
 
@@ -110,7 +112,10 @@ export function StoreUI({
 
       {/* Welcome Message */}
       {!hasEnteredStore && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center">
+        <div 
+          className="absolute inset-0 z-20 flex items-center justify-center cursor-pointer"
+          onClick={onEnterStore}
+        >
           <div className="text-center text-white">
             <h2 className="text-4xl font-bold mb-4">Vitajte v obchode Teta Márgit!</h2>
             <p className="text-xl mb-6">Kliknite ľavým tlačidlom myši pre vstup do obchodu</p>

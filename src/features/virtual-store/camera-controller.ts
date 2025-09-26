@@ -140,7 +140,7 @@ export class CameraController {
 
     // Если это последняя секция - показываем обзорную позицию
     if (sectionIndex === this.productPositions.length) {
-      const overviewPos = new THREE.Vector3(0, 4, 8);
+      const overviewPos = new THREE.Vector3(0, 2, 8);
       const overviewLookAt = new THREE.Vector3(0, 1, 0);
       
       this.animateToPosition(overviewPos, overviewLookAt, 1500, () => {

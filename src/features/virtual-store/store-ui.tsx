@@ -66,12 +66,12 @@ export function StoreUI({
     <>
       {/* Navigation Controls */}
       {hasEnteredStore && (
-        <div className="absolute top-2 right-2 z-20">
+        <div className="absolute top-0 right-0 z-20">
         <div className="flex flex-col gap-3">
           {/* Exit Button */}
           <button
             onClick={onExitStore}
-            className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-lg p-1 text-white transition-colors cursor-pointer w-8 h-8 flex items-center justify-center"
+            className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-lg p-1 text-white transition-colors cursor-pointer w-8 h-8 flex items-center justify-center m-2"
             title="Opustiť simulátor"
           >
             <X className="w-4 h-4" />

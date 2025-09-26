@@ -66,7 +66,7 @@ export function StoreUI({
     <>
       {/* Navigation Controls */}
       {hasEnteredStore && (
-        <div className="absolute top-6 right-6 z-20">
+        <div className="absolute top-4 right-4 z-20">
         <div className="flex flex-col gap-3">
           {/* Exit Button */}
           <button

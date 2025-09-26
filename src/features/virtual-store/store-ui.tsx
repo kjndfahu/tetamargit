@@ -71,10 +71,10 @@ export function StoreUI({
           {/* Exit Button */}
           <button
             onClick={onExitStore}
-            className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-lg p-2 text-white transition-colors cursor-pointer"
+            className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-lg p-1 text-white transition-colors cursor-pointer w-8 h-8 flex items-center justify-center"
             title="Opustiť simulátor"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
           
           {/* Navigation Controls */}

@@ -45,7 +45,7 @@ export function StoreUI({
           <button
             onClick={() => onNavigateToSection(Math.max(0, currentSection - 1))}
             disabled={currentSection === 0}
-            className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors"
+            className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -57,7 +57,7 @@ export function StoreUI({
           <button
             onClick={() => onNavigateToSection(Math.min(totalSections - 1, currentSection + 1))}
             disabled={currentSection === totalSections - 1}
-            className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors"
+            className="p-2 rounded-lg bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
           >
             <ArrowRight className="w-5 h-5" />
           </button>
@@ -71,7 +71,7 @@ export function StoreUI({
             <button
               key={i}
               onClick={() => onNavigateToSection(i)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer ${
                 i === currentSection
                   ? 'bg-[#EE4C7C] scale-125'
                   : 'bg-white/50 hover:bg-white/75'

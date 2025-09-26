@@ -72,11 +72,10 @@ export class CameraController {
   public handleScroll(deltaY: number): void {
     if (this.isAnimating) return;
 
-    const scrollSensitivity = 0.001;
     const scrollDirection = deltaY > 0 ? 1 : -1;
     
     // Определяем новую секцию
-    const sectionsCount = Math.ceil(this.productPositions.length / 4);
+    const sectionsCount = 5; // Фиксированное количество секций
     let newSection = this.currentSection + scrollDirection;
     
     // Ограничиваем диапазон секций
@@ -88,7 +87,7 @@ export class CameraController {
   }
 
   public navigateToSection(sectionIndex: number): void {
-    if (this.isAnimating || sectionIndex === this.currentSection) return;
+    if (sectionIndex === this.currentSection) return;
     
     this.currentSection = sectionIndex;
     this.isAnimating = true;
@@ -96,15 +95,15 @@ export class CameraController {
     // Вычисляем позицию камеры для данной секции
     const sectionPositions = [
       // Вход в магазин
-      { position: new THREE.Vector3(0, 2, 8), lookAt: new THREE.Vector3(0, 1, 0) },
+      { position: new THREE.Vector3(0, 2.5, 8), lookAt: new THREE.Vector3(0, 1.5, 0) },
       // Левая сторона
-      { position: new THREE.Vector3(-6, 2.5, 0), lookAt: new THREE.Vector3(-4, 1, 0) },
+      { position: new THREE.Vector3(-6, 2.5, 0), lookAt: new THREE.Vector3(-4, 1.5, 0) },
       // Правая сторона  
-      { position: new THREE.Vector3(6, 2.5, 0), lookAt: new THREE.Vector3(4, 1, 0) },
+      { position: new THREE.Vector3(6, 2.5, 0), lookAt: new THREE.Vector3(4, 1.5, 0) },
       // Центр магазина
-      { position: new THREE.Vector3(0, 3, 0), lookAt: new THREE.Vector3(0, 1, 0) },
+      { position: new THREE.Vector3(0, 3.5, 0), lookAt: new THREE.Vector3(0, 1.5, 0) },
       // Задняя часть
-      { position: new THREE.Vector3(0, 2.5, -6), lookAt: new THREE.Vector3(0, 1, -2) }
+      { position: new THREE.Vector3(0, 2.5, -6), lookAt: new THREE.Vector3(0, 1.5, -3) }
     ];
 
     const targetSection = sectionPositions[Math.min(sectionIndex, sectionPositions.length - 1)];
@@ -116,7 +115,7 @@ export class CameraController {
     const startPosition = this.camera.position.clone();
     const startLookAt = this.targetLookAt.clone();
     
-    const duration = 2000; // 2 секунды
+    const duration = 1500; // 1.5 секунды
     const startTime = Date.now();
 
     const animate = () => {

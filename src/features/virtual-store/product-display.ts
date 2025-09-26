@@ -183,8 +183,8 @@ export class ProductDisplay {
     // Легкое покачивание продукта
     if (this.productMesh) {
       const time = Date.now() * 0.001;
-      this.productMesh.rotation.y += 0.003;
-      this.productMesh.position.y = 1.3 + Math.sin(time) * 0.01;
+      this.productMesh.rotation.y += 0.005;
+      this.productMesh.position.y = 1.3 + Math.sin(time + this.position.x) * 0.02;
     }
   }
 

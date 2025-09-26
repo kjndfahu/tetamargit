@@ -162,9 +162,13 @@ export class VirtualStore extends EventEmitter {
       // Запускаем анимационный цикл
       this.animate();
       
-      this.emit('loadingComplete');
+      // Небольшая задержка перед завершением загрузки
+      setTimeout(() => {
+        this.emit('loadingComplete');
+      }, 500);
     } catch (error) {
       console.error('Error initializing virtual store:', error);
+      this.emit('loadingComplete'); // Завершаем загрузку даже при ошибке
     }
   }
 

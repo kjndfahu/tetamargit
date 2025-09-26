@@ -111,15 +111,9 @@ export function VirtualStoreSection() {
   const productsLoading = false;
 
   useEffect(() => {
-    if (!containerRef.current || productsLoading || products.length === 0 || initializingRef.current) return;
+    if (!containerRef.current || productsLoading || products.length === 0 || initializingRef.current || storeInstance) return;
 
     initializingRef.current = true;
-    
-    // Очищаем предыдущий экземпляр если есть
-    if (storeInstance) {
-      storeInstance.dispose();
-      setStoreInstance(null);
-    }
     
     const store = new VirtualStore(containerRef.current, products);
 
@@ -157,7 +151,17 @@ export function VirtualStoreSection() {
         store.dispose();
       }
     };
-  }, [products, productsLoading, storeInstance]);
+  }, [products, productsLoading]);
+
+  // Отдельный useEffect для очистки при размонтировании
+  useEffect(() => {
+    return () => {
+      if (storeInstance) {
+        storeInstance.dispose();
+        setStoreInstance(null);
+      }
+    };
+  }, []);
 
   if (productsLoading) {
     return (

@@ -1,4 +1,5 @@
 import { ImageBanner } from "@/features/image-banner";
+import { VirtualStoreSection } from "@/features/virtual-store";
 import { Filter } from "@/features/filter";
 import { RecentlyViewed } from "@/features/recently-viewed";
 import { FlipCards } from "@/features/flip-cards";
@@ -11,6 +12,8 @@ export default function Home() {
     <main className="flex flex-col gap-20 min-h-screen ">
 
       <ImageBanner />
+
+      <VirtualStoreSection />
 
       <Filter />
 

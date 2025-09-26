@@ -1,0 +1,214 @@
+import * as THREE from 'three';
+import { Product } from '@/lib/products';
+
+export class ProductDisplay {
+  private product: Product;
+  private position: { x: number; y: number; z: number };
+  private group: THREE.Group;
+  private productMesh: THREE.Mesh | null = null;
+  private labelMesh: THREE.Mesh | null = null;
+  private animationMixer: THREE.AnimationMixer | null = null;
+  private hoverAnimation: THREE.AnimationAction | null = null;
+
+  constructor(product: Product, position: { x: number; y: number; z: number }) {
+    this.product = product;
+    this.position = position;
+    this.group = new THREE.Group();
+    this.group.position.set(position.x, position.y, position.z);
+  }
+
+  public async create(): Promise<void> {
+    await this.createProductModel();
+    this.createLabel();
+    this.createHoverEffects();
+  }
+
+  private async createProductModel(): Promise<void> {
+    // Создаем временную 3D модель продукта
+    let geometry: THREE.BufferGeometry;
+    let material: THREE.Material;
+
+    // Определяем тип продукта по категории и создаем соответствующую модель
+    const categoryName = this.product.category?.name?.toLowerCase() || '';
+    
+    if (categoryName.includes('мясо') || categoryName.includes('колбаса')) {
+      // Модель мясных изделий - цилиндр
+      geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.8, 8);
+      material = new THREE.MeshLambertMaterial({ 
+        color: 0x8B4513,
+        transparent: true,
+        opacity: 0.9
+      });
+    } else if (categoryName.includes('молоко') || categoryName.includes('сыр')) {
+      // Модель молочных продуктов - параллелепипед
+      geometry = new THREE.BoxGeometry(0.4, 0.6, 0.3);
+      material = new THREE.MeshLambertMaterial({ 
+        color: 0xFFFFF0,
+        transparent: true,
+        opacity: 0.9
+      });
+    } else if (categoryName.includes('хлеб') || categoryName.includes('выпечка')) {
+      // Модель хлебобулочных изделий - овальная форма
+      geometry = new THREE.SphereGeometry(0.4, 8, 6);
+      geometry.scale(1, 0.6, 1.2);
+      material = new THREE.MeshLambertMaterial({ 
+        color: 0xDEB887,
+        transparent: true,
+        opacity: 0.9
+      });
+    } else if (categoryName.includes('овощи') || categoryName.includes('фрукты')) {
+      // Модель овощей/фруктов - сфера
+      geometry = new THREE.SphereGeometry(0.35, 12, 8);
+      material = new THREE.MeshLambertMaterial({ 
+        color: 0x228B22,
+        transparent: true,
+        opacity: 0.9
+      });
+    } else {
+      // Универсальная модель - куб
+      geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+      material = new THREE.MeshLambertMaterial({ 
+        color: 0xEE4C7C,
+        transparent: true,
+        opacity: 0.9
+      });
+    }
+
+    this.productMesh = new THREE.Mesh(geometry, material);
+    this.productMesh.position.y = 1.3; // Поднимаем над полкой
+    this.productMesh.castShadow = true;
+    this.productMesh.receiveShadow = true;
+    
+    // Добавляем userData для идентификации при клике
+    this.productMesh.userData = { 
+      type: 'product', 
+      productId: this.product.id 
+    };
+
+    this.group.add(this.productMesh);
+
+    // Создаем подставку/витрину
+    const standGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.1, 12);
+    const standMaterial = new THREE.MeshLambertMaterial({ 
+      color: 0xC0C0C0,
+      transparent: true,
+      opacity: 0.7
+    });
+    
+    const stand = new THREE.Mesh(standGeometry, standMaterial);
+    stand.position.y = 1.05;
+    stand.receiveShadow = true;
+    
+    this.group.add(stand);
+  }
+
+  private createLabel(): void {
+    // Создаем ценник/этикетку
+    const labelGeometry = new THREE.PlaneGeometry(1, 0.3);
+    const labelMaterial = new THREE.MeshLambertMaterial({ 
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.9,
+      side: THREE.DoubleSide
+    });
+
+    this.labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
+    this.labelMesh.position.set(0, 0.8, 0.7);
+    this.labelMesh.lookAt(0, 0.8, 10); // Поворачиваем к камере
+    
+    this.group.add(this.labelMesh);
+
+    // Добавляем рамку для ценника
+    const frameGeometry = new THREE.PlaneGeometry(1.1, 0.4);
+    const frameMaterial = new THREE.MeshLambertMaterial({ 
+      color: 0x333333,
+      transparent: true,
+      opacity: 0.8,
+      side: THREE.DoubleSide
+    });
+
+    const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+    frame.position.set(0, 0.8, 0.69);
+    frame.lookAt(0, 0.8, 10);
+    
+    this.group.add(frame);
+  }
+
+  private createHoverEffects(): void {
+    if (!this.productMesh) return;
+
+    // Создаем анимацию вращения при наведении
+    this.animationMixer = new THREE.AnimationMixer(this.productMesh);
+    
+    // Создаем keyframes для анимации
+    const times = [0, 1];
+    const rotationValues = [0, Math.PI * 2];
+    
+    const rotationTrack = new THREE.NumberKeyframeTrack(
+      '.rotation[y]',
+      times,
+      rotationValues
+    );
+    
+    const clip = new THREE.AnimationClip('hover', 1, [rotationTrack]);
+    this.hoverAnimation = this.animationMixer.clipAction(clip);
+    this.hoverAnimation.loop = THREE.LoopRepeat;
+  }
+
+  public startHoverAnimation(): void {
+    if (this.hoverAnimation) {
+      this.hoverAnimation.play();
+    }
+  }
+
+  public stopHoverAnimation(): void {
+    if (this.hoverAnimation) {
+      this.hoverAnimation.stop();
+    }
+  }
+
+  public update(): void {
+    if (this.animationMixer) {
+      this.animationMixer.update(0.016); // ~60fps
+    }
+
+    // Легкое покачивание продукта
+    if (this.productMesh) {
+      this.productMesh.rotation.y += 0.005;
+      this.productMesh.position.y = 1.3 + Math.sin(Date.now() * 0.001) * 0.02;
+    }
+  }
+
+  public getInteractableObjects(): THREE.Object3D[] {
+    return this.productMesh ? [this.productMesh] : [];
+  }
+
+  public getProduct(): Product {
+    return this.product;
+  }
+
+  public getPosition(): THREE.Vector3 {
+    return this.group.position.clone();
+  }
+
+  public getGroup(): THREE.Group {
+    return this.group;
+  }
+
+  public dispose(): void {
+    if (this.animationMixer) {
+      this.animationMixer.stopAllAction();
+    }
+
+    this.group.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach(material => material.dispose());
+        } else {
+          child.material.dispose();
+        }
+      }
+    });
+  }
+}

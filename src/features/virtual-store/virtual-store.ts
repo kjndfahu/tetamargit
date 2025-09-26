@@ -65,8 +65,8 @@ export class VirtualStore extends EventEmitter {
     );
     
     // Начальная позиция камеры - перед входом в магазин
-    this.camera.position.set(0, 2, 8);
-    this.camera.lookAt(0, 1, 0);
+    this.camera.position.set(0, 1.5, 8);
+    this.camera.lookAt(0, 0.8, 0);
   }
 
   private initLighting(): void {

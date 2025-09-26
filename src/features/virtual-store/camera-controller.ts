@@ -122,8 +122,8 @@ export class CameraController {
     this.currentSection = 0;
     
     // Возвращаемся к начальной позиции - перед входом в магазин
-    const exitPosition = new THREE.Vector3(0, 2, 12);
-    const exitLookAt = new THREE.Vector3(0, 1, 0);
+    const exitPosition = new THREE.Vector3(0, 1.5, 12);
+    const exitLookAt = new THREE.Vector3(0, 0.8, 0);
     
     this.animateToPosition(exitPosition, exitLookAt, 2000, () => {
       this.isAnimating = false;

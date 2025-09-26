@@ -136,10 +136,15 @@ export function VirtualStoreSection() {
       initializingRef.current = false;
     };
 
+    const handleExitStore = () => {
+      setHasEnteredStore(false);
+      setCurrentSection(0);
+    };
     store.on('productClick', handleProductClick);
     store.on('sectionChange', handleSectionChange);
     store.on('storeEntered', handleStoreEntered);
     store.on('loadingComplete', handleLoadingComplete);
+    store.on('exitStore', handleExitStore);
 
     // Инициализация магазина
     store.init().then(() => {
@@ -204,6 +209,7 @@ export function VirtualStoreSection() {
         totalSections={products.length}
         onNavigateToSection={(section) => storeInstance?.navigateToSection(section)}
         onEnterStore={() => storeInstance?.enterStore()}
+        onExitStore={() => storeInstance?.exitStore()}
       />
     </section>
   );

@@ -23,6 +23,7 @@ export function StoreUI({
   totalSections,
   onNavigateToSection,
   onEnterStore
+  onExitStore
 }: StoreUIProps) {
   const [addingToCart, setAddingToCart] = useState(false);
 

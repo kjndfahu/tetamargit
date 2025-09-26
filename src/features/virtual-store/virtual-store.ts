@@ -8,7 +8,7 @@ import { EventEmitter } from './event-emitter';
 export class VirtualStore extends EventEmitter {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
-  private renderer: THREE.WebGLRenderer;
+ private renderer!: THREE.WebGLRenderer;
   private environment: StoreEnvironment;
   private productDisplays: ProductDisplay[] = [];
   private cameraController: CameraController;

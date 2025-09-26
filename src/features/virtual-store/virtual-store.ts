@@ -39,7 +39,8 @@ export class VirtualStore extends EventEmitter {
     this.renderer = new THREE.WebGLRenderer({ 
       antialias: true, 
       alpha: true,
-      powerPreference: 'high-performance'
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: true
     });
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -48,6 +49,8 @@ export class VirtualStore extends EventEmitter {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.2;
+    this.renderer.autoClear = true;
+    this.renderer.sortObjects = true;
     
     this.container.appendChild(this.renderer.domElement);
   }
@@ -206,6 +209,10 @@ export class VirtualStore extends EventEmitter {
   }
 
   private animate(): void {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+    }
+    
     this.animationId = requestAnimationFrame(() => this.animate());
     
     // Обновляем контроллер камеры
@@ -213,6 +220,9 @@ export class VirtualStore extends EventEmitter {
     
     // Обновляем анимации продуктов
     this.productDisplays.forEach(display => display.update());
+    
+    // Очищаем буферы перед рендерингом
+    this.renderer.clear();
     
     // Рендерим сцену
     this.renderer.render(this.scene, this.camera);

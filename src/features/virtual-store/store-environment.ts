@@ -23,8 +23,7 @@ export class StoreEnvironment {
     const floorGeometry = new THREE.PlaneGeometry(20, 20);
     const floorMaterial = new THREE.MeshLambertMaterial({ 
       color: 0xf0f0f0,
-      transparent: true,
-      opacity: 0.9
+      transparent: false
     });
     
     // Создаем текстуру плитки
@@ -96,8 +95,7 @@ export class StoreEnvironment {
     const ceilingGeometry = new THREE.PlaneGeometry(20, 20);
     const ceilingMaterial = new THREE.MeshLambertMaterial({ 
       color: 0xffffff,
-      transparent: true,
-      opacity: 0.8
+      transparent: false
     });
     
     const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);

@@ -23,6 +23,10 @@ export function VirtualStoreSection() {
   useEffect(() => {
     if (!containerRef.current || productsLoading || products.length === 0) return;
 
+    // Очищаем предыдущий экземпляр если есть
+    if (storeInstance) {
+      storeInstance.dispose();
+    }
     const store = new VirtualStore(containerRef.current, products);
     setStoreInstance(store);
 
@@ -49,7 +53,9 @@ export function VirtualStoreSection() {
     });
 
     return () => {
-      store.dispose();
+      if (store) {
+        store.dispose();
+      }
     };
   }, [products, productsLoading]);
 

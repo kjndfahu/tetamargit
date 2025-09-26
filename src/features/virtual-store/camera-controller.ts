@@ -146,8 +146,9 @@ export class CameraController {
 
   public update(): void {
     // Плавно перемещаем камеру к целевой позиции
-    this.camera.position.lerp(this.targetPosition, 0.05);
+    this.camera.position.lerp(this.targetPosition, 0.02);
     this.camera.lookAt(this.targetLookAt);
+    this.camera.updateMatrixWorld();
   }
 
   public dispose(): void {

@@ -174,8 +174,9 @@ export class ProductDisplay {
 
     // Легкое покачивание продукта
     if (this.productMesh) {
-      this.productMesh.rotation.y += 0.005;
-      this.productMesh.position.y = 1.3 + Math.sin(Date.now() * 0.001) * 0.02;
+      const time = Date.now() * 0.001;
+      this.productMesh.rotation.y += 0.003;
+      this.productMesh.position.y = 1.3 + Math.sin(time) * 0.01;
     }
   }
 

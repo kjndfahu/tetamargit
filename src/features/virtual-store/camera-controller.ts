@@ -97,16 +97,17 @@ export class CameraController {
     
     this._hasEnteredStore = true;
     this.isAnimating = true;
+    this.currentSection = 0; // Сбрасываем секцию при входе
     
     // Animácia vstupu do obchodu
     const entrancePosition = new THREE.Vector3(0, 2, 6);
     const entranceLookAt = new THREE.Vector3(0, 1, 0);
     
     this.animateToPosition(entrancePosition, entranceLookAt, 2000, () => {
-      // Po vstupe prejdeme k prvému produktu
-      setTimeout(() => {
-        this.navigateToSection(0);
-      }, 500);
+      this.isAnimating = false;
+      // Устанавливаем начальную позицию без анимации
+      this.targetPosition.copy(entrancePosition);
+      this.targetLookAt.copy(entranceLookAt);
     });
   }
 
@@ -135,12 +136,15 @@ export class CameraController {
     const totalSections = this.productPositions.length + 1; // +1 for overview
     if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= totalSections) return;
     
+    // Предотвращаем навигацию во время анимации входа
+    if (this.isAnimating) return;
+    
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
     // Если это последняя секция - показываем обзорную позицию
     if (sectionIndex === this.productPositions.length) {
-      const overviewPos = new THREE.Vector3(0, 2, 8);
+      const overviewPos = new THREE.Vector3(0, 1.8, 6);
       const overviewLookAt = new THREE.Vector3(0, 1, 0);
       
       this.animateToPosition(overviewPos, overviewLookAt, 1500, () => {
@@ -155,8 +159,8 @@ export class CameraController {
       return;
     }
     
-    const cameraDistance = 4;
-    const cameraHeight = 2;
+    const cameraDistance = 3.5;
+    const cameraHeight = 1.8;
     
     const isLeftSide = productPos.x < 0;
     
@@ -170,7 +174,7 @@ export class CameraController {
     const lookAtPos = new THREE.Vector3().copy(productPos);
     lookAtPos.y = 1;
     
-    this.animateToPosition(cameraPos, lookAtPos, 1200, () => {
+    this.animateToPosition(cameraPos, lookAtPos, 1000, () => {
       this.isAnimating = false;
     });
   }

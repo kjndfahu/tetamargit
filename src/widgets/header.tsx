@@ -37,7 +37,7 @@ export function Header() {
         <div className="flex justify-between items-center h-16">
           <Link href="/">
             <div className="flex cursor-pointer items-center">
-              <Image width={60} height={60} src="/img/logo-teta.svg" alt="logo" />
+              <Image width={830/17.5} height={60} src="/img/logo.png" alt="logo" />
               <span className="ml-3 text-2xl font-bold uppercase text-[#EE4C7C]">Teta Márgit</span>
             </div>
           </Link>

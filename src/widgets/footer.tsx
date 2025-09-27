@@ -7,7 +7,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-4">
-              <Image width={60} height={60} src="/img/logo-teta.svg" alt="logo" />
+              <Image width={830/17.5} height={60} src="/img/logo.png" alt="logo" />
               <span className="ml-2 text-xl font-bold">Teta Márgit</span>
             </div>
             <p className="text-gray-900 mb-4">

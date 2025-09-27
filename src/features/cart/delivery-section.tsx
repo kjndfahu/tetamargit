@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, useState } from "react";
-import { Truck, Store, MapPin, Home, Building2, Phone, User, Mail, FileText } from "lucide-react";
+import { Truck, Store, MapPin, Chrome as Home, Building2, Phone, User, Mail, FileText } from "lucide-react";
 import { validators, useFormInputHandler } from '@/lib/shared/validators';
 
 export type DeliveryMethod = "pickup" | "courier";

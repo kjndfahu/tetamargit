@@ -8,9 +8,10 @@ interface SummarySidebarProps {
 	deliveryMethod: "pickup" | "courier";
 	onCheckout: () => void;
 	paymentMethod: "card" | "cash";
+	isProcessing?: boolean;
 }
 
-export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymentMethod }: SummarySidebarProps) {
+export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymentMethod, isProcessing = false }: SummarySidebarProps) {
 	const deliveryFee = deliveryMethod === "courier" ? 4.99 : 0;
 	const total = cartSummary.subtotal + deliveryFee;
 
@@ -34,10 +35,11 @@ export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymen
 				</div>
 				<button 
 					onClick={onCheckout} 
-					disabled={cartSummary.itemCount === 0}
+					disabled={cartSummary.itemCount === 0 || isProcessing}
 					className="w-full mt-6 cursor-pointer bg-[#EE4C7C] hover:bg-[#9A1750] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2"
 				>
-					<FileText className="h-5 w-5" /> Dokončiť objednávku
+					<FileText className="h-5 w-5" /> 
+					{isProcessing ? 'Spracovávam objednávku...' : 'Dokončiť objednávku'}
 				</button>
 				<p className="text-xs text-gray-600 mt-3">
 					Platba: {paymentMethod === "card" ? "kartou online" : "v hotovosti pri prevzatí"}.

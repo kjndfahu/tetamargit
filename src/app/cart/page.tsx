@@ -6,23 +6,46 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/features/auth/auth-modal";
-import { DeliverySection, type DeliveryMethod } from "@/features/cart/delivery-section";
+import { DeliverySection, type DeliveryMethod, type DeliveryAddress } from "@/features/cart/delivery-section";
 import { PaymentSection, type PaymentMethod } from "@/features/cart/payment-section";
 import { CartProductsSection } from "@/features/cart/cart-products-section";
 import { SummarySidebar } from "@/features/cart/summary-sidebar";
 import { SuccessModal } from "@/features/cart/success-modal";
+import { OrderService } from "@/lib/order";
+import { validators } from '@/lib/shared/validators';
 
 export default function CartPage() {
 	const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("pickup");
 	const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+	const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
+		fullName: '',
+		phone: '',
+		email: '',
+		street: '',
+		city: '',
+		postalCode: '',
+		note: ''
+	});
+	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 	const [showAuthModal, setShowAuthModal] = useState(false);
 	const [shouldRedirectHomeAfterAuth, setShouldRedirectHomeAfterAuth] = useState(false);
+	const [isProcessingOrder, setIsProcessingOrder] = useState(false);
 	const hasCheckedAuth = useRef(false);
 	const wasAuthenticated = useRef<boolean | undefined>(undefined);
 	const { cartSummary, loading, error, clearCart } = useCart();
-	const { isAuthenticated, loading: authLoading } = useAuth();
+	const { isAuthenticated, loading: authLoading, user } = useAuth();
 	const router = useRouter();
+
+	// Set user email when authenticated and pickup method
+	useEffect(() => {
+		if (isAuthenticated && user?.email && deliveryMethod === "pickup") {
+			setDeliveryAddress(prev => ({
+				...prev,
+				email: user.email || ''
+			}));
+		}
+	}, [isAuthenticated, user?.email, deliveryMethod]);
 
 	// Check authentication when component mounts
 	useEffect(() => {
@@ -65,14 +88,77 @@ export default function CartPage() {
 		return () => window.clearTimeout(t);
 	}, [isSuccessOpen, router]);
 
+	const validateForm = (): boolean => {
+		const newErrors: { [key: string]: string } = {};
+
+		if (deliveryMethod === "courier") {
+			if (!deliveryAddress.fullName.trim()) {
+				newErrors.fullName = "Meno a priezvisko je povinné";
+			}
+			if (!deliveryAddress.phone.trim()) {
+				newErrors.phone = "Telefón je povinný";
+			} else if (!validators.phone(deliveryAddress.phone, false)) {
+				newErrors.phone = "Zadajte platné telefónne číslo";
+			}
+			if (!deliveryAddress.email.trim()) {
+				newErrors.email = "Email je povinný";
+			} else if (!validators.email(deliveryAddress.email)) {
+				newErrors.email = "Zadajte platný email";
+			}
+			if (!deliveryAddress.street.trim()) {
+				newErrors.street = "Ulica a číslo je povinné";
+			}
+			if (!deliveryAddress.city.trim()) {
+				newErrors.city = "Mesto je povinné";
+			}
+			if (!deliveryAddress.postalCode.trim()) {
+				newErrors.postalCode = "PSČ je povinné";
+			}
+		} else {
+			// For pickup, we still need email for confirmation
+			if (!deliveryAddress.email.trim() && user?.email) {
+				setDeliveryAddress(prev => ({ ...prev, email: user.email || '' }));
+			} else if (!deliveryAddress.email.trim() && !user?.email) {
+				newErrors.email = "Email je potrebný pre potvrdenie objednávky";
+			} else if (deliveryAddress.email.trim() && !validators.email(deliveryAddress.email)) {
+				newErrors.email = "Zadajte platný email";
+			}
+		}
+
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
+
 	const handleCheckout = async () => {
+		if (!validateForm()) {
+			return;
+		}
+
 		try {
-			// Here you would normally process the order
-			// For now, we'll just clear the cart and show success
+			setIsProcessingOrder(true);
+			
+			// Send order emails
+			await OrderService.sendOrderEmails({
+				cartSummary,
+				deliveryMethod,
+				paymentMethod,
+				deliveryAddress: deliveryMethod === "courier" ? deliveryAddress : { 
+					...deliveryAddress, 
+					email: deliveryAddress.email || user?.email || '' 
+				},
+				userEmail: user?.email || deliveryAddress.email
+			});
+
+			// Clear the cart after successful order
 			await clearCart();
+			
+			// Show success message
 			setIsSuccessOpen(true);
 		} catch (error) {
-			console.error('Checkout error:', error);
+			console.error('Order processing error:', error);
+			// You could show an error message here
+		} finally {
+			setIsProcessingOrder(false);
 		}
 	};
 
@@ -105,7 +191,13 @@ export default function CartPage() {
 			) : (
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 				<div className="lg:col-span-2 space-y-6">
-					<DeliverySection deliveryMethod={deliveryMethod} setDeliveryMethod={setDeliveryMethod} />
+					<DeliverySection 
+						deliveryMethod={deliveryMethod} 
+						setDeliveryMethod={setDeliveryMethod}
+						deliveryAddress={deliveryAddress}
+						setDeliveryAddress={setDeliveryAddress}
+						errors={errors}
+					/>
 					<PaymentSection paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} />
 					<CartProductsSection />
 				</div>
@@ -115,6 +207,7 @@ export default function CartPage() {
 					deliveryMethod={deliveryMethod}
 					paymentMethod={paymentMethod}
 					onCheckout={handleCheckout}
+					isProcessing={isProcessingOrder}
 				/>
 			</div>
 			)}

@@ -20,108 +20,117 @@ export class OrderService {
       userEmail
     } = orderData;
 
-    // Prepare order details
-    const orderDetails = this.formatOrderDetails(orderData);
+    // Generate unique order number
+    const orderNumber = this.generateOrderNumber();
     
     try {
-      // Send email to service (admin)
-      await this.sendServiceEmail(orderDetails);
-      
-      // Send confirmation email to client
-      await this.sendClientEmail(orderDetails, deliveryAddress.email || userEmail);
+      // Send email to admin only
+      await this.sendAdminEmail(orderData, orderNumber);
       
     } catch (error) {
-      console.error('Error sending order emails:', error);
+      console.error('Error sending order email:', error);
       throw new Error('Nepodarilo sa odoslať objednávku. Skúste to znova.');
     }
   }
 
-  private static formatOrderDetails(orderData: OrderData): string {
+  private static generateOrderNumber(): string {
+    const timestamp = Date.now().toString();
+    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+    return `TM-${timestamp.slice(-6)}${random}`;
+  }
+
+  private static async sendAdminEmail(orderData: OrderData, orderNumber: string): Promise<void> {
     const {
       cartSummary,
       deliveryMethod,
       paymentMethod,
-      deliveryAddress
+      deliveryAddress,
+      userEmail
     } = orderData;
 
     const deliveryFee = deliveryMethod === 'courier' ? 4.99 : 0;
     const total = cartSummary.subtotal + deliveryFee;
+    const customerEmail = deliveryAddress.email || userEmail;
 
-    let details = `
-=== NOVÁ OBJEDNÁVKA ===
+    // Format products list for email
+    const productsList = cartSummary.items.map(item => ({
+      name: item.product?.name || 'Neznámy produkt',
+      quantity: item.quantity,
+      price: item.price.toFixed(2),
+      total: (item.price * item.quantity).toFixed(2)
+    }));
 
-PRODUKTY:
-${cartSummary.items.map(item => 
-  `• ${item.product?.name || 'Neznámy produkt'} - ${item.quantity}x - ${item.price.toFixed(2)}€ = ${(item.price * item.quantity).toFixed(2)}€`
-).join('\n')}
-
-SÚHRN:
-• Produkty: ${cartSummary.subtotal.toFixed(2)}€
-• Doručenie: ${deliveryFee.toFixed(2)}€
-• CELKOM: ${total.toFixed(2)}€
-
-SPÔSOB DORUČENIA: ${deliveryMethod === 'pickup' ? 'Osobný odber' : 'Doručenie kuriérom'}
-SPÔSOB PLATBY: ${paymentMethod === 'card' ? 'Kartou' : 'V hotovosti'}
-`;
-
-    if (deliveryMethod === 'courier') {
-      details += `
-ADRESA DORUČENIA:
-• Meno: ${deliveryAddress.fullName}
-• Telefón: ${deliveryAddress.phone}
-• Email: ${deliveryAddress.email}
-• Adresa: ${deliveryAddress.street}, ${deliveryAddress.city}, ${deliveryAddress.postalCode}
-${deliveryAddress.note ? `• Poznámka: ${deliveryAddress.note}` : ''}
-`;
-    } else {
-      details += `
-KONTAKTNÉ ÚDAJE:
-• Email: ${deliveryAddress.email}
-`;
-    }
-
-    return details;
-  }
-
-  private static async sendServiceEmail(orderDetails: string): Promise<void> {
     const templateParams = {
+      // Order details
+      order_number: orderNumber,
+      order_date: new Date().toLocaleDateString('sk-SK'),
+      
+      // Customer information
+      customer_name: deliveryAddress.fullName || 'Zákazník',
+      customer_email: customerEmail,
+      customer_phone: deliveryAddress.phone || '',
+      
+      // Products - formatted as HTML table
+      products_html: this.formatProductsAsHTML(productsList),
+      products_text: this.formatProductsAsText(productsList),
+      
+      // Pricing
+      subtotal: cartSummary.subtotal.toFixed(2),
+      delivery_fee: deliveryFee.toFixed(2),
+      total: total.toFixed(2),
+      items_count: cartSummary.itemCount,
+      
+      // Delivery & Payment
+      delivery_method: deliveryMethod === 'pickup' ? 'Osobný odber' : 'Doručenie kuriérom',
+      payment_method: paymentMethod === 'card' ? 'Platba kartou' : 'Platba v hotovosti',
+      
+      // Address (only for courier)
+      delivery_address: deliveryMethod === 'courier' ? 
+        `${deliveryAddress.street}, ${deliveryAddress.city}, ${deliveryAddress.postalCode}` : 
+        'Osobný odber v predajni',
+      delivery_note: deliveryAddress.note || '',
+      
+      // Email routing - only to admin
       to_email: 'teta.margit.tech@gmail.com',
-      subject: 'Nová objednávka - Teta Márgit',
-      message: orderDetails,
-      from_name: 'Teta Márgit - Objednávkový systém'
+      from_name: 'Teta Márgit - Nová objednávka'
     };
 
     await emailjs.send(
       process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
-      process.env.NEXT_PUBLIC_EMAILJS_ORDER_TEMPLATE_ID || process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
+      process.env.NEXT_PUBLIC_EMAILJS_ORDER_TEMPLATE_ID || '',
       templateParams,
       process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
     );
   }
 
-  private static async sendClientEmail(orderDetails: string, clientEmail: string): Promise<void> {
-    const clientMessage = `Ďakujeme za vašu objednávku!
+  private static formatProductsAsHTML(products: any[]): string {
+    return `
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <thead>
+          <tr style="background-color: #EE4C7C; color: white;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Produkt</th>
+            <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Množstvo</th>
+            <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Cena/ks</th>
+            <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Spolu</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${products.map(product => `
+            <tr>
+              <td style="padding: 12px; border: 1px solid #ddd;">${product.name}</td>
+              <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${product.quantity}x</td>
+              <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">${product.price}€</td>
+              <td style="padding: 12px; text-align: right; border: 1px solid #ddd; font-weight: bold;">${product.total}€</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
 
-${orderDetails}
-
-Vaša objednávka bola úspešne prijatá a bude spracovaná v najkratšom možnom čase.
-
-S pozdravom,
-Tím Teta Márgit
-`;
-
-    const templateParams = {
-      to_email: clientEmail,
-      subject: 'Potvrdenie objednávky - Teta Márgit',
-      message: clientMessage,
-      from_name: 'Teta Márgit'
-    };
-
-    await emailjs.send(
-      process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
-      process.env.NEXT_PUBLIC_EMAILJS_CLIENT_TEMPLATE_ID || process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
-      templateParams,
-      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
-    );
+  private static formatProductsAsText(products: any[]): string {
+    return products.map(product => 
+      `• ${product.name} - ${product.quantity}x - ${product.price}€ = ${product.total}€`
+    ).join('\n');
   }
 }

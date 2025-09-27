@@ -85,7 +85,7 @@ KONTAKTNÉ ÚDAJE:
 
   private static async sendServiceEmail(orderDetails: string): Promise<void> {
     const templateParams = {
-      to_email: 'info@tetamargit.sk', // Your service email
+      to_email: 'teta.margit.tech@gmail.com',
       subject: 'Nová objednávka - Teta Márgit',
       message: orderDetails,
       from_name: 'Teta Márgit - Objednávkový systém'

@@ -33,9 +33,14 @@ export default function CartPage() {
 	const [isProcessingOrder, setIsProcessingOrder] = useState(false);
 	const hasCheckedAuth = useRef(false);
 	const wasAuthenticated = useRef<boolean | undefined>(undefined);
-	const { cartSummary, loading, error, clearCart } = useCart();
+	const { cartSummary, loading, error, clearCart, refetch } = useCart();
 	const { isAuthenticated, loading: authLoading, user } = useAuth();
 	const router = useRouter();
+
+	// Force cart refresh when products change
+	const handleCartChange = () => {
+		refetch();
+	};
 
 	// Set user email when authenticated and pickup method
 	useEffect(() => {
@@ -199,7 +204,7 @@ export default function CartPage() {
 						errors={errors}
 					/>
 					<PaymentSection paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} />
-					<CartProductsSection />
+					<CartProductsSection onCartChange={handleCartChange} />
 				</div>
 
 				<SummarySidebar

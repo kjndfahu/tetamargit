@@ -2,6 +2,7 @@
 
 import { FileText } from "lucide-react";
 import { CartSummary } from "@/lib/cart";
+import { useEffect, useState } from "react";
 
 interface SummarySidebarProps {
 	cartSummary: CartSummary;
@@ -12,8 +13,14 @@ interface SummarySidebarProps {
 }
 
 export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymentMethod, isProcessing = false }: SummarySidebarProps) {
+	const [currentSummary, setCurrentSummary] = useState(cartSummary);
 	const deliveryFee = deliveryMethod === "courier" ? 4.99 : 0;
-	const total = cartSummary.subtotal + deliveryFee;
+	const total = currentSummary.subtotal + deliveryFee;
+
+	// Update local summary when cartSummary changes
+	useEffect(() => {
+		setCurrentSummary(cartSummary);
+	}, [cartSummary]);
 
 	return (
 		<aside className="lg:col-span-1">
@@ -21,8 +28,8 @@ export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymen
 				<h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2"><FileText className="h-5 w-5 text-[#EE4C7C]" /> Spolu</h3>
 				<div className="space-y-2 text-black">
 					<div className="flex justify-between">
-						<span>Produkty ({cartSummary.itemCount} ks)</span>
-						<span>{cartSummary.subtotal.toFixed(2)}€</span>
+						<span>Produkty ({currentSummary.itemCount} ks)</span>
+						<span>{currentSummary.subtotal.toFixed(2)}€</span>
 					</div>
 					<div className="flex justify-between">
 						<span>Doručenie</span>
@@ -35,7 +42,7 @@ export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymen
 				</div>
 				<button 
 					onClick={onCheckout} 
-					disabled={cartSummary.itemCount === 0 || isProcessing}
+					disabled={currentSummary.itemCount === 0 || isProcessing}
 					className="w-full mt-6 cursor-pointer bg-[#EE4C7C] hover:bg-[#9A1750] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2"
 				>
 					<FileText className="h-5 w-5" /> 

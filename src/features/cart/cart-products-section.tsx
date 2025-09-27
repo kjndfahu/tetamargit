@@ -4,7 +4,11 @@ import { Package, Plus, Minus, Trash2 } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useState } from "react";
 
-export function CartProductsSection() {
+interface CartProductsSectionProps {
+	onCartChange?: () => void;
+}
+
+export function CartProductsSection({ onCartChange }: CartProductsSectionProps) {
 	const { cartItems, updateCartItem, removeCartItem } = useCart();
 	const [updatingItems, setUpdatingItems] = useState<string[]>([]);
 
@@ -14,6 +18,10 @@ export function CartProductsSection() {
 		try {
 			setUpdatingItems(prev => [...prev, itemId]);
 			await updateCartItem(itemId, newQuantity);
+			// Trigger cart change callback to update totals
+			if (onCartChange) {
+				onCartChange();
+			}
 		} catch (error) {
 			console.error('Error updating quantity:', error);
 		} finally {
@@ -27,6 +35,10 @@ export function CartProductsSection() {
 		try {
 			setUpdatingItems(prev => [...prev, itemId]);
 			await removeCartItem(itemId);
+			// Trigger cart change callback to update totals
+			if (onCartChange) {
+				onCartChange();
+			}
 		} catch (error) {
 			console.error('Error removing item:', error);
 		} finally {

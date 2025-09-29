@@ -16,7 +16,7 @@ export function useCart() {
 
   const fetchCart = async () => {
     try {
-      setLoading(true);
+      //setLoading(true);
       setError(null);
       
       const summary = await CartService.getCartSummary(user?.id);

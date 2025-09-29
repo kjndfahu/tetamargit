@@ -131,6 +131,42 @@ export class ProductService {
     };
   }
 
+  // Get 4 random products (optionally excluding one id)
+  static async getRandomProducts(limit = 4, excludeId?: string): Promise<Product[]> {
+    let query = supabase
+      .from('products')
+      .select(`
+        *,
+        category:categories(*)
+      `)
+      .eq('is_active', true)
+      .gt('stock_quantity', 0);
+
+    if (excludeId) {
+      query = query.neq('id', excludeId);
+    }
+
+    // If your DB supports random ordering:
+    // query = query.order('random()');
+    // As a fallback: fetch more and shuffle on client side
+    const { data, error } = await query.limit(20);
+    if (error) throw error;
+
+    const withImages = (data || []).map(p => ({
+      ...p,
+      image_url: p.image_path
+        ? supabase.storage.from('Products').getPublicUrl(p.image_path).data.publicUrl
+        : null
+    }));
+
+    for (let i = withImages.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [withImages[i], withImages[j]] = [withImages[j], withImages[i]];
+    }
+
+    return withImages.slice(0, limit);
+  }
+
   // Get single product by ID
   static async getProduct(id: string): Promise<Product | null> {
     const { data, error } = await supabase

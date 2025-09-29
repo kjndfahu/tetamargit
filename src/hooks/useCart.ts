@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CartService, type CartItem, type CartSummary, type AddToCartData } from '@/lib/cart';
+import { useCartStore } from '@/stores/cart';
 import { useAuth } from '@/hooks/useAuth';
 
 export function useCart() {
@@ -13,6 +14,7 @@ export function useCart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const setItemCount = useCartStore(s => s.setItemCount);
 
   const fetchCart = async () => {
     try {
@@ -22,6 +24,8 @@ export function useCart() {
       const summary = await CartService.getCartSummary(user?.id);
       setCartSummary(summary);
       setCartItems(summary.items);
+      // Синхронизируем счетчик в Zustand, чтобы хедер обновлялся сразу
+      setItemCount(summary.itemCount || 0);
     } catch (err) {
       console.error('Error fetching cart:', err);
       setError('Nepodarilo sa načítať košík');

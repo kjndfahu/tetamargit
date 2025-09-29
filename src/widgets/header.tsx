@@ -2,18 +2,31 @@
 
 import Image from 'next/image';
 import { Search, ShoppingCart, Menu, X, UserPlus, LogIn, User, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AuthModal } from '@/features/auth/auth-modal';
 import { useAuth } from '@/hooks/useAuth';
 import { useCartItemCount } from '@/hooks/useCart';
+import { useCartStore } from '@/stores/cart';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAuth, setOpenAuth] = useState(false);
   const [authType, setAuthType] = useState<'signup' | 'login'>('signup');
   const { user, profile, loading, signOut, isAuthenticated } = useAuth();
-  const { itemCount, loading: cartLoading } = useCartItemCount();
+  const { itemCount: serverItemCount, loading: cartLoading } = useCartItemCount();
+  const zustandItemCount = useCartStore(state => state.itemCount);
+  const setZustandItemCount = useCartStore(state => state.setItemCount);
+  
+  // Синхронизируем Zustand счетчик с серверным при загрузке
+  useEffect(() => {
+    if (!cartLoading && serverItemCount !== undefined) {
+      setZustandItemCount(serverItemCount);
+    }
+  }, [serverItemCount, cartLoading, setZustandItemCount]);
+  
+  // Используем Zustand счетчик
+  const itemCount = zustandItemCount;
 
   // Prevent cart navigation if not authenticated
   const handleCartClick = (e: React.MouseEvent<HTMLAnchorElement>) => {

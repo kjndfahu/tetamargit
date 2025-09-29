@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Search } from 'lucide-react';
 import { useProducts, useCategories } from '@/hooks/useProducts';
-import { useCart } from '@/hooks/useCart';
+import { useCartStore } from '@/stores/cart';
 import { useAuth } from '@/hooks/useAuth';
 import { ProductFilters, ProductSort } from '@/lib/products';
 
@@ -26,7 +27,7 @@ export function Filter() {
 
   const { categories, parentCategories, loading: categoriesLoading } = useCategories();
   const { products, loading: productsLoading, error } = useProducts(filters, sort, 50);
-  const { addToCart } = useCart();
+  const addToCartZustand = useCartStore(s => s.addToCart);
   const { isAuthenticated } = useAuth();
 
   // Helper function to get all child category IDs for a parent category
@@ -143,7 +144,7 @@ export function Filter() {
 
     try {
       setAddingToCart(productId);
-      await addToCart({
+      await addToCartZustand({
         product_id: productId,
         quantity: 1,
         price: price
@@ -324,23 +325,27 @@ export function Filter() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
                 <div key={product.id} className="group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                  <div className="relative overflow-hidden rounded-t-xl">
-                    <img
-                      src={product.image_url || 'products.svg'}
-                      alt={product.name}
-                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-                  
-                  <div className="p-4">
-                    <div className="text-xs text-[#EE4C7C] font-medium mb-2">
-                      {product.category?.name || 'Bez kategórie'}
+                  <Link href={`/product/${product.id}`} className="block">
+                    <div className="relative overflow-hidden rounded-t-xl">
+                      <img
+                        src={product.image_url || 'products.svg'}
+                        alt={product.name}
+                        className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
                     </div>
                     
-                    <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">
-                      {product.name}
-                    </h3>
+                    <div className="p-4">
+                      <div className="text-xs text-[#EE4C7C] font-medium mb-2">
+                        {product.category?.name || 'Bez kategórie'}
+                      </div>
+                      
+                      <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">
+                        {product.name}
+                      </h3>
+                    </div>
+                  </Link>
 
+                  <div className="px-4 pb-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <span className="text-lg font-bold text-black">

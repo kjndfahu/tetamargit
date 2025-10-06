@@ -1,22 +1,86 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export class StoreEnvironment {
   private scene: THREE.Scene;
   private group: THREE.Group;
+  private loader: GLTFLoader;
 
   constructor(scene: THREE.Scene) {
     this.scene = scene;
     this.group = new THREE.Group();
+    this.loader = new GLTFLoader();
   }
 
   public async create(): Promise<void> {
+    try {
+      await this.loadCustomModel();
+      this.scene.add(this.group);
+    } catch (error) {
+      console.warn('Failed to load custom model, falling back to procedural generation:', error);
+      // Fallback to procedural generation if model loading fails
+      this.createProceduralEnvironment();
+      this.scene.add(this.group);
+    }
+  }
+
+  private async loadCustomModel(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.loader.load(
+        '/models/1.glb',
+        (gltf) => {
+          console.log('Successfully loaded custom store model');
+          
+          // Add the loaded model to our group
+          const model = gltf.scene;
+          
+          // Scale and position the model if needed
+          model.scale.setScalar(1);
+          model.position.set(0, 0, 0);
+          
+          // Enable shadows for all meshes in the model
+          model.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+              
+              // Ensure materials are properly configured
+              if (child.material) {
+                if (Array.isArray(child.material)) {
+                  child.material.forEach(material => {
+                    if (material instanceof THREE.MeshStandardMaterial) {
+                      material.needsUpdate = true;
+                    }
+                  });
+                } else if (child.material instanceof THREE.MeshStandardMaterial) {
+                  child.material.needsUpdate = true;
+                }
+              }
+            }
+          });
+          
+          this.group.add(model);
+          resolve();
+        },
+        (progress) => {
+          console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
+        },
+        (error) => {
+          console.error('Error loading GLB model:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+  private createProceduralEnvironment(): void {
+    console.log('Creating fallback procedural environment');
+    
     this.createFloor();
     this.createWalls();
     this.createCeiling();
     this.createShelves();
     this.createDecorations();
-    
-    this.scene.add(this.group);
   }
 
   private createFloor(): void {
@@ -57,8 +121,6 @@ export class StoreEnvironment {
       map: floorTexture
     });
     
-    floorMaterial.map = floorTexture;
-    
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
@@ -83,6 +145,8 @@ export class StoreEnvironment {
     const leftWall = new THREE.Mesh(wallGeometry, wallMaterial);
     leftWall.position.set(-10, wallHeight / 2, 0);
     leftWall.rotation.y = Math.PI / 2;
+    this.group.add(leftWall);
+    
     // Правая стена
     const rightWall = new THREE.Mesh(wallGeometry, wallMaterial);
     rightWall.position.set(10, wallHeight / 2, 0);

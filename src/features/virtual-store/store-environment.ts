@@ -40,8 +40,8 @@ export class StoreEnvironment {
 
           // Scale the model - reduced by 30% (from 2 to 1.4)
           model.scale.setScalar(1.4);
-          // Lower the model position (Y and Z)
-          model.position.set(0, -1, -4);
+          // Lower the model position
+          model.position.set(0, -1.5, 0);
           model.rotation.y = 0;
           
           // Enable shadows for all meshes in the model
@@ -57,12 +57,14 @@ export class StoreEnvironment {
                     if (material instanceof THREE.MeshStandardMaterial) {
                       material.metalness = 0.1;
                       material.roughness = 0.8;
+                      material.side = THREE.DoubleSide;
                       material.needsUpdate = true;
                     }
                   });
                 } else if (child.material instanceof THREE.MeshStandardMaterial) {
                   child.material.metalness = 0.1;
                   child.material.roughness = 0.8;
+                  child.material.side = THREE.DoubleSide;
                   child.material.needsUpdate = true;
                 }
               }

@@ -29,7 +29,7 @@ export class FormManager {
   private fields: Map<string, FormField> = new Map();
   private values: Record<string, any> = {};
   private errors: Record<string, string[]> = {};
-  public touched: Set<string> = new Set();
+  private touched: Set<string> = new Set();
   private isSubmitting: boolean = false;
 
   constructor(config: FormConfig) {
@@ -125,7 +125,7 @@ export class FormManager {
     return this.isSubmitting;
   }
 
-  public validateField(name: string): void {
+  private validateField(name: string): void {
     const field = this.fields.get(name);
     if (!field || !field.validation) {
       return;
@@ -193,7 +193,7 @@ export class FormManager {
     return null;
   }
 
-  public validateAll(): void {
+  private validateAll(): void {
     this.errors = {};
     
     for (const field of this.config.fields) {

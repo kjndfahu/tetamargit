@@ -116,7 +116,7 @@ export const requestIdleCallback = (
       didTimeout: false,
       timeRemaining: () => 0
     });
-  }, 1) as unknown as number;
+  }, 1);
 };
 
 export const cancelIdleCallback = (handle: number): void => {

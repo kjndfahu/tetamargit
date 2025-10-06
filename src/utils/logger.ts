@@ -217,11 +217,11 @@ export const logApiCall = (endpoint: string, method: string, duration: number, s
   logger.info(`API Call: ${method} ${endpoint}`, context, { endpoint, method, duration, status });
 };
 
-export const logUserAction = (action: string, details?: any, context?: string): void => {
+export const logUserAction = (action: string, details?: any, context?: string): void {
   logger.info(`User Action: ${action}`, context, { action, details });
 };
 
-export const logSecurityEvent = (event: string, details?: any, context?: string): void => {
+export const logSecurityEvent = (event: string, details?: any, context?: string): void {
   logger.warn(`Security Event: ${event}`, context, { event, details });
 };
 

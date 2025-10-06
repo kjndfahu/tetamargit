@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-
 export interface Locale {
   code: string;
   name: string;
@@ -258,9 +256,9 @@ export const plural = (count: number, forms: Record<string, string>): string => 
 
 // Хук для React компонентов
 export const useTranslation = () => {
-  const [locale, setLocaleState] = useState(getCurrentLocale());
-
-  useEffect(() => {
+  const [locale, setLocaleState] = React.useState(getCurrentLocale());
+  
+  React.useEffect(() => {
     const handleLocaleChange = (event: CustomEvent) => {
       setLocaleState(event.detail.locale);
     };

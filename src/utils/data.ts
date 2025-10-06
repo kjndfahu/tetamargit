@@ -65,7 +65,7 @@ export const deepMerge = <T extends Record<string, any>>(target: T, ...sources: 
         if (!target[key]) {
           Object.assign(target, { [key]: {} });
         }
-        deepMerge(target[key] as Record<string, any>, source[key] as Partial<Record<string, any>>);
+        deepMerge(target[key], source[key]);
       } else {
         Object.assign(target, { [key]: source[key] });
       }

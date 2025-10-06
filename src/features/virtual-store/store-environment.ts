@@ -40,8 +40,8 @@ export class StoreEnvironment {
 
           // Scale the model - reduced by 30% (from 2 to 1.4)
           model.scale.setScalar(1.4);
-          // Lower the model position
-          model.position.set(0, -1, 0);
+          // Lower the model position (Y and Z)
+          model.position.set(0, -1, -2);
           model.rotation.y = 0;
           
           // Enable shadows for all meshes in the model

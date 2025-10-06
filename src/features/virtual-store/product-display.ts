@@ -33,49 +33,49 @@ export class ProductDisplay {
     
     if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
       // Модель мясных изделий - цилиндр
-      geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.8, 8);
-      material = new THREE.MeshLambertMaterial({ 
+      geometry = new THREE.CylinderGeometry(0.21, 0.21, 0.56, 8);
+      material = new THREE.MeshLambertMaterial({
         color: 0x8B4513,
         transparent: true,
         opacity: 0.9
       });
     } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
       // Модель молочных продуктов - параллелепипед
-      geometry = new THREE.BoxGeometry(0.4, 0.6, 0.3);
-      material = new THREE.MeshLambertMaterial({ 
+      geometry = new THREE.BoxGeometry(0.28, 0.42, 0.21);
+      material = new THREE.MeshLambertMaterial({
         color: 0xFFFFF0,
         transparent: true,
         opacity: 0.9
       });
     } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
       // Модель хлебобулочных изделий - овальная форма
-      geometry = new THREE.SphereGeometry(0.4, 8, 6);
+      geometry = new THREE.SphereGeometry(0.28, 8, 6);
       geometry.scale(1, 0.6, 1.2);
-      material = new THREE.MeshLambertMaterial({ 
+      material = new THREE.MeshLambertMaterial({
         color: 0xDEB887,
         transparent: true,
         opacity: 0.9
       });
     } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
       // Модель овощей/фруктов - сфера
-      geometry = new THREE.SphereGeometry(0.35, 12, 8);
-      material = new THREE.MeshLambertMaterial({ 
+      geometry = new THREE.SphereGeometry(0.245, 12, 8);
+      material = new THREE.MeshLambertMaterial({
         color: 0x228B22,
         transparent: true,
         opacity: 0.9
       });
     } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
       // Модель консервов - цилиндр
-      geometry = new THREE.CylinderGeometry(0.25, 0.25, 0.6, 12);
-      material = new THREE.MeshLambertMaterial({ 
+      geometry = new THREE.CylinderGeometry(0.175, 0.175, 0.42, 12);
+      material = new THREE.MeshLambertMaterial({
         color: 0xFF6347,
         transparent: true,
         opacity: 0.9
       });
     } else {
       // Универсальная модель - куб
-      geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-      material = new THREE.MeshLambertMaterial({ 
+      geometry = new THREE.BoxGeometry(0.35, 0.35, 0.35);
+      material = new THREE.MeshLambertMaterial({
         color: 0xEE4C7C,
         transparent: true,
         opacity: 0.9
@@ -83,7 +83,7 @@ export class ProductDisplay {
     }
 
     this.productMesh = new THREE.Mesh(geometry, material);
-    this.productMesh.position.y = 1.3; // Поднимаем над полкой
+    this.productMesh.position.y = 1.1; // Поднимаем над полкой
     this.productMesh.castShadow = true;
     this.productMesh.receiveShadow = true;
     
@@ -233,7 +233,7 @@ export class ProductDisplay {
     if (this.productMesh) {
       const time = Date.now() * 0.001;
       this.productMesh.rotation.y += 0.005;
-      this.productMesh.position.y = 1.3 + Math.sin(time + this.position.x) * 0.02;
+      this.productMesh.position.y = 1.1 + Math.sin(time + this.position.x) * 0.02;
     }
   }
 

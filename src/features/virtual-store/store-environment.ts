@@ -42,7 +42,7 @@ export class StoreEnvironment {
           model.scale.setScalar(1.4);
           // Lower the model position (Y and Z)
           model.position.set(0, -1, -4);
-          model.rotation.y = 0;
+          model.rotation.y = Math.PI / 2;
           
           // Enable shadows for all meshes in the model
           model.traverse((child) => {

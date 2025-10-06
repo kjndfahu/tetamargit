@@ -16,8 +16,8 @@ export class CameraController {
   constructor(camera: THREE.PerspectiveCamera, container: HTMLElement) {
     this.camera = camera;
     this.container = container;
-    // Начальная позиция - перед входом в магазин
-    this.targetPosition = new THREE.Vector3(0, 2, 12);
+    // Начальная позиция - перед входом в магазин - берем из текущей позиции камеры
+    this.targetPosition = this.camera.position.clone();
     this.targetLookAt = new THREE.Vector3(0, 1, 0);
     this.mouse = new THREE.Vector2();
 
@@ -93,19 +93,26 @@ export class CameraController {
     }
   }
   public enterStore(): void {
-    if (this._hasEnteredStore) return;
-    
+    if (this._hasEnteredStore) {
+      console.log('Already entered store, skipping...');
+      return;
+    }
+
+    console.log('CameraController: Starting enter store animation');
+    console.log('Current camera position:', this.camera.position);
+
     this._hasEnteredStore = true;
     this.isAnimating = true;
-    this.currentSection = 0; // Сбрасываем секцию при входе
-    
-    // Animácia vstupu do obchodu
+    this.currentSection = 0;
+
     const entrancePosition = new THREE.Vector3(0, 2, 6);
     const entranceLookAt = new THREE.Vector3(0, 1, 0);
-    
+
+    console.log('Target entrance position:', entrancePosition);
+
     this.animateToPosition(entrancePosition, entranceLookAt, 2000, () => {
+      console.log('Enter store animation complete');
       this.isAnimating = false;
-      // Устанавливаем начальную позицию без анимации
       this.targetPosition.copy(entrancePosition);
       this.targetLookAt.copy(entranceLookAt);
     });

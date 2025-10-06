@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { VirtualStore } from './virtual-store';
 import { StoreUI } from './store-ui';
 import { Product } from '@/lib/products';
@@ -100,7 +100,7 @@ const mockProducts: Product[] = [
   }
 ];
 
-export function VirtualStoreSection() {
+function VirtualStoreSectionComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeInstance, setStoreInstance] = useState<VirtualStore | null>(null);
   const initializingRef = useRef(false);
@@ -238,3 +238,5 @@ export function VirtualStoreSection() {
     </section>
   );
 }
+
+export const VirtualStoreSection = memo(VirtualStoreSectionComponent);

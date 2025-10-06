@@ -32,54 +32,24 @@ export class ProductDisplay {
     const categoryName = this.product.category?.name?.toLowerCase() || '';
     
     if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
-      // Модель мясных изделий - цилиндр
       geometry = new THREE.CylinderGeometry(0.21, 0.21, 0.56, 8);
-      material = new THREE.MeshLambertMaterial({
-        color: 0x8B4513,
-        transparent: true,
-        opacity: 0.9
-      });
+      material = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
     } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
-      // Модель молочных продуктов - параллелепипед
       geometry = new THREE.BoxGeometry(0.28, 0.42, 0.21);
-      material = new THREE.MeshLambertMaterial({
-        color: 0xFFFFF0,
-        transparent: true,
-        opacity: 0.9
-      });
+      material = new THREE.MeshLambertMaterial({ color: 0xFFFFF0 });
     } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
-      // Модель хлебобулочных изделий - овальная форма
       geometry = new THREE.SphereGeometry(0.28, 8, 6);
       geometry.scale(1, 0.6, 1.2);
-      material = new THREE.MeshLambertMaterial({
-        color: 0xDEB887,
-        transparent: true,
-        opacity: 0.9
-      });
+      material = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
     } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
-      // Модель овощей/фруктов - сфера
-      geometry = new THREE.SphereGeometry(0.245, 12, 8);
-      material = new THREE.MeshLambertMaterial({
-        color: 0x228B22,
-        transparent: true,
-        opacity: 0.9
-      });
+      geometry = new THREE.SphereGeometry(0.245, 8, 6);
+      material = new THREE.MeshLambertMaterial({ color: 0x228B22 });
     } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
-      // Модель консервов - цилиндр
-      geometry = new THREE.CylinderGeometry(0.175, 0.175, 0.42, 12);
-      material = new THREE.MeshLambertMaterial({
-        color: 0xFF6347,
-        transparent: true,
-        opacity: 0.9
-      });
+      geometry = new THREE.CylinderGeometry(0.175, 0.175, 0.42, 8);
+      material = new THREE.MeshLambertMaterial({ color: 0xFF6347 });
     } else {
-      // Универсальная модель - куб
       geometry = new THREE.BoxGeometry(0.35, 0.35, 0.35);
-      material = new THREE.MeshLambertMaterial({
-        color: 0xEE4C7C,
-        transparent: true,
-        opacity: 0.9
-      });
+      material = new THREE.MeshLambertMaterial({ color: 0xEE4C7C });
     }
 
     this.productMesh = new THREE.Mesh(geometry, material);
@@ -95,13 +65,8 @@ export class ProductDisplay {
 
     this.group.add(this.productMesh);
 
-    // Создаем подставку/витрину
-    const standGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.1, 12);
-    const standMaterial = new THREE.MeshLambertMaterial({ 
-      color: 0xC0C0C0,
-      transparent: true,
-      opacity: 0.7
-    });
+    const standGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.1, 8);
+    const standMaterial = new THREE.MeshLambertMaterial({ color: 0xC0C0C0 });
     
     const stand = new THREE.Mesh(standGeometry, standMaterial);
     stand.position.y = 1.05;
@@ -111,12 +76,9 @@ export class ProductDisplay {
   }
 
   private createLabel(): void {
-    // Создаем табличку с названием типа продукции
     const labelGeometry = new THREE.PlaneGeometry(1.2, 0.4);
-    const labelMaterial = new THREE.MeshLambertMaterial({ 
+    const labelMaterial = new THREE.MeshLambertMaterial({
       color: 0xffffff,
-      transparent: true,
-      opacity: 0.9,
       side: THREE.DoubleSide
     });
 
@@ -161,19 +123,17 @@ export class ProductDisplay {
       labelText = 'Čerstvé produkty';
     }
     
-    // Создаем canvas для текста
     const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 256;
+    canvas.width = 512;
+    canvas.height = 128;
     const ctx = canvas.getContext('2d')!;
     
     // Заливаем фон белым цветом
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Настройки текста
     ctx.fillStyle = '#000000';
-    ctx.font = 'bold 64px Arial, sans-serif';
+    ctx.font = 'bold 32px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     

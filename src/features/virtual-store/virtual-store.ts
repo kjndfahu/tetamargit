@@ -47,36 +47,33 @@ export class VirtualStore extends EventEmitter {
   }
 
   private initRenderer(): void {
-    this.renderer = new THREE.WebGLRenderer({ 
-      antialias: true, 
-      alpha: true,
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: window.devicePixelRatio <= 1,
+      alpha: false,
       powerPreference: 'high-performance',
-      preserveDrawingBuffer: true
+      stencil: false,
+      depth: true
     });
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.BasicShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.2;
-    this.renderer.autoClear = true;
-    this.renderer.sortObjects = true;
-    
+
     this.container.appendChild(this.renderer.domElement);
   }
 
   private initLighting(): void {
-    // Ambient light для общего освещения
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     this.scene.add(ambientLight);
 
-    // Directional light для теней
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(10, 10, 5);
     directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 2048;
-    directionalLight.shadow.mapSize.height = 2048;
+    directionalLight.shadow.mapSize.width = 1024;
+    directionalLight.shadow.mapSize.height = 1024;
     directionalLight.shadow.camera.near = 0.5;
     directionalLight.shadow.camera.far = 50;
     directionalLight.shadow.camera.left = -10;
@@ -85,7 +82,6 @@ export class VirtualStore extends EventEmitter {
     directionalLight.shadow.camera.bottom = -10;
     this.scene.add(directionalLight);
 
-    // Point lights для витрин
     const pointLight1 = new THREE.PointLight(0xffffff, 0.6, 10);
     pointLight1.position.set(-3, 3, 0);
     this.scene.add(pointLight1);
@@ -248,19 +244,13 @@ export class VirtualStore extends EventEmitter {
     if (this.animationId) {
       window.cancelAnimationFrame(this.animationId);
     }
-    
+
     this.animationId = window.requestAnimationFrame(() => this.animate());
-    
-    // Обновляем контроллер камеры
+
     this.cameraController.update();
-    
-    // Обновляем анимации продуктов
+
     this.productDisplays.forEach(display => display.update());
-    
-    // Очищаем буферы перед рендерингом
-    this.renderer.clear();
-    
-    // Рендерим сцену
+
     this.renderer.render(this.scene, this.camera);
   }
 

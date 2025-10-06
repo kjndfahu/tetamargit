@@ -39,9 +39,9 @@ export class StoreEnvironment {
           const model = gltf.scene;
 
           // Scale the model - reduced by 30% (from 2 to 1.4)
-          model.scale.setScalar(1.4);
+          model.scale.setScalar(1.2);
           // Lower the model position (Y and Z)
-          model.position.set(0, -1, -4);
+          model.position.set(0, -1, -5);
           model.rotation.y = Math.PI / 2;
           
           // Enable shadows for all meshes in the model

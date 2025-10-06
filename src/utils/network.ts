@@ -172,7 +172,7 @@ export class NetworkManager {
       return response;
     } catch (error) {
       if (this.shouldRetry(error as Error, attempt, config)) {
-        await this.delay(config.retryDelay * attempt);
+        await this.delay((config.retryDelay || 1000) * attempt);
         return this.executeRequest<T>(config, signal, attempt + 1);
       }
       throw error;
@@ -202,9 +202,12 @@ export class NetworkManager {
       }
     }
 
+    const abortController = new AbortController();
     const timeoutId = setTimeout(() => {
-      signal.abort();
+      abortController.abort();
     }, timeout);
+
+    fetchConfig.signal = abortController.signal;
 
     try {
       const response = await fetch(fullUrl, fetchConfig);
@@ -462,6 +465,7 @@ export class WebSocketManager {
 
   constructor(config: Partial<WebSocketConfig> = {}) {
     this.config = {
+      url: '',
       reconnectAttempts: 5,
       reconnectDelay: 1000,
       heartbeatInterval: 30000,
@@ -599,7 +603,7 @@ export class WebSocketManager {
   }
 
   get isConnected(): boolean {
-    return this.ws && this.ws.readyState === WebSocket.OPEN;
+    return !!this.ws && this.ws.readyState === WebSocket.OPEN;
   }
 }
 

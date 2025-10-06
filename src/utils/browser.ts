@@ -155,7 +155,7 @@ export class BrowserDetector {
       supportsServiceWorker: 'serviceWorker' in navigator,
       supportsPushNotifications: 'PushManager' in window,
       language,
-      languages,
+      languages: Array.from(languages),
       timezone,
       screenResolution: {
         width: screen.width,

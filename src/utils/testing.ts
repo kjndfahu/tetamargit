@@ -11,11 +11,13 @@ export interface TestResult {
   duration: number;
   error?: Error;
   retries: number;
+  skip?: boolean;
 }
 
 export interface TestSuite {
   name: string;
   tests: Test[];
+  test?: any;
   beforeAll?: () => void | Promise<void>;
   afterAll?: () => void | Promise<void>;
   beforeEach?: () => void | Promise<void>;
@@ -317,16 +319,17 @@ export const expect = (actual: any) => {
 };
 
 // Утилиты для моков
-export const mock = <T>(obj: T): jest.Mocked<T> => {
-  return obj as jest.Mocked<T>;
+export const mock = <T>(obj: T): T => {
+  return obj;
 };
 
 export const spyOn = <T extends object, K extends keyof T>(
   obj: T,
   method: K
-): jest.SpyInstance => {
+): any => {
   const original = obj[method];
-  const spy = jest.fn().mockImplementation(original as any);
+  const spy = ((...args: any[]) => (original as any)(...args)) as any;
+  spy.mockImplementation = (fn: any) => { obj[method] = fn as T[K]; return spy; };
   obj[method] = spy as T[K];
   return spy;
 };

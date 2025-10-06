@@ -75,15 +75,15 @@ export const formatCountdown = (seconds: number, locale: string = 'sk-SK'): stri
   const langForms = forms[lang] || forms.sk;
   
   if (seconds < 60) {
-    return `${seconds} ${getPluralForm(seconds, langForms.second)}`;
+    return `${seconds} ${getPluralForm(seconds, langForms.second as [string, string, string])}`;
   }
-  
+
   if (seconds < 3600) {
     const minutes = Math.floor(seconds / 60);
-    return `${minutes} ${getPluralForm(minutes, langForms.minute)}`;
+    return `${minutes} ${getPluralForm(minutes, langForms.minute as [string, string, string])}`;
   }
-  
+
   const hours = Math.floor(seconds / 3600);
-  return `${hours} ${getPluralForm(hours, langForms.hour)}`;
+  return `${hours} ${getPluralForm(hours, langForms.hour as [string, string, string])}`;
 };
 

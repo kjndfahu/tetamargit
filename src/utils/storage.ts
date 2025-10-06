@@ -44,10 +44,10 @@ export const storage = {
   }
 };
 
-export const sessionStorage = {
+export const sessionStorageUtil = {
   get: <T>(key: string, defaultValue?: T): T | null => {
     try {
-      const item = sessionStorage.getItem(key);
+      const item = window.sessionStorage.getItem(key);
       if (item === null) return defaultValue || null;
       return JSON.parse(item);
     } catch (error) {
@@ -58,7 +58,7 @@ export const sessionStorage = {
 
   set: <T>(key: string, value: T): void => {
     try {
-      sessionStorage.setItem(key, JSON.stringify(value));
+      window.sessionStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
       console.error(`Error setting sessionStorage key "${key}":`, error);
     }
@@ -66,7 +66,7 @@ export const sessionStorage = {
 
   remove: (key: string): void => {
     try {
-      sessionStorage.removeItem(key);
+      window.sessionStorage.removeItem(key);
     } catch (error) {
       console.error(`Error removing sessionStorage key "${key}":`, error);
     }
@@ -74,7 +74,7 @@ export const sessionStorage = {
 
   clear: (): void => {
     try {
-      sessionStorage.clear();
+      window.sessionStorage.clear();
     } catch (error) {
       console.error('Error clearing sessionStorage:', error);
     }
@@ -82,7 +82,7 @@ export const sessionStorage = {
 
   has: (key: string): boolean => {
     try {
-      return sessionStorage.getItem(key) !== null;
+      return window.sessionStorage.getItem(key) !== null;
     } catch (error) {
       console.error(`Error checking sessionStorage key "${key}":`, error);
       return false;
@@ -95,8 +95,8 @@ export const createStorageHook = <T>(
   defaultValue: T,
   useSession: boolean = false
 ) => {
-  const storageInstance = useSession ? sessionStorage : storage;
-  
+  const storageInstance = useSession ? sessionStorageUtil : storage;
+
   return {
     get: () => storageInstance.get<T>(key, defaultValue),
     set: (value: T) => storageInstance.set(key, value),

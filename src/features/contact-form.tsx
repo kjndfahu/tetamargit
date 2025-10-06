@@ -11,7 +11,6 @@ interface ContactFormProps {
   onDateTimeChange: (date: string, time: string) => void;
 }
 
-export function ContactForm({ deliveryType }: ContactFormProps) {
 export function ContactForm({ deliveryType, onDateTimeChange }: ContactFormProps) {
   const [formData, setFormData] = useState<ContactFormData>({
     firstName: '',
@@ -211,23 +210,23 @@ export function ContactForm({ deliveryType, onDateTimeChange }: ContactFormProps
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="">Vyberte čas</option>
-                             {deliveryType === 'pickup' ? (
-                 <>
-                   {TIME_SLOTS.PICKUP.map((slot, index) => (
-                     <option key={index} value={slot.split(' - ')[0]}>
-                       {slot}
-                     </option>
-                   ))}
-                 </>
-               ) : (
-                 <>
-                   {TIME_SLOTS.DELIVERY.map((slot, index) => (
-                     <option key={index} value={slot.split(' - ')[0]}>
-                       {slot}
-                     </option>
-                   ))}
-                 </>
-               )}
+              {deliveryType === 'pickup' ? (
+                <>
+                  {TIME_SLOTS.PICKUP.map((slot, index) => (
+                    <option key={index} value={slot.split(' - ')[0]}>
+                      {slot}
+                    </option>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {TIME_SLOTS.DELIVERY.map((slot, index) => (
+                    <option key={index} value={slot.split(' - ')[0]}>
+                      {slot}
+                    </option>
+                  ))}
+                </>
+              )}
             </select>
           </div>
         </div>

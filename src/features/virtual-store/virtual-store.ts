@@ -48,16 +48,16 @@ export class VirtualStore extends EventEmitter {
 
   private initRenderer(): void {
     this.renderer = new THREE.WebGLRenderer({
-      antialias: window.devicePixelRatio <= 1,
+      antialias: true,
       alpha: false,
       powerPreference: 'high-performance',
       stencil: false,
       depth: true
     });
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.BasicShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.2;

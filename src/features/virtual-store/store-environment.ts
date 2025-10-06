@@ -37,10 +37,11 @@ export class StoreEnvironment {
           
           // Add the loaded model to our group
           const model = gltf.scene;
-          
-          // Scale the model to fit the store space better
-          model.scale.setScalar(2);
-          model.position.set(0, 0, 0);
+
+          // Scale the model - reduced by 30% (from 2 to 1.4)
+          model.scale.setScalar(1.4);
+          // Lower the model position
+          model.position.set(0, -1, 0);
           model.rotation.y = 0;
           
           // Enable shadows for all meshes in the model

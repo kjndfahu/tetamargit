@@ -76,7 +76,7 @@ export class BrowserDetector {
   private detectBrowserInfo(): BrowserInfo {
     const userAgent = navigator.userAgent;
     const language = navigator.language || 'en';
-    const languages = navigator.languages || [language];
+    const languages = Array.from(navigator.languages || [language]);
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const screen = window.screen;
     const viewport = {

@@ -35,7 +35,6 @@ export function ContactForm({ deliveryType, onDateTimeChange }: ContactFormProps
   const tomorrow = useMemo(() => getTomorrow(), []);
 
   return (
-  return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Kontaktné údaje</h2>
       
@@ -182,9 +181,10 @@ export function ContactForm({ deliveryType, onDateTimeChange }: ContactFormProps
                 } else {
                   handleInputChange('deliveryDate', date);
                 }
-                // Уведомляем родительский компонент об изменении даты
                 const time = deliveryType === 'pickup' ? formData.pickupTime : formData.deliveryTime;
-                onDateTimeChange(date, time);
+                if (time) {
+                  onDateTimeChange(date, time);
+                }
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
@@ -204,9 +204,10 @@ export function ContactForm({ deliveryType, onDateTimeChange }: ContactFormProps
                 } else {
                   handleInputChange('deliveryTime', time);
                 }
-                // Уведомляем родительский компонент об изменении времени
                 const date = deliveryType === 'pickup' ? formData.pickupDate : formData.deliveryDate;
-                onDateTimeChange(date, time);
+                if (date) {
+                  onDateTimeChange(date, time);
+                }
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
@@ -246,6 +247,5 @@ export function ContactForm({ deliveryType, onDateTimeChange }: ContactFormProps
         />
       </div>
     </div>
-  );
   );
 }

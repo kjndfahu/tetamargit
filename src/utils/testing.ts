@@ -11,6 +11,7 @@ export interface TestResult {
   duration: number;
   error?: Error;
   retries: number;
+  skip?: boolean;
 }
 
 export interface TestSuite {
@@ -202,10 +203,10 @@ export class TestRunner {
 }
 
 // Утилиты для создания тестов
-export const describe = (name: string, fn: () => void): TestSuite => {
+export const describe = (name: string, fn: () => void): TestSuite & { test: any } => {
   const tests: Test[] = [];
-  const suite: TestSuite = { name, tests };
-  
+  const suite: TestSuite & { test?: any } = { name, tests };
+
   const test = (testName: string, testFn: () => void | Promise<void>, options?: Partial<Test>): void => {
     tests.push({
       name: testName,
@@ -213,7 +214,7 @@ export const describe = (name: string, fn: () => void): TestSuite => {
       ...options
     });
   };
-  
+
   test.skip = (testName: string, testFn: () => void | Promise<void>, options?: Partial<Test>): void => {
     tests.push({
       name: testName,
@@ -222,7 +223,7 @@ export const describe = (name: string, fn: () => void): TestSuite => {
       ...options
     });
   };
-  
+
   test.only = (testName: string, testFn: () => void | Promise<void>, options?: Partial<Test>): void => {
     tests.push({
       name: testName,
@@ -231,12 +232,12 @@ export const describe = (name: string, fn: () => void): TestSuite => {
       ...options
     });
   };
-  
+
   suite.test = test;
-  
+
   fn();
-  
-  return suite;
+
+  return suite as TestSuite & { test: any };
 };
 
 export const it = describe;
@@ -317,16 +318,17 @@ export const expect = (actual: any) => {
 };
 
 // Утилиты для моков
-export const mock = <T>(obj: T): jest.Mocked<T> => {
-  return obj as jest.Mocked<T>;
+export const mock = <T>(obj: T): T => {
+  return obj as T;
 };
 
 export const spyOn = <T extends object, K extends keyof T>(
   obj: T,
   method: K
-): jest.SpyInstance => {
+): any => {
   const original = obj[method];
-  const spy = jest.fn().mockImplementation(original as any);
+  const spy = (() => {}) as any;
+  spy.mockImplementation = (fn: any) => spy;
   obj[method] = spy as T[K];
   return spy;
 };

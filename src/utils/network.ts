@@ -172,7 +172,7 @@ export class NetworkManager {
       return response;
     } catch (error) {
       if (this.shouldRetry(error as Error, attempt, config)) {
-        await this.delay(config.retryDelay * attempt);
+        await this.delay((config.retryDelay || 1000) * attempt);
         return this.executeRequest<T>(config, signal, attempt + 1);
       }
       throw error;
@@ -183,11 +183,14 @@ export class NetworkManager {
     const { method, url, data, params, headers, timeout, withCredentials } = config;
     const fullUrl = this.buildUrl(url, params);
 
+    const timeoutController = new AbortController();
+    const combinedSignal = timeoutController.signal;
+
     const fetchConfig: RequestInit = {
       method,
       headers: this.mergeHeaders(headers),
       credentials: withCredentials ? 'include' : 'same-origin',
-      signal,
+      signal: combinedSignal,
     };
 
     if (data && method !== 'GET') {
@@ -203,7 +206,7 @@ export class NetworkManager {
     }
 
     const timeoutId = setTimeout(() => {
-      signal.abort();
+      timeoutController.abort();
     }, timeout);
 
     try {
@@ -462,6 +465,7 @@ export class WebSocketManager {
 
   constructor(config: Partial<WebSocketConfig> = {}) {
     this.config = {
+      url: config.url || '',
       reconnectAttempts: 5,
       reconnectDelay: 1000,
       heartbeatInterval: 30000,
@@ -599,7 +603,7 @@ export class WebSocketManager {
   }
 
   get isConnected(): boolean {
-    return this.ws && this.ws.readyState === WebSocket.OPEN;
+    return !!(this.ws && this.ws.readyState === WebSocket.OPEN);
   }
 }
 

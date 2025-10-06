@@ -6,12 +6,12 @@ export const createAriaLabel = (text: string, context?: string): string => {
   return context ? `${text} ${context}` : text;
 };
 
-export const createAriaDescribedBy = (description: string): string => {
+export const createAriaDescribedBy = (description: string): { id: string; description: string } => {
   const id = generateId('desc');
   return { id, description };
 };
 
-export const createAriaLabelledBy = (label: string): string => {
+export const createAriaLabelledBy = (label: string): { id: string; label: string } => {
   const id = generateId('label');
   return { id, label };
 };

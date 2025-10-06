@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 export class StoreEnvironment {
   private scene: THREE.Scene;
@@ -10,6 +11,10 @@ export class StoreEnvironment {
     this.scene = scene;
     this.group = new THREE.Group();
     this.loader = new GLTFLoader();
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    this.loader.setDRACOLoader(dracoLoader);
   }
 
   public async create(): Promise<void> {

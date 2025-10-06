@@ -17,15 +17,14 @@ export class StoreEnvironment {
       await this.loadCustomModel();
       this.scene.add(this.group);
     } catch (error) {
-      console.warn('Failed to load custom model, falling back to procedural generation:', error);
-      // Fallback to procedural generation if model loading fails
-      this.createProceduralEnvironment();
-      this.scene.add(this.group);
+      console.error('Failed to load custom model:', error);
+      throw error; // Don't fallback, show the error
     }
   }
 
   private async loadCustomModel(): Promise<void> {
     return new Promise((resolve, reject) => {
+      console.log('Loading custom store model from /models/1.glb...');
       this.loader.load(
         '/models/1.glb',
         (gltf) => {
@@ -34,9 +33,10 @@ export class StoreEnvironment {
           // Add the loaded model to our group
           const model = gltf.scene;
           
-          // Scale and position the model if needed
-          model.scale.setScalar(1);
+          // Scale the model to fit the store space better
+          model.scale.setScalar(2);
           model.position.set(0, 0, 0);
+          model.rotation.y = 0;
           
           // Enable shadows for all meshes in the model
           model.traverse((child) => {
@@ -49,10 +49,14 @@ export class StoreEnvironment {
                 if (Array.isArray(child.material)) {
                   child.material.forEach(material => {
                     if (material instanceof THREE.MeshStandardMaterial) {
+                      material.metalness = 0.1;
+                      material.roughness = 0.8;
                       material.needsUpdate = true;
                     }
                   });
                 } else if (child.material instanceof THREE.MeshStandardMaterial) {
+                  child.material.metalness = 0.1;
+                  child.material.roughness = 0.8;
                   child.material.needsUpdate = true;
                 }
               }
@@ -60,13 +64,16 @@ export class StoreEnvironment {
           });
           
           this.group.add(model);
+          console.log('Custom model added to scene successfully');
           resolve();
         },
         (progress) => {
-          console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
+          const percentage = progress.total > 0 ? (progress.loaded / progress.total * 100) : 0;
+          console.log('Loading progress:', percentage.toFixed(1) + '%');
         },
         (error) => {
           console.error('Error loading GLB model:', error);
+          console.error('Make sure the file /models/1.glb exists and is accessible');
           reject(error);
         }
       );

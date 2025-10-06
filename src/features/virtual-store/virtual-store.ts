@@ -156,6 +156,7 @@ export class VirtualStore extends EventEmitter {
 
   public async init(): Promise<void> {
     try {
+      console.log('Initializing virtual store with custom model...');
       // Создаем окружение магазина
       await this.environment.create();
       
@@ -172,11 +173,13 @@ export class VirtualStore extends EventEmitter {
       
       // Небольшая задержка перед завершением загрузки
       window.setTimeout(() => {
+        console.log('Virtual store initialization completed');
         this.emit('loadingComplete');
       }, 500);
     } catch (error) {
       console.error('Chyba pri inicializácii virtuálneho obchodu:', error);
-      this.emit('loadingComplete'); // Завершаем загрузку даже при ошибке
+      // Don't emit loadingComplete on error, let the UI handle the error state
+      throw error;
     }
   }
 

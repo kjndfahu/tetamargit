@@ -106,6 +106,7 @@ export function VirtualStoreSection() {
   const initializingRef = useRef(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingError, setLoadingError] = useState<string | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [hasEnteredStore, setHasEnteredStore] = useState(false);
   const [products] = useState<Product[]>(mockProducts);
@@ -115,6 +116,7 @@ export function VirtualStoreSection() {
     if (!containerRef.current || productsLoading || products.length === 0 || initializingRef.current || storeInstance) return;
 
     initializingRef.current = true;
+    setLoadingError(null);
     
     const store = new VirtualStore(containerRef.current, products);
 
@@ -140,6 +142,7 @@ export function VirtualStoreSection() {
       setHasEnteredStore(false);
       setCurrentSection(0);
     };
+
     store.on('productClick', handleProductClick);
     store.on('sectionChange', handleSectionChange);
     store.on('storeEntered', handleStoreEntered);
@@ -148,9 +151,11 @@ export function VirtualStoreSection() {
 
     // Инициализация магазина
     store.init().then(() => {
+      console.log('Store instance created successfully');
       setStoreInstance(store);
     }).catch((error) => {
       console.error('Failed to initialize virtual store:', error);
+      setLoadingError('Nepodarilo sa načítať 3D model obchodu. Skontrolujte internetové pripojenie.');
       initializingRef.current = false;
       setIsLoading(false);
     });
@@ -193,24 +198,43 @@ export function VirtualStoreSection() {
       {isLoading && (
         <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
           <div className="text-center text-white">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EE4C7C] mx-auto mb-4"></div>
               <h3 className="text-xl font-semibold mb-2">Načítavame virtuálny obchod</h3>
-              <p className="text-gray-300">Pripravujeme 3D modely produktov...</p>
-            <p className="text-gray-600">Načítavame produkty...</p>
+            <p className="text-gray-300">Načítavame váš vlastný 3D model obchodu...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Error Overlay */}
+      {loadingError && (
+        <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
+          <div className="text-center text-white max-w-md mx-4">
+            <div className="text-red-400 text-6xl mb-4">⚠️</div>
+            <h3 className="text-xl font-semibold mb-2">Chyba načítania</h3>
+            <p className="text-gray-300 mb-4">{loadingError}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-[#EE4C7C] hover:bg-[#9A1750] text-white px-6 py-2 rounded-lg transition-colors"
+            >
+              Skúsiť znova
+            </button>
           </div>
         </div>
       )}
 
       {/* Store UI Overlay */}
-      <StoreUI
-        selectedProduct={selectedProduct}
-        onCloseProduct={() => setSelectedProduct(null)}
-        currentSection={currentSection}
-        hasEnteredStore={hasEnteredStore}
-        totalSections={products.length}
-        onNavigateToSection={(section) => storeInstance?.navigateToSection(section)}
-        onEnterStore={() => storeInstance?.enterStore()}
-        onExitStore={() => storeInstance?.exitStore()}
-      />
+      {!loadingError && (
+        <StoreUI
+          selectedProduct={selectedProduct}
+          onCloseProduct={() => setSelectedProduct(null)}
+          currentSection={currentSection}
+          hasEnteredStore={hasEnteredStore}
+          totalSections={products.length}
+          onNavigateToSection={(section) => storeInstance?.navigateToSection(section)}
+          onEnterStore={() => storeInstance?.enterStore()}
+          onExitStore={() => storeInstance?.exitStore()}
+        />
+      )}
     </section>
   );
 }

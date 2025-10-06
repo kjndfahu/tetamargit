@@ -12,6 +12,7 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ deliveryType }: ContactFormProps) {
+export function ContactForm({ deliveryType, onDateTimeChange }: ContactFormProps) {
   const [formData, setFormData] = useState<ContactFormData>({
     firstName: '',
     lastName: '',

@@ -39,7 +39,7 @@ export class StoreEnvironment {
           const model = gltf.scene;
 
           // Scale the model - reduced by 75%
-          model.scale.setScalar(0.3);
+          model.scale.set(0.3, 0.15, 0.3);
           // Lower the model position (Y and Z)
           model.position.set(0, -3, -7.5);
           model.rotation.y = Math.PI / 2;

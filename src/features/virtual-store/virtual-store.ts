@@ -18,6 +18,7 @@ export class VirtualStore extends EventEmitter {
   private container: HTMLElement;
   private animationId: number | null = null;
   private hasEnteredStore: boolean = false;
+  private isRendering: boolean = false;
 
   constructor(container: HTMLElement, products: Product[]) {
     super();
@@ -143,10 +144,10 @@ export class VirtualStore extends EventEmitter {
   }
 
   private onWheel(event: WheelEvent): void {
-    event.preventDefault();
     if (!this.hasEnteredStore) {
       return;
     }
+    event.preventDefault();
     this.cameraController.handleScroll(event.deltaY);
   }
 
@@ -164,9 +165,12 @@ export class VirtualStore extends EventEmitter {
         this.productDisplays.map(display => display.getPosition())
       );
       
-      // Запускаем анимационный цикл
-      this.animate();
-      
+      // Рендеринг запустится только после входа в магазин
+      // this.animate() вызывается в startRendering()
+
+      // Рендерим один кадр для показа начальной сцены
+      this.renderer.render(this.scene, this.camera);
+
       // Небольшая задержка перед завершением загрузки
       window.setTimeout(() => {
         console.log('Virtual store initialization completed');
@@ -219,9 +223,10 @@ export class VirtualStore extends EventEmitter {
 
   public enterStore(): void {
     if (this.hasEnteredStore) return;
-    
+
     console.log('Entering store...');
     this.hasEnteredStore = true;
+    this.startRendering();
     this.cameraController.enterStore();
     window.setTimeout(() => {
       console.log('Store entered successfully');
@@ -231,18 +236,19 @@ export class VirtualStore extends EventEmitter {
 
   public exitStore(): void {
     if (!this.hasEnteredStore) return;
-    
+
     console.log('Exiting store...');
     this.hasEnteredStore = false;
     this.cameraController.exitStore();
     window.setTimeout(() => {
       console.log('Store exited successfully');
+      this.stopRendering();
       this.emit('exitStore');
     }, 500);
   }
   private animate(): void {
-    if (this.animationId) {
-      window.cancelAnimationFrame(this.animationId);
+    if (!this.isRendering) {
+      return;
     }
 
     this.animationId = window.requestAnimationFrame(() => this.animate());
@@ -252,6 +258,26 @@ export class VirtualStore extends EventEmitter {
     this.productDisplays.forEach(display => display.update());
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  private startRendering(): void {
+    if (this.isRendering) return;
+
+    console.log('Starting 3D rendering...');
+    this.isRendering = true;
+    this.animate();
+  }
+
+  private stopRendering(): void {
+    if (!this.isRendering) return;
+
+    console.log('Stopping 3D rendering...');
+    this.isRendering = false;
+
+    if (this.animationId) {
+      window.cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
   }
 
   public dispose(): void {

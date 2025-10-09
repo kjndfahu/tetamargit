@@ -181,7 +181,7 @@ export class CameraController {
     const lookAtPos = new THREE.Vector3().copy(productPos);
     lookAtPos.y = 1;
     
-    this.animateToPosition(cameraPos, lookAtPos, 800, () => {
+    this.animateToPosition(cameraPos, lookAtPos, 1200, () => {
       this.isAnimating = false;
     });
   }
@@ -197,7 +197,7 @@ export class CameraController {
       const progress = Math.min(elapsed / duration, 1);
       
       // Используем easing функцию для плавной анимации
-      const easeProgress = this.easeOutQuart(progress);
+      const easeProgress = this.easeInOutCubic(progress);
       
       // Интерполируем позицию камеры
       this.targetPosition.lerpVectors(startPosition, targetPos, easeProgress);
@@ -226,7 +226,7 @@ export class CameraController {
 
   public update(): void {
     // Плавно перемещаем камеру к целевой позиции
-    const lerpFactor = this.isAnimating ? 0.15 : 0.08;
+    const lerpFactor = 0.06;
     this.camera.position.lerp(this.targetPosition, lerpFactor);
     this.camera.lookAt(this.targetLookAt);
     this.camera.updateMatrixWorld();

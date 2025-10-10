@@ -124,28 +124,30 @@ export class CameraController {
 
   public exitStore(): void {
     if (!this._hasEnteredStore) return;
-    
+
     this._hasEnteredStore = false;
     this.isAnimating = true;
     this.currentSection = 0;
-    
+
     // Возвращаемся к начальной позиции - перед входом в магазин
     const exitPosition = new THREE.Vector3(0, 2, 12);
     const exitLookAt = new THREE.Vector3(0, 1, 0);
-    
+
     this.animateToPosition(exitPosition, exitLookAt, 2000, () => {
       this.isAnimating = false;
+      this.targetPosition.copy(exitPosition);
+      this.targetLookAt.copy(exitLookAt);
     });
   }
   public navigateToSection(sectionIndex: number): void {
     if (!this._hasEnteredStore) return;
-    
+
     const totalSections = this.productPositions.length + 1; // +1 for overview
     if (sectionIndex === this.currentSection || sectionIndex < 0 || sectionIndex >= totalSections) return;
-    
+
     // Предотвращаем навигацию во время анимации входа
     if (this.isAnimating) return;
-    
+
     this.currentSection = sectionIndex;
     this.isAnimating = true;
 
@@ -153,9 +155,11 @@ export class CameraController {
     if (sectionIndex === this.productPositions.length) {
       const overviewPos = new THREE.Vector3(0, 1.8, 6);
       const overviewLookAt = new THREE.Vector3(0, 1, 0);
-      
+
       this.animateToPosition(overviewPos, overviewLookAt, 1500, () => {
         this.isAnimating = false;
+        this.targetPosition.copy(overviewPos);
+        this.targetLookAt.copy(overviewLookAt);
       });
       return;
     }
@@ -183,6 +187,8 @@ export class CameraController {
     
     this.animateToPosition(cameraPos, lookAtPos, 1200, () => {
       this.isAnimating = false;
+      this.targetPosition.copy(cameraPos);
+      this.targetLookAt.copy(lookAtPos);
     });
   }
 
@@ -199,13 +205,22 @@ export class CameraController {
       // Используем easing функцию для плавной анимации
       const easeProgress = this.easeInOutCubic(progress);
 
-      // Обновляем целевые позиции для плавной интерполяции в update()
-      this.targetPosition.lerpVectors(startPosition, targetPos, easeProgress);
-      this.targetLookAt.lerpVectors(startLookAt, targetLookAt, easeProgress);
+      // Напрямую обновляем позицию камеры во время анимации
+      this.camera.position.lerpVectors(startPosition, targetPos, easeProgress);
+
+      // Вычисляем направление взгляда
+      const currentLookAtPos = new THREE.Vector3().lerpVectors(startLookAt, targetLookAt, easeProgress);
+      this.camera.lookAt(currentLookAtPos);
+
+      // Обновляем целевые позиции
+      this.targetPosition.copy(this.camera.position);
+      this.targetLookAt.copy(currentLookAtPos);
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
+        this.camera.position.copy(targetPos);
+        this.camera.lookAt(targetLookAt);
         this.targetPosition.copy(targetPos);
         this.targetLookAt.copy(targetLookAt);
         this.isAnimating = false;

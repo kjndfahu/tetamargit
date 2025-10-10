@@ -189,23 +189,30 @@ export class CameraController {
   private animateToPosition(targetPos: THREE.Vector3, targetLookAt: THREE.Vector3, duration: number = 1200, onComplete?: () => void): void {
     const startPosition = this.camera.position.clone();
     const startLookAt = this.targetLookAt.clone();
-    
+
     const startTime = Date.now();
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Используем easing функцию для плавной анимации
       const easeProgress = this.easeInOutCubic(progress);
-      
-      // Интерполируем позицию камеры
-      this.targetPosition.lerpVectors(startPosition, targetPos, easeProgress);
-      this.targetLookAt.lerpVectors(startLookAt, targetLookAt, easeProgress);
-      
+
+      // Напрямую обновляем позицию камеры без двойной интерполяции
+      this.camera.position.lerpVectors(startPosition, targetPos, easeProgress);
+
+      // Для lookAt тоже обновляем напрямую
+      const currentLookAt = new THREE.Vector3().lerpVectors(startLookAt, targetLookAt, easeProgress);
+      this.camera.lookAt(currentLookAt);
+      this.camera.updateMatrixWorld();
+
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
+        // После завершения анимации обновляем целевые позиции
+        this.targetPosition.copy(targetPos);
+        this.targetLookAt.copy(targetLookAt);
         this.isAnimating = false;
         if (onComplete) onComplete();
       }
@@ -225,11 +232,13 @@ export class CameraController {
   }
 
   public update(): void {
-    // Плавно перемещаем камеру к целевой позиции
-    const lerpFactor = 0.06;
-    this.camera.position.lerp(this.targetPosition, lerpFactor);
-    this.camera.lookAt(this.targetLookAt);
-    this.camera.updateMatrixWorld();
+    // Плавно перемещаем камеру к целевой позиции только если не идёт анимация
+    if (!this.isAnimating) {
+      const lerpFactor = 0.06;
+      this.camera.position.lerp(this.targetPosition, lerpFactor);
+      this.camera.lookAt(this.targetLookAt);
+      this.camera.updateMatrixWorld();
+    }
   }
 
   public dispose(): void {

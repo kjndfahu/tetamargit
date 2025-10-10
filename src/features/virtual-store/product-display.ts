@@ -47,7 +47,7 @@ export class ProductDisplay {
           const tableModel = gltf.scene;
 
           tableModel.scale.set(0.05, 0.05, 0.05);
-          tableModel.position.set(0, 0, 0);
+          tableModel.position.set(0, -0.3, 0);
 
           tableModel.traverse((child) => {
             if (child instanceof THREE.Mesh) {

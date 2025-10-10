@@ -205,22 +205,13 @@ export class CameraController {
       // Используем easing функцию для плавной анимации
       const easeProgress = this.easeInOutCubic(progress);
 
-      // Напрямую обновляем позицию камеры во время анимации
-      this.camera.position.lerpVectors(startPosition, targetPos, easeProgress);
-
-      // Вычисляем направление взгляда
-      const currentLookAtPos = new THREE.Vector3().lerpVectors(startLookAt, targetLookAt, easeProgress);
-      this.camera.lookAt(currentLookAtPos);
-
-      // Обновляем целевые позиции
-      this.targetPosition.copy(this.camera.position);
-      this.targetLookAt.copy(currentLookAtPos);
+      // Обновляем целевые позиции для плавной интерполяции в update()
+      this.targetPosition.lerpVectors(startPosition, targetPos, easeProgress);
+      this.targetLookAt.lerpVectors(startLookAt, targetLookAt, easeProgress);
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        this.camera.position.copy(targetPos);
-        this.camera.lookAt(targetLookAt);
         this.targetPosition.copy(targetPos);
         this.targetLookAt.copy(targetLookAt);
         this.isAnimating = false;

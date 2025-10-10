@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { Product } from '@/lib/products';
 
 export class ProductDisplay {
@@ -9,18 +11,74 @@ export class ProductDisplay {
   private labelMesh: THREE.Mesh | null = null;
   private animationMixer: THREE.AnimationMixer | null = null;
   private hoverAnimation: THREE.AnimationAction | null = null;
+  private loader: GLTFLoader;
+  private tableIndex: number;
 
-  constructor(product: Product, position: { x: number; y: number; z: number }) {
+  constructor(product: Product, position: { x: number; y: number; z: number }, tableIndex: number) {
     this.product = product;
     this.position = position;
     this.group = new THREE.Group();
     this.group.position.set(position.x, position.y, position.z);
+    this.tableIndex = tableIndex;
+
+    this.loader = new GLTFLoader();
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    this.loader.setDRACOLoader(dracoLoader);
   }
 
   public async create(): Promise<void> {
+    await this.loadTable();
     await this.createProductModel();
     this.createLabel();
     this.createHoverEffects();
+  }
+
+  private async loadTable(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const tableNumber = ((this.tableIndex % 6) + 1);
+      const tablePath = `/models/tables/bar_table(${tableNumber}).glb`;
+
+      console.log(`Loading table model: ${tablePath}`);
+
+      this.loader.load(
+        tablePath,
+        (gltf) => {
+          const tableModel = gltf.scene;
+
+          tableModel.scale.set(0.5, 0.5, 0.5);
+          tableModel.position.set(0, 0, 0);
+
+          tableModel.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+
+              if (child.material) {
+                if (Array.isArray(child.material)) {
+                  child.material.forEach(material => {
+                    if (material instanceof THREE.MeshStandardMaterial) {
+                      material.needsUpdate = true;
+                    }
+                  });
+                } else if (child.material instanceof THREE.MeshStandardMaterial) {
+                  child.material.needsUpdate = true;
+                }
+              }
+            }
+          });
+
+          this.group.add(tableModel);
+          console.log(`Table ${tableNumber} loaded successfully`);
+          resolve();
+        },
+        undefined,
+        (error) => {
+          console.error(`Error loading table ${tablePath}:`, error);
+          resolve();
+        }
+      );
+    });
   }
 
   private async createProductModel(): Promise<void> {
@@ -53,26 +111,17 @@ export class ProductDisplay {
     }
 
     this.productMesh = new THREE.Mesh(geometry, material);
-    this.productMesh.position.y = 1.1; // Поднимаем над полкой
+    this.productMesh.position.y = 1.1;
     this.productMesh.castShadow = true;
     this.productMesh.receiveShadow = true;
-    
+
     // Добавляем userData для идентификации при клике
-    this.productMesh.userData = { 
-      type: 'product', 
-      productId: this.product.id 
+    this.productMesh.userData = {
+      type: 'product',
+      productId: this.product.id
     };
 
     this.group.add(this.productMesh);
-
-    const standGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.1, 8);
-    const standMaterial = new THREE.MeshLambertMaterial({ color: 0xC0C0C0 });
-    
-    const stand = new THREE.Mesh(standGeometry, standMaterial);
-    stand.position.y = 1.05;
-    stand.receiveShadow = true;
-    
-    this.group.add(stand);
   }
 
   private createLabel(): void {

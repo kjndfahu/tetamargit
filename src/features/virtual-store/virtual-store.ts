@@ -198,14 +198,14 @@ export class VirtualStore extends EventEmitter {
 
     // Используем все доступные продукты и позиции
     const maxProducts = Math.min(this.products.length, positions.length);
-    
+
     for (let i = 0; i < maxProducts; i++) {
       const product = this.products[i];
       const position = positions[i];
-      
-      const productDisplay = new ProductDisplay(product, position);
+
+      const productDisplay = new ProductDisplay(product, position, i);
       await productDisplay.create();
-      
+
       this.scene.add(productDisplay.getGroup());
       this.productDisplays.push(productDisplay);
     }

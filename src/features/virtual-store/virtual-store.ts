@@ -244,7 +244,7 @@ export class VirtualStore extends EventEmitter {
       console.log('Store exited successfully');
       this.stopRendering();
       this.emit('exitStore');
-    }, 500);
+    }, 2100);
   }
   private animate(): void {
     if (!this.isRendering) {

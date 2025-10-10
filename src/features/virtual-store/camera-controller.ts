@@ -199,18 +199,13 @@ export class CameraController {
       // Используем easing функцию для плавной анимации
       const easeProgress = this.easeInOutCubic(progress);
 
-      // Напрямую обновляем позицию камеры без двойной интерполяции
-      this.camera.position.lerpVectors(startPosition, targetPos, easeProgress);
-
-      // Для lookAt тоже обновляем напрямую
-      const currentLookAt = new THREE.Vector3().lerpVectors(startLookAt, targetLookAt, easeProgress);
-      this.camera.lookAt(currentLookAt);
-      this.camera.updateMatrixWorld();
+      // Обновляем целевые позиции для плавной интерполяции в update()
+      this.targetPosition.lerpVectors(startPosition, targetPos, easeProgress);
+      this.targetLookAt.lerpVectors(startLookAt, targetLookAt, easeProgress);
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        // После завершения анимации обновляем целевые позиции
         this.targetPosition.copy(targetPos);
         this.targetLookAt.copy(targetLookAt);
         this.isAnimating = false;
@@ -232,13 +227,21 @@ export class CameraController {
   }
 
   public update(): void {
-    // Плавно перемещаем камеру к целевой позиции только если не идёт анимация
-    if (!this.isAnimating) {
-      const lerpFactor = 0.06;
-      this.camera.position.lerp(this.targetPosition, lerpFactor);
-      this.camera.lookAt(this.targetLookAt);
-      this.camera.updateMatrixWorld();
-    }
+    // Плавно перемещаем камеру к целевой позиции
+    const lerpFactor = 0.06;
+    this.camera.position.lerp(this.targetPosition, lerpFactor);
+
+    // Плавная интерполяция для lookAt
+    const currentLookAt = new THREE.Vector3();
+    this.camera.getWorldDirection(currentLookAt);
+    currentLookAt.normalize();
+
+    const targetDirection = this.targetLookAt.clone().sub(this.camera.position).normalize();
+    currentLookAt.lerp(targetDirection, lerpFactor);
+
+    const lookAtPoint = this.camera.position.clone().add(currentLookAt);
+    this.camera.lookAt(lookAtPoint);
+    this.camera.updateMatrixWorld();
   }
 
   public dispose(): void {

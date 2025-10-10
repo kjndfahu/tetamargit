@@ -185,7 +185,7 @@ export class CameraController {
     const lookAtPos = new THREE.Vector3().copy(productPos);
     lookAtPos.y = 1;
     
-    this.animateToPosition(cameraPos, lookAtPos, 1200, () => {
+    this.animateToPosition(cameraPos, lookAtPos, 1800, () => {
       this.isAnimating = false;
       this.targetPosition.copy(cameraPos);
       this.targetLookAt.copy(lookAtPos);

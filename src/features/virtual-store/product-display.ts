@@ -46,7 +46,7 @@ export class ProductDisplay {
         (gltf) => {
           const tableModel = gltf.scene;
 
-          tableModel.scale.set(0.5, 0.5, 0.5);
+          tableModel.scale.set(0.05, 0.05, 0.05);
           tableModel.position.set(0, 0, 0);
 
           tableModel.traverse((child) => {

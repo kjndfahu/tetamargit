@@ -103,7 +103,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
           animateIn ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-2"
         }`}
       >
-        <div className="px-6 py-5 bg-gradient-to-r from-[#8B4513] to-[#ff86ad]">
+        <div className="px-6 py-5 bg-gradient-to-r from-[#EE4C7C] to-[#ff86ad]">
           <div className="flex items-start justify-between">
             <div>
               <h3 className="text-white text-xl font-semibold">
@@ -141,12 +141,12 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
                 <label className="flex flex-col gap-1">
                   <span className="text-sm text-gray-700">Meno</span>
                   <div className="relative">
-                    <User className="h-4 w-4 text-[#8B4513] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <User className="h-4 w-4 text-[#EE4C7C] absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       name="firstName"
                       required
                       disabled={loading}
-                      className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513] disabled:opacity-50"
+                      className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] disabled:opacity-50"
                       placeholder="Ján"
                     />
                   </div>
@@ -154,12 +154,12 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
                 <label className="flex flex-col gap-1">
                   <span className="text-sm text-gray-700">Priezvisko</span>
                   <div className="relative">
-                    <User className="h-4 w-4 text-[#8B4513] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <User className="h-4 w-4 text-[#EE4C7C] absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       name="lastName"
                       required
                       disabled={loading}
-                      className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513] disabled:opacity-50"
+                      className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] disabled:opacity-50"
                       placeholder="Novák"
                     />
                   </div>
@@ -171,13 +171,13 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
               <label className="flex flex-col gap-1">
                 <span className="text-sm text-gray-700">E‑mail</span>
                 <div className="relative">
-                  <Mail className="h-4 w-4 text-[#8B4513] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Mail className="h-4 w-4 text-[#EE4C7C] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     name="email"
                     required
                     type="email"
                     disabled={loading}
-                    className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513] disabled:opacity-50"
+                    className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] disabled:opacity-50"
                     placeholder="jan.novak@example.com"
                   />
                 </div>
@@ -187,12 +187,12 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
                 <label className="flex flex-col gap-1">
                   <span className="text-sm text-gray-700">Telefón (voliteľné)</span>
                   <div className="relative">
-                    <User className="h-4 w-4 text-[#8B4513] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <User className="h-4 w-4 text-[#EE4C7C] absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       name="phone"
                       type="tel"
                       disabled={loading}
-                      className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513] disabled:opacity-50"
+                      className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] disabled:opacity-50"
                       placeholder="+421 900 123 456"
                     />
                   </div>
@@ -202,14 +202,14 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
               <label className="flex flex-col gap-1">
                 <span className="text-sm text-gray-700">Heslo</span>
                 <div className="relative">
-                  <Lock className="h-4 w-4 text-[#8B4513] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Lock className="h-4 w-4 text-[#EE4C7C] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     name="password"
                     required
                     type="password"
                     disabled={loading}
                     minLength={6}
-                    className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513] disabled:opacity-50"
+                    className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] disabled:opacity-50"
                     placeholder="••••••••"
                   />
                 </div>
@@ -218,7 +218,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-2 cursor-pointer bg-[#8B4513] hover:bg-[#d9446f] text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-2 cursor-pointer bg-[#EE4C7C] hover:bg-[#d9446f] text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Spracováva sa...' : (isSignup ? "Zaregistrovať sa" : "Prihlásiť sa")}
               </button>
@@ -245,7 +245,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
               </button>
 
               <p className="text-xs text-gray-500 mt-3">
-                Pokračovaním súhlasíte s našimi <a className="text-[#8B4513] hover:underline" href="#">Podmienkami</a> a <a className="text-[#8B4513] hover:underline" href="#">Zásadami ochrany súkromia</a>.
+                Pokračovaním súhlasíte s našimi <a className="text-[#EE4C7C] hover:underline" href="#">Podmienkami</a> a <a className="text-[#EE4C7C] hover:underline" href="#">Zásadami ochrany súkromia</a>.
               </p>
 
               <div className="mt-3 text-sm text-gray-700">
@@ -254,7 +254,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
                     Máte účet?{' '}
                     <button
                       type="button"
-                      className="text-[#8B4513] hover:underline cursor-pointer"
+                      className="text-[#EE4C7C] hover:underline cursor-pointer"
                       onClick={() => (onSwitchType ? onSwitchType("login") : onClose())}
                     >
                       Prihláste sa
@@ -265,7 +265,7 @@ export function AuthModal({ open, onClose, type, onSwitchType }: AuthModalProps)
                     Nemáte účet?{' '}
                     <button
                       type="button"
-                      className="text-[#8B4513] hover:underline cursor-pointer"
+                      className="text-[#EE4C7C] hover:underline cursor-pointer"
                       onClick={() => (onSwitchType ? onSwitchType("signup") : onClose())}
                     >
                       Zaregistrujte sa

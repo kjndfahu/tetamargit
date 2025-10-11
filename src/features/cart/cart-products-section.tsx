@@ -49,7 +49,7 @@ export function CartProductsSection({ onCartChange }: CartProductsSectionProps) 
 	return (
 		<section className="bg-white shadow rounded-xl p-6">
 			<h2 className="text-xl font-semibold mb-4 text-black flex items-center gap-2">
-				<Package className="h-5 w-5 text-[#8B4513]" /> 
+				<Package className="h-5 w-5 text-[#EE4C7C]" /> 
 				Produkty ({cartItems.length})
 			</h2>
 			
@@ -99,7 +99,7 @@ export function CartProductsSection({ onCartChange }: CartProductsSectionProps) 
 									<button
 										onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
 										disabled={updatingItems.includes(item.id) || item.quantity <= 1}
-										className="p-1 rounded-full border border-gray-300 hover:border-[#8B4513] hover:text-[#8B4513] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+										className="p-1 rounded-full border border-gray-300 hover:border-[#EE4C7C] hover:text-[#EE4C7C] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 									>
 										<Minus className="w-4 h-4" />
 									</button>
@@ -111,7 +111,7 @@ export function CartProductsSection({ onCartChange }: CartProductsSectionProps) 
 									<button
 										onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
 										disabled={updatingItems.includes(item.id)}
-										className="p-1 rounded-full border border-gray-300 hover:border-[#8B4513] hover:text-[#8B4513] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+										className="p-1 rounded-full border border-gray-300 hover:border-[#EE4C7C] hover:text-[#EE4C7C] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 									>
 										<Plus className="w-4 h-4" />
 									</button>

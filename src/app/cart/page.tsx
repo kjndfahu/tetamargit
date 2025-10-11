@@ -12,7 +12,7 @@ import { CartProductsSection } from "@/features/cart/cart-products-section";
 import { SummarySidebar } from "@/features/cart/summary-sidebar";
 import { SuccessModal } from "@/features/cart/success-modal";
 import { OrderService } from "@/lib/order";
-import { validators } from '@/lib/validators';
+import { validators } from '@/lib/shared/validators';
 
 export default function CartPage() {
 	const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("pickup");
@@ -183,13 +183,13 @@ export default function CartPage() {
 
 			{loading || authLoading ? (
 				<div className="text-center py-12">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8B4513] mx-auto"></div>
+					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EE4C7C] mx-auto"></div>
 					<p className="mt-4 text-gray-600">Načítavam košík...</p>
 				</div>
 			) : cartSummary.itemCount === 0 ? (
 				<div className="text-center py-12">
 					<p className="text-gray-600 text-lg mb-4">Váš košík je prázdny</p>
-					<Link href="/" className="bg-[#8B4513] hover:bg-[#2C1810] text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+					<Link href="/" className="bg-[#EE4C7C] hover:bg-[#9A1750] text-white font-semibold py-3 px-6 rounded-lg transition-colors">
 						Pokračovať v nákupe
 					</Link>
 				</div>

@@ -1,0 +1,306 @@
+import * as THREE from 'three';
+import { Product } from '@/lib/products';
+import { StoreEnvironment } from './store-environment';
+import { ProductDisplay } from './product-display';
+import { CameraController } from './camera-controller';
+import { EventEmitter } from './event-emitter';
+
+export class VirtualStore extends EventEmitter {
+  private scene: THREE.Scene;
+  private camera: THREE.PerspectiveCamera;
+ private renderer!: THREE.WebGLRenderer;
+  private environment: StoreEnvironment;
+  private productDisplays: ProductDisplay[] = [];
+  private cameraController: CameraController;
+  private raycaster: THREE.Raycaster;
+  private mouse: THREE.Vector2;
+  private products: Product[];
+  private container: HTMLElement;
+  private animationId: number | null = null;
+  private hasEnteredStore: boolean = false;
+  private isRendering: boolean = false;
+
+  constructor(container: HTMLElement, products: Product[]) {
+    super();
+    this.container = container;
+    this.products = products;
+    this.scene = new THREE.Scene();
+    
+    // Initialize camera directly in constructor
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
+    this.camera.position.set(0, 2, 12);
+    this.camera.lookAt(0, 1, 0);
+    
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+
+    this.initRenderer();
+    this.initLighting();
+    this.initEventListeners();
+
+    this.environment = new StoreEnvironment(this.scene);
+    this.cameraController = new CameraController(this.camera, this.container);
+  }
+
+  private initRenderer(): void {
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: false,
+      powerPreference: 'high-performance',
+      stencil: false,
+      depth: true
+    });
+    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.2;
+
+    this.container.appendChild(this.renderer.domElement);
+  }
+
+  private initLighting(): void {
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    this.scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(10, 10, 5);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 1024;
+    directionalLight.shadow.mapSize.height = 1024;
+    directionalLight.shadow.camera.near = 0.5;
+    directionalLight.shadow.camera.far = 50;
+    directionalLight.shadow.camera.left = -10;
+    directionalLight.shadow.camera.right = 10;
+    directionalLight.shadow.camera.top = 10;
+    directionalLight.shadow.camera.bottom = -10;
+    this.scene.add(directionalLight);
+
+    const pointLight1 = new THREE.PointLight(0xffffff, 0.6, 10);
+    pointLight1.position.set(-3, 3, 0);
+    this.scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0xffffff, 0.6, 10);
+    pointLight2.position.set(3, 3, 0);
+    this.scene.add(pointLight2);
+  }
+
+  private initEventListeners(): void {
+    // Обработка кликов мыши
+    this.container.addEventListener('click', this.onMouseClick.bind(this));
+    
+    // Обработка изменения размера окна
+    window.addEventListener('resize', this.onWindowResize.bind(this));
+
+    // Обработка скролла для навигации по секциям
+    this.container.addEventListener('wheel', this.onWheel.bind(this));
+  }
+
+  private onMouseClick(event: MouseEvent): void {
+    // Ak sme ešte nevošli do obchodu, spustíme vstup
+    if (!this.hasEnteredStore) {
+      console.log('Clicking to enter store...');
+      this.enterStore();
+      return;
+    }
+
+    const rect = this.container.getBoundingClientRect();
+    this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    
+    // Проверяем пересечения с продуктами
+    const intersectableObjects: THREE.Object3D[] = [];
+    this.productDisplays.forEach(display => {
+      intersectableObjects.push(...display.getInteractableObjects());
+    });
+
+    const intersects = this.raycaster.intersectObjects(intersectableObjects, true);
+    
+    if (intersects.length > 0) {
+      const clickedObject = intersects[0].object;
+      const productDisplay = this.productDisplays.find(display => 
+        display.getInteractableObjects().includes(clickedObject)
+      );
+      
+      if (productDisplay) {
+        this.emit('productClick', productDisplay.getProduct());
+      }
+    }
+  }
+
+  private onWindowResize(): void {
+    this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+  }
+
+  private onWheel(event: WheelEvent): void {
+    if (!this.hasEnteredStore) {
+      return;
+    }
+    event.preventDefault();
+    this.cameraController.handleScroll(event.deltaY);
+  }
+
+  public async init(): Promise<void> {
+    try {
+      console.log('Initializing virtual store with custom model...');
+      // Создаем окружение магазина
+      await this.environment.create();
+      
+      // Создаем витрины с продуктами
+      await this.createProductDisplays();
+      
+      // Настраиваем контроллер камеры
+      this.cameraController.setProductPositions(
+        this.productDisplays.map(display => display.getPosition())
+      );
+      
+      // Рендеринг запустится только после входа в магазин
+      // this.animate() вызывается в startRendering()
+
+      // Рендерим один кадр для показа начальной сцены
+      this.renderer.render(this.scene, this.camera);
+
+      // Небольшая задержка перед завершением загрузки
+      window.setTimeout(() => {
+        console.log('Virtual store initialization completed');
+        this.emit('loadingComplete');
+      }, 500);
+    } catch (error) {
+      console.error('Chyba pri inicializácii virtuálneho obchodu:', error);
+      // Don't emit loadingComplete on error, let the UI handle the error state
+      throw error;
+    }
+  }
+
+  private async createProductDisplays(): Promise<void> {
+    const positions = [
+      // Левая сторона (3 продукта)
+      { x: -6, y: 0, z: -3 },
+      { x: -6, y: 0, z: 0 },
+      { x: -6, y: 0, z: 3 },
+      
+      // Правая сторона (3 продукта)
+      { x: 6, y: 0, z: -3 },
+      { x: 6, y: 0, z: 0 },
+      { x: 6, y: 0, z: 3 }
+    ];
+
+    // Используем все доступные продукты и позиции
+    const maxProducts = Math.min(this.products.length, positions.length);
+
+    for (let i = 0; i < maxProducts; i++) {
+      const product = this.products[i];
+      const position = positions[i];
+
+      const productDisplay = new ProductDisplay(product, position, i);
+      await productDisplay.create();
+
+      this.scene.add(productDisplay.getGroup());
+      this.productDisplays.push(productDisplay);
+    }
+    
+  }
+
+  public hasUserEnteredStore(): boolean {
+    return this.hasEnteredStore;
+  }
+
+  public navigateToSection(sectionIndex: number): void {
+    this.cameraController.navigateToSection(sectionIndex);
+    this.emit('sectionChange', sectionIndex);
+  }
+
+  public enterStore(): void {
+    if (this.hasEnteredStore) return;
+
+    console.log('Entering store...');
+    this.hasEnteredStore = true;
+    this.startRendering();
+    this.cameraController.enterStore();
+    window.setTimeout(() => {
+      console.log('Store entered successfully');
+      this.emit('storeEntered');
+    }, 500);
+  }
+
+  public exitStore(): void {
+    if (!this.hasEnteredStore) return;
+
+    console.log('Exiting store...');
+    this.hasEnteredStore = false;
+    this.cameraController.exitStore();
+    window.setTimeout(() => {
+      console.log('Store exited successfully');
+      this.stopRendering();
+      this.emit('exitStore');
+    }, 2100);
+  }
+  private animate(): void {
+    if (!this.isRendering) {
+      return;
+    }
+
+    this.animationId = window.requestAnimationFrame(() => this.animate());
+
+    this.cameraController.update();
+
+    this.productDisplays.forEach(display => display.update());
+
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  private startRendering(): void {
+    if (this.isRendering) return;
+
+    console.log('Starting 3D rendering...');
+    this.isRendering = true;
+    this.animate();
+  }
+
+  private stopRendering(): void {
+    if (!this.isRendering) return;
+
+    console.log('Stopping 3D rendering...');
+    this.isRendering = false;
+
+    if (this.animationId) {
+      window.cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+  }
+
+  public dispose(): void {
+    if (this.animationId) {
+      window.cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+    
+    // Очищаем ресурсы
+    this.productDisplays.forEach(display => display.dispose());
+    this.environment.dispose();
+    this.cameraController.dispose();
+    
+    // Удаляем обработчики событий
+    this.removeAllListeners();
+    
+    // Очищаем renderer
+    if (this.container.contains(this.renderer.domElement)) {
+      this.container.removeChild(this.renderer.domElement);
+    }
+    this.renderer.dispose();
+    
+    // Очищаем сцену
+    this.scene.clear();
+  }
+}

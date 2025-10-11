@@ -25,7 +25,7 @@ export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymen
 	return (
 		<aside className="lg:col-span-1">
 			<div className="bg-white shadow rounded-xl p-6">
-				<h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2"><FileText className="h-5 w-5 text-[#8B4513]" /> Spolu</h3>
+				<h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2"><FileText className="h-5 w-5 text-[#EE4C7C]" /> Spolu</h3>
 				<div className="space-y-2 text-black">
 					<div className="flex justify-between">
 						<span>Produkty ({currentSummary.itemCount} ks)</span>
@@ -43,7 +43,7 @@ export function SummarySidebar({ cartSummary, deliveryMethod, onCheckout, paymen
 				<button 
 					onClick={onCheckout} 
 					disabled={currentSummary.itemCount === 0 || isProcessing}
-					className="w-full mt-6 cursor-pointer bg-[#8B4513] hover:bg-[#2C1810] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2"
+					className="w-full mt-6 cursor-pointer bg-[#EE4C7C] hover:bg-[#9A1750] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2"
 				>
 					<FileText className="h-5 w-5" /> 
 					{isProcessing ? 'Spracovávam objednávku...' : 'Dokončiť objednávku'}

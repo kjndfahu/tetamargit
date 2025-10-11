@@ -137,21 +137,21 @@ export function FlipCards() {
                 </div>
 
                 <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180">
-                  <div className="bg-gradient-to-br from-[#8B4513] to-[#2C1810] rounded-xl shadow-lg h-full p-6 text-white overflow-y-auto">
+                  <div className="bg-gradient-to-br from-[#EE4C7C] to-[#9A1750] rounded-xl shadow-lg h-full p-6 text-white overflow-y-auto">
                     <h3 className="text-xl font-bold mb-3 text-center">
                       {card.back.title}
                     </h3>
 
-                    <p className="text-sm mb-4 text-[#F5F5DC] leading-relaxed">
+                    <p className="text-sm mb-4 text-pink-100 leading-relaxed">
                       {card.back.description}
                     </p>
 
                     <div className="mb-4">
-                      <h4 className="font-semibold mb-2 text-[#D4AF37]">Ingrediencie:</h4>
+                      <h4 className="font-semibold mb-2 text-pink-200">Ingrediencie:</h4>
                       <ul className="space-y-1">
                         {card.back.ingredients.map((ingredient, index) => (
-                          <li key={index} className="text-xs text-[#F5F5DC] flex items-center">
-                            <span className="w-2 h-2 bg-[#D4AF37] rounded-full mr-2"></span>
+                          <li key={index} className="text-xs text-pink-100 flex items-center">
+                            <span className="w-2 h-2 bg-pink-300 rounded-full mr-2"></span>
                             {ingredient}
                           </li>
                         ))}
@@ -159,43 +159,43 @@ export function FlipCards() {
                     </div>
 
                     <div className="mb-4">
-                      <h4 className="font-semibold mb-2 text-[#D4AF37]">Postup:</h4>
-                      <p className="text-xs text-[#F5F5DC] leading-relaxed">
+                      <h4 className="font-semibold mb-2 text-pink-200">Postup:</h4>
+                      <p className="text-xs text-pink-100 leading-relaxed">
                         {card.back.instructions}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 mb-4">
                       <div className="flex items-center text-xs">
-                        <Clock className="w-3 h-3 text-[#D4AF37] mr-1" />
-                        <span className="text-[#F5F5DC]">{card.back.time}</span>
+                        <Clock className="w-3 h-3 text-pink-300 mr-1" />
+                        <span className="text-pink-100">{card.back.time}</span>
                       </div>
                       <div className="flex items-center text-xs">
-                        <Users className="w-3 h-3 text-[#D4AF37] mr-1" />
-                        <span className="text-[#F5F5DC]">{card.back.servings}</span>
+                        <Users className="w-3 h-3 text-pink-300 mr-1" />
+                        <span className="text-pink-100">{card.back.servings}</span>
                       </div>
                     </div>
 
                     <div className="mb-4">
-                      <span className="text-xs bg-[#D4AF37] text-[#2C1810] px-2 py-1 rounded-full">
+                      <span className="text-xs bg-pink-200 text-[#9A1750] px-2 py-1 rounded-full">
                         {card.back.difficulty}
                       </span>
                     </div>
 
                     <div className="mb-4">
-                      <span className="text-lg font-bold text-[#D4AF37]">
+                      <span className="text-lg font-bold text-pink-200">
                         {card.back.price}
                       </span>
                     </div>
 
                     <div className="flex space-x-2">
-                      <button className="flex-1 bg-white text-[#2C1810] hover:bg-gray-100 font-semibold py-2 px-3 rounded-lg text-sm transition-colors duration-300 flex items-center justify-center">
+                      <button className="flex-1 bg-white text-[#9A1750] hover:bg-gray-100 font-semibold py-2 px-3 rounded-lg text-sm transition-colors duration-300 flex items-center justify-center">
                         <ShoppingCart className="w-4 h-4 mr-1" />
                         Do košíka
                       </button>
                     </div>
 
-                    <div className="text-center mt-3 text-xs text-[#D4AF37]">
+                    <div className="text-center mt-3 text-xs text-pink-200">
                       Kliknite pre návrat
                     </div>
                   </div>
@@ -207,7 +207,7 @@ export function FlipCards() {
 
         <div className="text-center mt-12">
           <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 shadow-lg">
-            <Info className="w-5 h-5 text-[#8B4513]" />
+            <Info className="w-5 h-5 text-[#EE4C7C]" />
             <span className="text-gray-700 font-medium">
               Všetky recepty sú testované a odporúčané našou tetou Márgit
             </span>

@@ -185,7 +185,7 @@ export function Filter() {
                     placeholder="Názov..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent"
+                    className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -197,7 +197,7 @@ export function Filter() {
                 <select
                   value={`${sort.field}-${sort.direction}`}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="w-full py-2 px-2 cursor-pointer text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent"
+                  className="w-full py-2 px-2 cursor-pointer text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                 >
                   <option className="cursor-pointer" value="created_at-desc">Najnovšie</option>
                   <option className="cursor-pointer" value="price-asc">Cena ↑</option>
@@ -213,7 +213,7 @@ export function Filter() {
                 <select
                   value={selectedPriceRange}
                   onChange={(e) => setSelectedPriceRange(e.target.value)}
-                  className="w-full py-2 cursor-pointer px-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent"
+                  className="w-full py-2 cursor-pointer px-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
                 >
                   <option value="">Všetky</option>
                   {priceRanges.map(range => (
@@ -231,7 +231,7 @@ export function Filter() {
                 <div className="space-y-1">
                   {categoriesLoading ? (
                     <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#8B4513] mx-auto"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#EE4C7C] mx-auto"></div>
                     </div>
                   ) : (
                     categories.map(category => (
@@ -243,8 +243,8 @@ export function Filter() {
                             onClick={() => toggleCategory(category.id)}
                             className={`flex-1 p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
                               selectedCategories.includes(category.id)
-                                ? 'border-[#8B4513] bg-[#A0826D]/20 text-[#2C1810]'
-                                : 'border-gray-200 hover:border-[#8B4513] hover:bg-[#A0826D]/10'
+                                ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
+                                : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
                             } text-left`}
                           >
                             <div className="flex items-center justify-between">
@@ -255,7 +255,7 @@ export function Filter() {
                                     e.stopPropagation();
                                     toggleCategoryExpansion(category.id);
                                   }}
-                                  className="text-gray-400 hover:text-[#8B4513] hover:bg-gray-100 rounded px-2 py-1 ml-2 min-w-[24px] h-6 flex items-center justify-center text-base font-bold transition-all duration-200"
+                                  className="text-gray-400 hover:text-[#EE4C7C] hover:bg-gray-100 rounded px-2 py-1 ml-2 min-w-[24px] h-6 flex items-center justify-center text-base font-bold transition-all duration-200"
                                 >
                                   {expandedCategories.includes(category.id) ? '−' : '+'}
                                 </button>
@@ -272,8 +272,8 @@ export function Filter() {
                                 onClick={() => toggleCategory(child.id)}
                                 className={`w-full p-2 rounded-lg border transition-all cursor-pointer duration-200 text-xs ${
                                   selectedCategories.includes(child.id)
-                                    ? 'border-[#8B4513] bg-[#A0826D]/20 text-[#2C1810]'
-                                    : 'border-gray-200 hover:border-[#8B4513] hover:bg-[#A0826D]/10'
+                                    ? 'border-[#EE4C7C] bg-[#E3AFBC]/20 text-[#9A1750]'
+                                    : 'border-gray-200 hover:border-[#EE4C7C] hover:bg-[#E3AFBC]/10'
                                 }`}
                               >
                                 <span className="font-medium">{child.name}</span>
@@ -335,11 +335,11 @@ export function Filter() {
                     </div>
                     
                     <div className="p-4">
-                      <div className="text-xs text-[#8B4513] font-medium mb-2">
+                      <div className="text-xs text-[#EE4C7C] font-medium mb-2">
                         {product.category?.name || 'Bez kategórie'}
                       </div>
-
-                      <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#8B4513] transition-colors">
+                      
+                      <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">
                         {product.name}
                       </h3>
                     </div>
@@ -361,7 +361,7 @@ export function Filter() {
                       <button 
                         onClick={() => handleAddToCart(product.id, product.price)}
                         disabled={addingToCart === product.id}
-                        className="bg-[#8B4513] hover:bg-[#2C1810] cursor-pointer text-white text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+                        className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
                       >
                         {addingToCart === product.id ? 'Pridávam...' : 'Do košíka'}
                       </button>
@@ -377,7 +377,7 @@ export function Filter() {
                 <p className="text-gray-500 text-lg">Žiadne produkty neboli nájdené</p>
                 <button
                   onClick={clearFilters}
-                  className="mt-4 text-[#8B4513] hover:underline"
+                  className="mt-4 text-[#EE4C7C] hover:underline"
                 >
                   Vymazať filtre
                 </button>
@@ -408,7 +408,7 @@ export function Filter() {
                   const loginButton = document.querySelector('[data-auth-login]') as HTMLButtonElement;
                   if (loginButton) loginButton.click();
                 }}
-                className="flex-1 px-4 py-2 bg-[#8B4513] hover:bg-[#2C1810] text-white rounded-lg"
+                className="flex-1 px-4 py-2 bg-[#EE4C7C] hover:bg-[#9A1750] text-white rounded-lg"
               >
                 Prihlásiť sa
               </button>

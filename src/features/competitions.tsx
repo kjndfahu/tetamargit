@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { SuccessModal } from "@/features/cart/success-modal";
 import { supabase } from '@/config/supabase';
-import { validators, useFormInputHandler } from '@/lib/validators';
+import { validators, useFormInputHandler } from '@/lib/shared/validators';
 
 export function Competitions() {
 	const [open, setOpen] = useState(false);
@@ -109,7 +109,7 @@ export function Competitions() {
 		<section id="competitions" className="flex flex-col items-center gap-8 px-4 sm:px-6 lg:px-20">
 			<h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">Súťaže</h2>
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-				<div className="rounded-xl p-7 border-2 border-dashed border-[#8B4513] overflow-hidden aspect-video flex items-center justify-center">
+				<div className="rounded-xl p-7 border-2 border-dashed border-[#EE4C7C] overflow-hidden aspect-video flex items-center justify-center">
 					<video 
 						className="w-full h-full rounded-xl object-cover" 
 						controls
@@ -141,7 +141,7 @@ export function Competitions() {
 								value={formData.firstName}
 								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
-								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513]" 
+								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 
 								placeholder="Ján" 
 							/>
 						</label>
@@ -152,7 +152,7 @@ export function Competitions() {
 								value={formData.lastName}
 								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
-								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513]" 
+								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 
 								placeholder="Novák" 
 							/>
 						</label>
@@ -164,7 +164,7 @@ export function Competitions() {
 								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
 								type="email" 
-								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513]" 
+								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 
 								placeholder="jan.novak@example.com" 
 							/>
 						</label>
@@ -176,7 +176,7 @@ export function Competitions() {
 								onChange={(e) => handleInputChange(e, setFormData)}
 								required 
 								type="tel" 
-								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B4513]" 
+								className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EE4C7C]" 
 								placeholder="+421 900 123 456" 
 							/>
 						</label>
@@ -187,14 +187,14 @@ export function Competitions() {
 								required 
 								type="file" 
 								accept="video/*" 
-								className="border border-gray-300 rounded-lg px-3 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-[#A0826D]/20 file:text-[#2C1810] hover:file:bg-[#A0826D]/30" 
+								className="border border-gray-300 rounded-lg px-3 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-[#E3AFBC]/20 file:text-[#9A1750] hover:file:bg-[#E3AFBC]/30" 
 							/>
 						</label>
 						<div className="sm:col-span-2">
 							<button 
 								type="submit" 
 								disabled={isSubmitting}
-								className="w-full cursor-pointer bg-[#8B4513] hover:bg-[#2C1810] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition"
+								className="w-full cursor-pointer bg-[#EE4C7C] hover:bg-[#9A1750] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition"
 							>
 								{isSubmitting ? 'Odosielam...' : 'Odoslať'}
 							</button>

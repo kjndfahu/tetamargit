@@ -56,7 +56,7 @@ export function Header() {
           </Link>
 
           <nav className="hidden md:flex space-x-8">
-            <a href="#home" className="text-black hover:text-[#EE4C7C] transition-colors">Domov</a>
+            <Link href="/" className="text-black hover:text-[#EE4C7C] transition-colors">Domov</Link>
             <a href="#products" className="text-black hover:text-[#EE4C7C] transition-colors">Produkty</a>
             <a href="#about" className="text-black hover:text-[#EE4C7C] transition-colors">O nás</a>
             <a href="#contact" className="text-black hover:text-[#EE4C7C] transition-colors">Kontakt</a>
@@ -128,7 +128,7 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
-              <a href="#home" className="text-black hover:text-[#EE4C7C] transition-colors">Domov</a>
+              <Link href="/" className="text-black hover:text-[#EE4C7C] transition-colors">Domov</Link>
               <a href="#products" className="text-black hover:text-[#EE4C7C] transition-colors">Produkty</a>
               <a href="#about" className="text-black hover:text-[#EE4C7C] transition-colors">O nás</a>
               <a href="#contact" className="text-black hover:text-[#EE4C7C] transition-colors">Kontakt</a>

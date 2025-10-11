@@ -1,19 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --primary-pink: #EE4C7C;
-  --primary-magenta: #9A1750;
-  --primary-purple: #5D001E;
-  --secondary-pink: #E3AFBC;
-  --light-pink: #E3E2DF;
+  --primary-brown: #8B4513;
+  --primary-dark: #2C1810;
+  --accent-gold: #D4AF37;
+  --secondary-brown: #A0826D;
+  --light-beige: #F5F5DC;
   --white: #FFFFFF;
-  --black: #000000;
+  --black: #1A1A1A;
+  --dark-bg: #0D0D0D;
   --font-inter: var(--font-inter);
 }
 
 body {
   color: var(--black);
-  background: var(--white);
+  background: var(--light-beige);
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -22,11 +23,11 @@ body {
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-magenta) 100%);
+  background: linear-gradient(135deg, var(--primary-brown) 0%, var(--primary-dark) 100%);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-magenta) 100%);
+  background: linear-gradient(135deg, var(--primary-brown) 0%, var(--accent-gold) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

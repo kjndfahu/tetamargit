@@ -71,11 +71,11 @@ export function RecentlyViewed() {
                   />
                 </div>
                 <div className="p-4">
-                  <div className="text-xs text-orange-500 font-medium mb-2">
+                  <div className="text-xs text-[#8B4513] font-medium mb-2">
                     {product.category?.name || 'Bez kategórie'}
                   </div>
-                  
-                  <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-orange-500 transition-colors">
+
+                  <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-[#8B4513] transition-colors">
                     {product.name}
                   </h3>
                 </div>
@@ -96,7 +96,7 @@ export function RecentlyViewed() {
                     <button 
                       onClick={() => handleAddToCart(product.id, product.price)}
                       disabled={addingToCart === product.id}
-                      className="bg-[#EE4C7C] hover:bg-[#f5f5f5] cursor-pointer text-white hover:text-gray-600 hover:border-[1px] hover:border-gray-600 text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+                      className="bg-[#8B4513] hover:bg-[#2C1810] cursor-pointer text-white text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
                     >
                       {addingToCart === product.id ? 'Pridávam...' : 'Do košíka'}
                     </button>

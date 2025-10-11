@@ -18,17 +18,17 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#EE4C7C]">Rýchle odkazy</h3>
+            <h3 className="text-lg font-semibold mb-4 text-[#8B4513]">Rýchle odkazy</h3>
             <ul className="space-y-2">
-              <li><a href="#home" className="text-gray-900 hover:text-[#EE4C7C] transition-colors">Domov</a></li>
-              <li><a href="#products" className="text-gray-900 hover:text-[#EE4C7C] transition-colors">Produkty</a></li>
-              <li><a href="#about" className="text-gray-900 hover:text-[#EE4C7C] transition-colors">O nás</a></li>
-              <li><a href="#contact" className="text-gray-900 hover:text-[#EE4C7C] transition-colors">Kontakt</a></li>
+              <li><a href="#home" className="text-gray-900 hover:text-[#8B4513] transition-colors">Domov</a></li>
+              <li><a href="#products" className="text-gray-900 hover:text-[#8B4513] transition-colors">Produkty</a></li>
+              <li><a href="#about" className="text-gray-900 hover:text-[#8B4513] transition-colors">O nás</a></li>
+              <li><a href="#contact" className="text-gray-900 hover:text-[#8B4513] transition-colors">Kontakt</a></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#EE4C7C]">Kontakt</h3>
+            <h3 className="text-lg font-semibold mb-4 text-[#8B4513]">Kontakt</h3>
             <div className="space-y-2 text-gray-900">
               <p>📞 +421 (999) 123-45-67</p>
               <p>📧 info@tetamargit.sk</p>

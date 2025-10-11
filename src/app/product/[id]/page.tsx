@@ -50,7 +50,7 @@ export default function ProductPage() {
     return (
       <main className="px-4 sm:px-6 lg:px-20 py-10 w-full">
         <p className="text-red-600">Produkt sa nepodarilo načítať.</p>
-        <button onClick={() => router.back()} className="mt-4 inline-flex items-center gap-2 text-[#EE4C7C] hover:text-[#9A1750]">
+        <button onClick={() => router.back()} className="mt-4 inline-flex items-center gap-2 text-[#8B4513] hover:text-[#2C1810]">
           ← Vrátiť sa späť
         </button>
       </main>
@@ -59,7 +59,7 @@ export default function ProductPage() {
 
   return (
     <main className="px-4 sm:px-6 lg:px-20 py-10 w-full">
-      <button onClick={() => router.back()} className="mb-6 inline-flex items-center gap-2 text-[#EE4C7C] hover:text-[#9A1750]">
+      <button onClick={() => router.back()} className="mb-6 inline-flex items-center gap-2 text-[#8B4513] hover:text-[#2C1810]">
         ← Vrátiť sa späť
       </button>
 
@@ -78,7 +78,7 @@ export default function ProductPage() {
           <div className="text-xl font-semibold text-gray-900 mb-6">{product.price?.toFixed(2)} €</div>
           <button
             onClick={handleAddToCart}
-            className="bg-[#EE4C7C] hover:bg-[#9A1750] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="bg-[#8B4513] hover:bg-[#2C1810] text-white font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Pridať do košíka
           </button>
@@ -105,7 +105,7 @@ export default function ProductPage() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-[#EE4C7C] transition-colors">{p.name}</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-[#8B4513] transition-colors">{p.name}</h3>
                   <div className="text-gray-700 font-medium">{p.price?.toFixed(2)} €</div>
                 </div>
               </Link>

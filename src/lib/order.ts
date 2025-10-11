@@ -107,7 +107,7 @@ export class OrderService {
     return `
       <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
         <thead>
-          <tr style="background-color: #EE4C7C; color: white;">
+          <tr style="background-color: #8B4513; color: white;">
             <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Produkt</th>
             <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Množstvo</th>
             <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Cena/ks</th>

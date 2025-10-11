@@ -19,24 +19,24 @@ const contactInfo = [
     title: 'Email',
     value: 'info@tetamargit.sk',
     subtitle: 'Odpovieme do 2 hodín',
-    color: 'text-[#EE4C7C]',
-    bgColor: 'bg-[#E3AFBC]/20'
+    color: 'text-[#8B4513]',
+    bgColor: 'bg-[#A0826D]/20'
   },
   {
     icon: MapPin,
     title: 'Adresa',
     value: 'ul. Čerstvá, 15, Bratislava',
     subtitle: 'Metro "Čerstvá"',
-    color: 'text-[#9A1750]',
-    bgColor: 'bg-[#E3AFBC]/30'
+    color: 'text-[#2C1810]',
+    bgColor: 'bg-[#A0826D]/30'
   },
   {
     icon: Clock,
     title: 'Otvorené hodiny',
     value: 'Denne',
     subtitle: '8:00 - 22:00',
-    color: 'text-[#5D001E]',
-    bgColor: 'bg-[#E3AFBC]/40'
+    color: 'text-[#2C1810]',
+    bgColor: 'bg-[#A0826D]/40'
   }
 ];
 
@@ -168,7 +168,7 @@ export function ContactUs() {
                         value={formData.name}
                         onChange={(e) => handleInputChange(e, setFormData)}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent"
                         placeholder="Vaše meno"
                       />
                     </div>
@@ -184,7 +184,7 @@ export function ContactUs() {
                         value={formData.email}
                         onChange={(e) => handleInputChange(e, setFormData)}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -201,7 +201,7 @@ export function ContactUs() {
                         name="phone"
                         value={formData.phone}
                         onChange={(e) => handleInputChange(e, setFormData)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent"
                         placeholder="+421 (999) 123-45-67"
                       />
                     </div>
@@ -216,7 +216,7 @@ export function ContactUs() {
                         value={formData.subject}
                         onChange={(e) => handleInputChange(e, setFormData)}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent"
                       >
                         <option value="">Vyberte tému</option>
                         <option value="Otázka ohľadom objednávky">Otázka ohľadom objednávky</option>
@@ -239,7 +239,7 @@ export function ContactUs() {
                       onChange={(e) => handleInputChange(e, setFormData)}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EE4C7C] focus:border-transparent resize-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:border-transparent resize-none"
                       placeholder="Opíšte vašu otázku alebo návrh..."
                     />
                   </div>
@@ -247,7 +247,7 @@ export function ContactUs() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-[#EE4C7C] cursor-pointer hover:bg-[#9A1750] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-60"
+                    className="w-full bg-[#8B4513] cursor-pointer hover:bg-[#2C1810] text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-60"
                   >
                     <Send className="w-5 h-5" />
                     <span>{isLoading ? 'Odosielam…' : 'Posielajte správy'}</span>

@@ -200,7 +200,7 @@ function VirtualStoreSectionComponent() {
           <div className="text-center text-white">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EE4C7C] mx-auto mb-4"></div>
               <h3 className="text-xl font-semibold mb-2">Načítavame virtuálny obchod</h3>
-            <p className="text-gray-300">Načítavame váš vlastný 3D model obchodu...</p>
+            <p className="text-gray-300"></p>
           </div>
         </div>
       )}

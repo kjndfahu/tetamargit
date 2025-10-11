@@ -71,14 +71,14 @@ export function StoreUI({
           {/* Exit Button */}
           <button
             onClick={onExitStore}
-            className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-lg p-1 text-white transition-colors cursor-pointer w-8 h-8 flex items-center justify-center m-2 md:m-2 m-3"
+            className="bg-red-500/80 hover:bg-red-600/90 backdrop-blur-sm rounded-lg p-1 text-white transition-colors cursor-pointer w-9 h-9 md:w-8 md:h-8 flex items-center justify-center m-4 md:m-2"
             title="Opustiť simulátor"
           >
-            <X className="w-4 h-4 md:w-4 md:h-4 w-5 h-5" />
+            <X className="w-5 h-5 md:w-4 md:h-4" />
           </button>
 
           {/* Navigation Controls */}
-        <div className="bg-black/50 backdrop-blur-sm rounded-lg p-2 md:p-3 flex items-center gap-2 md:gap-3 mr-2 md:mr-0">
+        <div className="bg-black/50 backdrop-blur-sm rounded-lg p-2 md:p-3 flex items-center gap-2 md:gap-3 mr-4 md:mr-0">
           <button
             onClick={() => {
               const newSection = currentSection === 0 ? totalSections - 1 : currentSection - 1;
@@ -108,9 +108,9 @@ export function StoreUI({
         </div>
       )}
 
-      {/* Section Indicators */}
+      {/* Section Indicators - Hidden on mobile */}
       {hasEnteredStore && (
-        <div className="absolute top-4 md:top-6 left-1/2 transform -translate-x-1/2 z-20">
+        <div className="absolute top-4 md:top-6 left-1/2 transform -translate-x-1/2 z-20 hidden md:block">
         <div className="bg-black/50 backdrop-blur-sm rounded-lg p-2 md:p-3 flex items-center gap-1.5 md:gap-2">
           {Array.from({ length: totalSections }, (_, i) => (
             <button

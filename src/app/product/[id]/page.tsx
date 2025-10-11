@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useProduct } from "@/hooks/useProducts";
 import { useCartStore } from "@/stores/cart";
 import { ProductService } from "@/lib/products";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 export default function ProductPage() {
   const params = useParams();
@@ -14,6 +15,7 @@ export default function ProductPage() {
 
   const { product, loading, error } = useProduct(id || "");
   const addToCart = useCartStore(state => state.addToCart);
+  const { addRecentProduct } = useRecentlyViewed();
 
   // рекомендации из БД
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -24,6 +26,12 @@ export default function ProductPage() {
     };
     if (id) load();
   }, [id]);
+
+  useEffect(() => {
+    if (product) {
+      addRecentProduct(product);
+    }
+  }, [product]);
 
   const handleAddToCart = async () => {
     if (!product) return;

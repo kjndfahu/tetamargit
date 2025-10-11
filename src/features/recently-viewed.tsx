@@ -1,13 +1,13 @@
 'use client';
 
-import { useFeaturedProducts } from '@/hooks/useProducts';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import Link from 'next/link';
 import { useCartStore } from '@/stores/cart';
 import { useState } from 'react';
 
 
 export function RecentlyViewed() {
-  const { products, loading, error } = useFeaturedProducts(6);
+  const { recentProducts, loading } = useRecentlyViewed();
   const addToCart = useCartStore(s => s.addToCart);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
@@ -26,6 +26,10 @@ export function RecentlyViewed() {
     }
   };
 
+  if (!loading && recentProducts.length === 0) {
+    return null;
+  }
+
   return (
     <section className=" bg-white">
       <div className=" mx-auto px-4 sm:px-6 lg:px-20">
@@ -37,12 +41,6 @@ export function RecentlyViewed() {
             Vráťte sa k produktom, ktoré vás zaujali. Možno je teraz ten správny čas si ich objednať!
           </p>
         </div>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
-            <p className="text-red-600">{error}</p>
-          </div>
-        )}
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
@@ -62,7 +60,7 @@ export function RecentlyViewed() {
           </div>
         ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-          {products.map((product) => (
+          {recentProducts.map((product) => (
             <div key={product.id} className="group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
               <Link href={`/product/${product.id}`} className="block">
                 <div className="relative overflow-hidden rounded-t-xl">
@@ -108,18 +106,6 @@ export function RecentlyViewed() {
           ))}
         </div>
         )}
-
-        {!loading && products.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Žiadne odporúčané produkty</p>
-          </div>
-        )}
-
-        <div className="text-center mt-12">
-          <button className="bg-[#EE4C7C] hover:bg-[#9A1750] cursor-pointer text-white font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
-            Zobraziť všetky produkty
-          </button>
-        </div>
       </div>
     </section>
   );

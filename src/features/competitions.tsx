@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { SuccessModal } from "@/features/cart/success-modal";
 import { supabase } from '@/config/supabase';
-import { validators, useFormInputHandler } from '@/lib/shared/validators';
+import { validators, useFormInputHandler } from '@/lib/validators';
 
 export function Competitions() {
 	const [open, setOpen] = useState(false);

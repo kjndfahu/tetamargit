@@ -2,7 +2,7 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { Truck, Store, MapPin, Chrome as Home, Building2, Phone, User, Mail, FileText } from "lucide-react";
-import { validators, useFormInputHandler } from '@/lib/shared/validators';
+import { validators, useFormInputHandler } from '@/lib/validators';
 
 export type DeliveryMethod = "pickup" | "courier";
 

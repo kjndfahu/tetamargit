@@ -12,7 +12,7 @@ import { CartProductsSection } from "@/features/cart/cart-products-section";
 import { SummarySidebar } from "@/features/cart/summary-sidebar";
 import { SuccessModal } from "@/features/cart/success-modal";
 import { OrderService } from "@/lib/order";
-import { validators } from '@/lib/shared/validators';
+import { validators } from '@/lib/validators';
 
 export default function CartPage() {
 	const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("pickup");

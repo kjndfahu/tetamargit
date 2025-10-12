@@ -51,7 +51,7 @@ export function Header() {
           <Link href="/">
             <div className="flex cursor-pointer items-center">
               <Image width={830/17.5} height={60} src="/img/logo.png" alt="logo" />
-              <span className="ml-3 text-2xl font-bold uppercase text-[#EE4C7C]">Teta Márgit1</span>
+              <span className="ml-3 text-2xl font-bold uppercase text-[#EE4C7C]">Teta Márgit</span>
             </div>
           </Link>
 

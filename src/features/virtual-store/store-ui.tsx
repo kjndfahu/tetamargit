@@ -11,6 +11,7 @@ interface StoreUIProps {
   currentSection: number;
   hasEnteredStore: boolean;
   totalSections: number;
+  products: Product[];
   onNavigateToSection: (section: number) => void;
   onEnterStore: () => void;
   onExitStore: () => void;
@@ -22,6 +23,7 @@ export function StoreUI({
   currentSection,
   hasEnteredStore,
   totalSections,
+  products,
   onNavigateToSection,
   onEnterStore,
   onExitStore
@@ -54,15 +56,10 @@ export function StoreUI({
   };
 
   const getSectionName = (index: number) => {
-    const productNames = [
-      'Salámová paštéta',
-      'Margit-chmeľáčik (Malinovka)',
-      'Paštéta Bolognese',
-      'Pivnica Radošina (Margit-víno)',
-      'Margit-káva kolekcia',
-      'Pečeňová paštéta'
-    ];
-    return productNames[index] || `Produkt ${index + 1}`;
+    if (products && products[index]) {
+      return products[index].category?.name || products[index].name;
+    }
+    return `Produkt ${index + 1}`;
   };
 
   const getSectionSide = (index: number) => {

@@ -360,7 +360,7 @@ export class ProductService {
       .select('stock_quantity')
       .eq('id', productId)
       .eq('is_active', true)
-      .single();
+      .maybeSingle();
 
     if (error || !data) {
       return false;

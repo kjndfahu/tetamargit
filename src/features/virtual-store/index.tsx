@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, memo } from 'react';
 import { VirtualStore } from './virtual-store';
 import { StoreUI } from './store-ui';
-import { Product } from '@/lib/products';
+import { Product, ProductService } from '@/lib/products';
 
 // Mock data for testing when Supabase is not available
 const mockProducts: Product[] = [
@@ -108,8 +108,29 @@ function VirtualStoreSectionComponent() {
   const [loadingError, setLoadingError] = useState<string | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [hasEnteredStore, setHasEnteredStore] = useState(false);
-  const [products] = useState<Product[]>(mockProducts);
-  const productsLoading = false;
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setProductsLoading(true);
+        const { products: loadedProducts } = await ProductService.getProducts(
+          { featured: true, inStock: true },
+          { field: 'created_at', direction: 'desc' },
+          6
+        );
+        setProducts(loadedProducts);
+      } catch (error) {
+        console.error('Error loading products:', error);
+        setLoadingError('Nepodarilo sa načítať produkty');
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current || productsLoading || products.length === 0 || initializingRef.current || storeInstance) return;
@@ -229,6 +250,7 @@ function VirtualStoreSectionComponent() {
           currentSection={currentSection}
           hasEnteredStore={hasEnteredStore}
           totalSections={products.length}
+          products={products}
           onNavigateToSection={(section) => storeInstance?.navigateToSection(section)}
           onEnterStore={() => storeInstance?.enterStore()}
           onExitStore={() => storeInstance?.exitStore()}

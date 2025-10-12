@@ -3,6 +3,7 @@
 import { X, ShoppingCart, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Product } from '@/lib/products';
 import { useState } from 'react';
+import { useCart } from '@/hooks/useCart';
 
 interface StoreUIProps {
   selectedProduct: Product | null;
@@ -15,10 +16,10 @@ interface StoreUIProps {
   onExitStore: () => void;
 }
 
-export function StoreUI({ 
-  selectedProduct, 
-  onCloseProduct, 
-  currentSection, 
+export function StoreUI({
+  selectedProduct,
+  onCloseProduct,
+  currentSection,
   hasEnteredStore,
   totalSections,
   onNavigateToSection,
@@ -26,18 +27,27 @@ export function StoreUI({
   onExitStore
 }: StoreUIProps) {
   const [addingToCart, setAddingToCart] = useState(false);
+  const [cartError, setCartError] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   const handleAddToCart = async () => {
     if (!selectedProduct) return;
-    
+
     try {
       setAddingToCart(true);
-      // Mock add to cart functionality
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setCartError(null);
+
+      await addToCart({
+        product_id: selectedProduct.id,
+        quantity: 1,
+        price: selectedProduct.price
+      });
+
       console.log('Added to cart:', selectedProduct.name);
       onCloseProduct();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding to cart:', error);
+      setCartError(error.message || 'Nepodarilo sa pridať produkt do košíka');
     } finally {
       setAddingToCart(false);
     }
@@ -249,6 +259,13 @@ export function StoreUI({
                   )}
                 </div>
               </div>
+
+              {/* Error Message */}
+              {cartError && (
+                <div className="mb-3 md:mb-4 p-2 md:p-3 bg-red-100 border border-red-300 rounded-lg text-red-700 text-xs md:text-sm">
+                  {cartError}
+                </div>
+              )}
 
               {/* Add to Cart Button */}
               <button

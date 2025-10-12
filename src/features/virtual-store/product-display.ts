@@ -154,22 +154,13 @@ export class ProductDisplay {
   }
 
   private createLabelText(): void {
-    // Определяем тип продукции по категории
-    const categoryName = this.product.category?.name?.toLowerCase() || '';
-    let labelText = 'Produkty';
-    
-    if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
-      labelText = 'Výrobky z mäsa';
-    } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
-      labelText = 'Mliečne výrobky';
-    } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
-      labelText = 'Pečivo a chlieb';
-    } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
-      labelText = 'Ovocie a zelenina';
-    } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
-      labelText = 'Konzervy a džemy';
-    } else {
-      labelText = 'Čerstvé produkty';
+    // Используем название категории напрямую
+    let labelText = this.product.category?.name || 'Produkty';
+
+    // Сокращаем длинные названия для лучшего отображения на табличке
+    if (labelText.length > 25) {
+      // Если название слишком длинное, используем его как есть, canvas уменьшит шрифт
+      labelText = labelText;
     }
     
     const canvas = document.createElement('canvas');

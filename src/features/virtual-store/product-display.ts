@@ -92,19 +92,19 @@ export class ProductDisplay {
     if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
       geometry = new THREE.CylinderGeometry(0.21, 0.21, 0.56, 8);
       material = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-    } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
-      geometry = new THREE.BoxGeometry(0.28, 0.42, 0.21);
-      material = new THREE.MeshLambertMaterial({ color: 0xFFFFF0 });
+    } else if (categoryName.includes('káv') || categoryName.includes('nápoj')) {
+      geometry = new THREE.CylinderGeometry(0.14, 0.14, 0.35, 12);
+      material = new THREE.MeshLambertMaterial({ color: 0x6F4E37 });
     } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
       geometry = new THREE.SphereGeometry(0.28, 8, 6);
       geometry.scale(1, 0.6, 1.2);
       material = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
-    } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
-      geometry = new THREE.SphereGeometry(0.245, 8, 6);
-      material = new THREE.MeshLambertMaterial({ color: 0x228B22 });
-    } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
-      geometry = new THREE.CylinderGeometry(0.175, 0.175, 0.42, 8);
-      material = new THREE.MeshLambertMaterial({ color: 0xFF6347 });
+    } else if (categoryName.includes('paster') || categoryName.includes('paštét')) {
+      geometry = new THREE.BoxGeometry(0.28, 0.14, 0.21);
+      material = new THREE.MeshLambertMaterial({ color: 0xC19A6B });
+    } else if (categoryName.includes('alkohol') || categoryName.includes('pivo') || categoryName.includes('víno')) {
+      geometry = new THREE.CylinderGeometry(0.12, 0.12, 0.56, 8);
+      material = new THREE.MeshLambertMaterial({ color: 0x2E8B57 });
     } else {
       geometry = new THREE.BoxGeometry(0.35, 0.35, 0.35);
       material = new THREE.MeshLambertMaterial({ color: 0xEE4C7C });
@@ -160,14 +160,14 @@ export class ProductDisplay {
     
     if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
       labelText = 'Výrobky z mäsa';
-    } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
-      labelText = 'Mliečne výrobky';
+    } else if (categoryName.includes('káv') || categoryName.includes('nápoj')) {
+      labelText = 'Kávové nápoje';
     } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
       labelText = 'Pečivo a chlieb';
-    } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
-      labelText = 'Ovocie a zelenina';
-    } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
-      labelText = 'Konzervy a džemy';
+    } else if (categoryName.includes('paster') || categoryName.includes('paštét')) {
+      labelText = 'Pasterky';
+    } else if (categoryName.includes('alkohol') || categoryName.includes('pivo') || categoryName.includes('víno')) {
+      labelText = 'Alkoholické nápoje';
     } else {
       labelText = 'Čerstvé produkty';
     }

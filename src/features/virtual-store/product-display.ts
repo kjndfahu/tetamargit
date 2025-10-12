@@ -82,38 +82,32 @@ export class ProductDisplay {
   }
 
   private async createProductModel(): Promise<void> {
+    // Создаем временную 3D модель продукта
     let geometry: THREE.BufferGeometry;
     let material: THREE.Material;
 
-    const tableType = this.tableIndex % 6;
-
-    switch(tableType) {
-      case 0:
-        geometry = new THREE.CylinderGeometry(0.15, 0.18, 0.45, 8);
-        material = new THREE.MeshLambertMaterial({ color: 0x6F4E37 });
-        break;
-      case 1:
-        geometry = new THREE.CylinderGeometry(0.12, 0.12, 0.50, 12);
-        material = new THREE.MeshLambertMaterial({ color: 0x8B0000 });
-        break;
-      case 2:
-        geometry = new THREE.SphereGeometry(0.28, 8, 6);
-        geometry.scale(1, 0.6, 1.2);
-        material = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
-        break;
-      case 3:
-        geometry = new THREE.BoxGeometry(0.28, 0.42, 0.21);
-        material = new THREE.MeshLambertMaterial({ color: 0xFFFFF0 });
-        break;
-      case 4:
-        geometry = new THREE.CylinderGeometry(0.21, 0.21, 0.56, 8);
-        material = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        break;
-      case 5:
-      default:
-        geometry = new THREE.BoxGeometry(0.35, 0.35, 0.35);
-        material = new THREE.MeshLambertMaterial({ color: 0xEE4C7C });
-        break;
+    // Определяем тип продукта по категории и создаем соответствующую модель
+    const categoryName = this.product.category?.name?.toLowerCase() || '';
+    
+    if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
+      geometry = new THREE.CylinderGeometry(0.21, 0.21, 0.56, 8);
+      material = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+    } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
+      geometry = new THREE.BoxGeometry(0.28, 0.42, 0.21);
+      material = new THREE.MeshLambertMaterial({ color: 0xFFFFF0 });
+    } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
+      geometry = new THREE.SphereGeometry(0.28, 8, 6);
+      geometry.scale(1, 0.6, 1.2);
+      material = new THREE.MeshLambertMaterial({ color: 0xDEB887 });
+    } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
+      geometry = new THREE.SphereGeometry(0.245, 8, 6);
+      material = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+    } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
+      geometry = new THREE.CylinderGeometry(0.175, 0.175, 0.42, 8);
+      material = new THREE.MeshLambertMaterial({ color: 0xFF6347 });
+    } else {
+      geometry = new THREE.BoxGeometry(0.35, 0.35, 0.35);
+      material = new THREE.MeshLambertMaterial({ color: 0xEE4C7C });
     }
 
     this.productMesh = new THREE.Mesh(geometry, material);
@@ -160,16 +154,23 @@ export class ProductDisplay {
   }
 
   private createLabelText(): void {
-    const tableLabels = [
-      'Kávové nápoje',
-      'Alkoholické nápoje',
-      'Pečivo a koláče',
-      'Mliečne výrobky',
-      'Mäsové špeciality',
-      'Domáce produkty'
-    ];
-
-    const labelText = tableLabels[this.tableIndex % 6];
+    // Определяем тип продукции по категории
+    const categoryName = this.product.category?.name?.toLowerCase() || '';
+    let labelText = 'Produkty';
+    
+    if (categoryName.includes('mäso') || categoryName.includes('mäsové') || categoryName.includes('klobása')) {
+      labelText = 'Výrobky z mäsa';
+    } else if (categoryName.includes('mlieko') || categoryName.includes('mliečne') || categoryName.includes('syr')) {
+      labelText = 'Mliečne výrobky';
+    } else if (categoryName.includes('chlieb') || categoryName.includes('pečivo') || categoryName.includes('výpečka')) {
+      labelText = 'Pečivo a chlieb';
+    } else if (categoryName.includes('zelenina') || categoryName.includes('ovocie')) {
+      labelText = 'Ovocie a zelenina';
+    } else if (categoryName.includes('konzervy') || categoryName.includes('džem')) {
+      labelText = 'Konzervy a džemy';
+    } else {
+      labelText = 'Čerstvé produkty';
+    }
     
     const canvas = document.createElement('canvas');
     canvas.width = 512;

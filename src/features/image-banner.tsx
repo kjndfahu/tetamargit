@@ -23,23 +23,9 @@ export function ImageBanner() {
   const fetchBanners = async () => {
     try {
       setLoading(true);
-      
-      const { data, error } = await supabase
-        .from('banners')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true });
 
-      if (error) {
-        throw error;
-      }
-
-      const bannersWithImages = data.map(banner => ({
-        ...banner,
-        image_url: supabase.storage.from('Banners').getPublicUrl(banner.image_path).data.publicUrl
-      }));
-
-      setBanners(bannersWithImages);
+      // Баннеры пока не настроены, показываем пустой массив
+      setBanners([]);
       setError(null);
     } catch (err) {
       console.error('Error fetching banners:', err);

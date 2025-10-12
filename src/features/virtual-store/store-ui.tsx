@@ -45,12 +45,12 @@ export function StoreUI({
 
   const getSectionName = (index: number) => {
     const productNames = [
-      'Domáca klobása',
-      'Domáci syr', 
-      'Čerstvý chlieb',
-      'Čerstvá zelenina',
-      'Domáci džem',
-      'Čerstvé mlieko'
+      'Salámová paštéta',
+      'Margit-chmeľáčik (Malinovka)',
+      'Paštéta Bolognese',
+      'Pivnica Radošina (Margit-víno)',
+      'Margit-káva kolekcia',
+      'Pečeňová paštéta'
     ];
     return productNames[index] || `Produkt ${index + 1}`;
   };
